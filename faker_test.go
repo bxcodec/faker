@@ -27,11 +27,15 @@ type SomeStruct struct {
 type AStruct struct {
 	Number        int64
 	Height        int64
-	AnotherStruct BStruct
+	AnotherStruct CStruct
 }
 
 type BStruct struct {
 	Image string
+}
+type CStruct struct {
+	BStruct
+	Name string
 }
 
 func TestFakerData(t *testing.T) {
