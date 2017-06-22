@@ -54,6 +54,10 @@ func setSliceData(v reflect.Value) error {
 		v.Set(reflect.ValueOf([]float64{r.Float64(), r.Float64(), r.Float64()}))
 	case `[]string`:
 		v.Set(reflect.ValueOf([]string{randomString(5), randomString(7)}))
+	case `[]time.Time`:
+		ft := time.Unix(r.Int63(), 0)
+		ft2 := time.Unix(r.Int63(), 0)
+		v.Set(reflect.ValueOf([]time.Time{ft, ft2}))
 
 	default:
 		err = errors.New("Slice of " + v.Type().String() + " Not Supported Yet")
@@ -92,12 +96,19 @@ func setData(v reflect.Value) error {
 	case reflect.Slice:
 		return setSliceData(v)
 	case reflect.Struct:
-		for i := 0; i < v.NumField(); i++ {
-			err := setData(v.Field(i).Addr())
-			if err != nil {
-				return err
+
+		if v.Type().String() == "time.Time" {
+			ft := time.Unix(r.Int63(), 0)
+			v.Set(reflect.ValueOf(ft))
+		} else {
+			for i := 0; i < v.NumField(); i++ {
+				err := setData(v.Field(i).Addr())
+				if err != nil {
+					return err
+				}
 			}
 		}
+
 	case reflect.Ptr:
 		return errors.New("Unsupported kind: " + v.Kind().String() + " Change Without using * (pointer) in Field of " + v.Type().String())
 	default:

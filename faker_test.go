@@ -3,10 +3,11 @@ package faker
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 type SomeStruct struct {
-	Int      int
+	Inta     int
 	Int8     int8
 	Int16    int16
 	Int32    int32
@@ -23,6 +24,8 @@ type SomeStruct struct {
 	SFloat64 []float64
 	SBool    []bool
 	Struct   AStruct
+	Time     time.Time
+	Stime    []time.Time
 }
 type AStruct struct {
 	Number        int64
