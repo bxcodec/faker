@@ -97,7 +97,7 @@ BenchmarkFakerData-4      300000              4653 ns/op             880 B/op   
 ```
 
 ### MUST KNOW
-The Struct Field must PUBLIC. Use only
+The Struct Field must PUBLIC.<br>
 Support Only For :
 * int  int8  int16  int32  int64
 * []int  []int8  []int16  []int32  []int64  
@@ -105,4 +105,4 @@ Support Only For :
 * string []string
 * float32 float64 []float32 []float64
 * Nested Struct Field for Non POINTER
-* time.Time []time.Time 
+* time.Time []time.Time

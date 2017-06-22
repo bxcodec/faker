@@ -1,6 +1,5 @@
 // Faker is a simple fake data generator for your own struct.
 // Save your time, and Fake your data for your testing now.
-
 package faker
 
 import (
