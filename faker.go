@@ -1,3 +1,6 @@
+// Faker is a simple fake data generator for your own struct.
+// Save your time, and Fake your data for your testing now.
+
 package faker
 
 import (
@@ -16,6 +19,8 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
+// Fake Your Struct Data. You can use this for automation testing, or anything that need automated data.
+// You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
 
 	return setData(reflect.ValueOf(a))

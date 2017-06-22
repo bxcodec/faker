@@ -7,9 +7,8 @@ Struct Data Fake Generator
 Faker  will generate you a fake data based on your Struct.
 
 
-[![License](https://img.shields.io/badge/status-on%20going-yellowgreen.svg)](#)
-[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/saint/blob/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/bxcodec/saint?status.svg)](https://godoc.org/github.com/bxcodec/saint)
+[![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
+[![GoDoc](https://godoc.org/github.com/bxcodec/saint?status.svg)](https://godoc.org/github.com/bxcodec/faker)
 
 ## Index
 
@@ -96,3 +95,12 @@ Bench To Generate Fake Data
 ```bash
 BenchmarkFakerData-4      300000              4653 ns/op             880 B/op         31 allocs/op
 ```
+
+### MUST KNOW
+Support Only For :
+* int  int8  int16  int32  int64
+* []int  []int8  []int16  []int32  []int64  
+* bool []bool
+* string []string
+* float32 float64 []float32 []float64
+* Nested Struct Field for Non POINTER 
