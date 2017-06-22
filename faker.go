@@ -2,23 +2,10 @@ package faker
 
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"reflect"
 	"time"
 )
-
-type SomeStruct struct {
-	ID          int64
-	Name        string
-	Hobbies     []string
-	Categories  []int64
-	OtherStruct AStruct
-}
-type AStruct struct {
-	Number int64
-	Height int64
-}
 
 var src = rand.NewSource(time.Now().UnixNano())
 
@@ -35,19 +22,38 @@ func FakeData(a interface{}) error {
 }
 
 func setSliceData(v reflect.Value) error {
+	r := rand.New(src)
 	v = reflect.Indirect(v)
-	fmt.Println(v.Type())
+
+	var err error
+
 	switch v.Type().String() {
+	case `[]bool`:
+		val1 := r.Intn(2) > 0
+		val2 := r.Intn(2) > 0
+		val3 := r.Intn(2) > 0
+		v.Set(reflect.ValueOf([]bool{val1, val2, val3}))
+	case `[]int`:
+		v.Set(reflect.ValueOf([]int{r.Int(), r.Int(), r.Int()}))
+	case `[]int8`:
+		v.Set(reflect.ValueOf([]int8{int8(r.Int()), int8(r.Int()), int8(r.Int())}))
+	case `[]int16`:
+		v.Set(reflect.ValueOf([]int16{int16(r.Int()), int16(r.Int()), int16(r.Int())}))
+	case `[]int32`:
+		v.Set(reflect.ValueOf([]int32{r.Int31(), r.Int31(), r.Int31()}))
 	case `[]int64`:
-		v.Set(reflect.ValueOf([]int64{1, 2, 3}))
-		break
+		v.Set(reflect.ValueOf([]int64{r.Int63(), r.Int63(), r.Int63()}))
+	case `[]float32`:
+		v.Set(reflect.ValueOf([]float32{r.Float32(), r.Float32(), r.Float32()}))
+	case `[]float64`:
+		v.Set(reflect.ValueOf([]float64{r.Float64(), r.Float64(), r.Float64()}))
 	case `[]string`:
-		v.Set(reflect.ValueOf([]string{"hello", "world"}))
-		break
+		v.Set(reflect.ValueOf([]string{randomString(5), randomString(7)}))
+
 	default:
-		return errors.New("Slice of Struct Not Supported Yet")
+		err = errors.New("Slice of " + v.Type().String() + " Not Supported Yet")
 	}
-	return nil
+	return err
 }
 func setData(v reflect.Value) error {
 	r := rand.New(src)
@@ -62,9 +68,9 @@ func setData(v reflect.Value) error {
 	case reflect.Int:
 		v.SetInt(r.Int63())
 	case reflect.Int8:
-		v.Set(reflect.ValueOf(int8(r.Int())))
+		v.Set(reflect.ValueOf(int8(r.Intn(8))))
 	case reflect.Int16:
-		v.Set(reflect.ValueOf(int16(r.Int())))
+		v.Set(reflect.ValueOf(int16(r.Intn(16))))
 	case reflect.Int32:
 		v.Set(reflect.ValueOf(r.Int31()))
 	case reflect.Int64:
@@ -76,7 +82,7 @@ func setData(v reflect.Value) error {
 	case reflect.String:
 		v.SetString(randomString(25))
 	case reflect.Bool:
-		val := r.Intn(1) > 0
+		val := r.Intn(2) > 0
 		v.SetBool(val)
 	case reflect.Slice:
 		return setSliceData(v)
@@ -87,10 +93,10 @@ func setData(v reflect.Value) error {
 				return err
 			}
 		}
-
+	case reflect.Ptr:
+		return errors.New("Unsupported kind: " + v.Kind().String() + " Change Without using * (pointer) in Field of " + v.Type().String())
 	default:
-		return errors.New("Unsupported kind: " + v.Kind().String() + " Change Without using * (pointer) in any Field of Struct")
-
+		return errors.New("Unsupported kind: " + v.Kind().String())
 	}
 
 	return nil
