@@ -15,15 +15,13 @@ Faker  will generate you a fake data based on your Struct.
 * [Support](#support)
 * [Getting Started](#getting-started)
 * [Example](#example)
+* [Contribution](#contributions)
 
 
 ## Support
 
-
-You can also email <iman.tumorang@gmail.com> or file an [Issue](https://github.com/bxcodec/faker/issues/new).
+You can file an [Issue](https://github.com/bxcodec/faker/issues/new).
 See documentation in [Godoc](https://godoc.org/github.com/bxcodec/faker)
-
-
 
 
 ## Getting Started
@@ -105,3 +103,5 @@ Support Only For :
 * float32 float64 []float32 []float64
 * Nested Struct Field for Non POINTER
 * time.Time []time.Time
+
+
