@@ -6,7 +6,8 @@ Struct Data Fake Generator
 
 Faker  will generate you a fake data based on your Struct.
 
-
+[![Build Status](https://travis-ci.org/bxcodec/faker.svg?branch=master)](https://travis-ci.org/bxcodec/faker)
+[![Coverage Status](https://coveralls.io/repos/github/bxcodec/faker/badge.svg?branch=master)](https://coveralls.io/github/bxcodec/faker?branch=master)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/bxcodec/saint?status.svg)](https://godoc.org/github.com/bxcodec/faker)
 
@@ -15,15 +16,13 @@ Faker  will generate you a fake data based on your Struct.
 * [Support](#support)
 * [Getting Started](#getting-started)
 * [Example](#example)
+* [Contribution](#contributions)
 
 
 ## Support
 
-
-You can also email <iman.tumorang@gmail.com> or file an [Issue](https://github.com/bxcodec/faker/issues/new).
+You can file an [Issue](https://github.com/bxcodec/faker/issues/new).
 See documentation in [Godoc](https://godoc.org/github.com/bxcodec/faker)
-
-
 
 
 ## Getting Started
@@ -89,6 +88,7 @@ Output :
 {Int:7088293148785081331 Int8:7 Int16:14 Int32:1777976883 Int64:2467854463682814928 String:XMhCTmwvVqEUryIKnpWrQmBdb Bool:true SString:[iiCGZ GESVVaP] SInt:[2391903971675293806 5270400206229440165 7315288441301820955] SInt8:[124 104 84] SInt16:[-9403 -23327 -19174] SInt32:[1714966339 1617248797 1233525792] SInt64:[6505581000035730776 989945489581839946 7467254172609770414] SFloat32:[0.6761954 0.13427323 0.35608092] SFloat64:[0.49714054026277343 0.29188223737765046 0.7800285978504301] SBool:[true true true] Struct:{Number:8662858647992239649 Height:2466984558238338402 AnotherStruct:{Image:kNIwoxPiVcOqQxBUyyAuDAKom}}}
 ```
 
+![Example to use Faker](https://cdn-images-1.medium.com/max/800/1*AkMbxngg7zfvtWiuvFb4Mg.gif)
 
 Bench To Generate Fake Data
 ```bash
@@ -105,3 +105,5 @@ Support Only For :
 * float32 float64 []float32 []float64
 * Nested Struct Field for Non POINTER
 * time.Time []time.Time
+
+
