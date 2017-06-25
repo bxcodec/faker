@@ -8,4 +8,4 @@ env:
   COVERALLS_TOKEN:
     secure: e/A/C3Ij3+iuY3iBMlSe1lcZxtDYnGB2QaciNswsp84q0Ll+pBLBrno/1rIwI2P8x0Juy2Ox9s3vu4/vX6nmnrJS61uX+0BUAF1z9LsXwYPL24c3S6fMKaReetF7nFlqLbljbQnp/IjKG1iRibZLbfX4BaSWlONc8LRE+ex0azNS2/9yu5nulSCCY8BU1QUQY9yVSeVNsPvQNBeWNfwNsDo24Xk6kWxa+V7PYFkaY7qZMCx0KYHiOPOW2EqDAPKulLlV6Y50zXhh/78e/1VCoLlcMSCBkoNar0uaR7jOAgmjfCvpS0CgH+lhEdwhfgbYhT9LV4JUG1ZiDOpKG+D3C9Xe5BxshfHu/+ELaFDBwMrYaNND/CYTtmJ9buZ8ChkhpkGnA3xjdnT/LBWqko8OS80JlWtWGQ/8Nf1NXfFnARA4+fHEHJ0j0FrySJyyjVv23RMpRlC8IYVr563HK8aKMBI46Io4sUXYB89iG7/nPgOVPA3Dwinba6f1rqljmOeN1lbuJ/ucKpXk56AKtJG5t7x322/xyWmfibyNXumVqHsBe+U74fxRS4Ixr4jObquZmIuJfq2uxI1pHzNh6fYukRVqDZJHuc7ffac9xOZUCY40+8JmQhNGCLx7tSYb+CCPhSm1AvDlEumW3GlvD6OmJK2rPnMiniFHrewuI1oU6o0=
 script:
-- go test -v -covermode=count -coverprofile=coverage.out $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
+- go test -v -covermode=count -coverprofile=coverage.out $HOME/gopath/bin/goverallss -service=travis-ci -repotoken $COVERALLS_TOKEN
