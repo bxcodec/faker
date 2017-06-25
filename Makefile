@@ -1,13 +1,12 @@
 BINARY=faker
-TESTS=go test $$(go list ./... | grep -v /vendor/) -cover
+TESTS=go test -race -coverprofile=coverage.txt -covermode=atomic
+
 
 build:
-	${TESTS}
 	go build -o ${BINARY}
 
-install:
+test:
 	${TESTS}
-	go build -o ${BINARY}
 
 unittest:
 	go test -short $$(go list ./... | grep -v /vendor/)
