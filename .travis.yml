@@ -2,6 +2,3 @@ language: go
 
 go:
  - 1.8
- 
-before_script:
-  - glide install -v
