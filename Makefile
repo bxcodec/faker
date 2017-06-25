@@ -1,4 +1,4 @@
-BINARY=atlantis
+BINARY=faker
 TESTS=go test $$(go list ./... | grep -v /vendor/) -cover
 
 build:
