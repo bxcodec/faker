@@ -6,7 +6,8 @@ Struct Data Fake Generator
 
 Faker  will generate you a fake data based on your Struct.
 
-
+[![Build Status](https://travis-ci.org/bxcodec/faker.svg?branch=master)](https://travis-ci.org/bxcodec/faker)
+[![Coverage Status](https://coveralls.io/repos/github/bxcodec/faker/badge.svg?branch=master)](https://coveralls.io/github/bxcodec/faker?branch=master)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/bxcodec/saint?status.svg)](https://godoc.org/github.com/bxcodec/faker)
 
