@@ -7,9 +7,11 @@ import (
 )
 
 type SomeStruct struct {
-	// Inta     int
-	// Int8     int8
-	// Int16    int16
+	Inta             int
+	Int8             int8
+	Int16            int16
+	Int32            int32
+	Int64            int64
 	Float32          float32
 	Float64          float64
 	Latitude         float32 `faker:"lat"`
