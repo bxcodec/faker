@@ -7,25 +7,34 @@ import (
 )
 
 type SomeStruct struct {
-	Inta     int
-	Int8     int8
-	Int16    int16
-	Int32    int32
-	Int64    int64
-	String   string
-	Bool     bool
-	SString  []string
-	SInt     []int
-	SInt8    []int8
-	SInt16   []int16
-	SInt32   []int32
-	SInt64   []int64
-	SFloat32 []float32
-	SFloat64 []float64
-	SBool    []bool
-	Struct   AStruct
-	Time     time.Time
-	Stime    []time.Time
+	// Inta     int
+	// Int8     int8
+	// Int16    int16
+	Float32          float32
+	Float64          float64
+	Latitude         float32 `faker:"lat"`
+	LATITUDE         float64 `faker:"lat"`
+	Long             float32 `faker:"long"`
+	LONG             float64 `faker:"long"`
+	String           string
+	CreditCardType   string `faker:"cc_type"`
+	CreditCardNumber string `faker:"cc_number"`
+	Email            string `faker:"email"`
+	IPV4             string `faker:"ipv4"`
+	IPV6             string `faker:"ipv6"`
+	Bool             bool
+	SString          []string
+	SInt             []int
+	SInt8            []int8
+	SInt16           []int16
+	SInt32           []int32
+	SInt64           []int64
+	SFloat32         []float32
+	SFloat64         []float64
+	SBool            []bool
+	Struct           AStruct
+	Time             time.Time
+	Stime            []time.Time
 }
 type AStruct struct {
 	Number        int64
