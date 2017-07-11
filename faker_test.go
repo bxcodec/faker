@@ -66,16 +66,16 @@ func TestFakerData(t *testing.T) {
 	var a SomeStruct
 	err := FakeData(&a)
 	if err == nil {
-		fmt.Printf("%+v", a)
+		fmt.Printf("%+v \n", a)
 	}
-	fmt.Println("")
 	var b TaggedStruct
 	err = FakeData(&b)
 	if err == nil {
-		fmt.Printf("%+v", b)
+		fmt.Printf("%+v \n", b)
 	} else {
 		fmt.Println(" ER ", err)
 	}
+
 	// Example Result :
 	// {Int:8906957488773767119 Int8:6 Int16:14 Int32:391219825 Int64:2374447092794071106 String:poraKzAxVbWVkMkpcZCcWlYMd Bool:false SString:[MehdV aVotHsi] SInt:[528955241289647236 7620047312653801973 2774096449863851732] SInt8:[122 -92 -92] SInt16:[15679 -19444 -30246] SInt32:[1146660378 946021799 852909987] SInt64:[6079203475736033758 6913211867841842836 3269201978513619428] SFloat32:[0.019562425 0.12729558 0.36450312] SFloat64:[0.7825838989890364 0.9732903338838912 0.8316541489234004] SBool:[true false true] Struct:{Number:7693944638490551161 Height:6513508020379591917}}
 

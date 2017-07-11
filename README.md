@@ -130,8 +130,13 @@ Output :
 ![Example to use Faker](https://cdn-images-1.medium.com/max/800/1*AkMbxngg7zfvtWiuvFb4Mg.gif)
 
 Bench To Generate Fake Data
+#### Without Tag
 ```bash
 BenchmarkFakerData-4      300000              4653 ns/op             880 B/op         31 allocs/op
+```
+#### Using Tag
+```bash
+BenchmarkFakerData-4      100000             13629 ns/op            1920 B/op         97 allocs/op
 ```
 
 ### MUST KNOW
