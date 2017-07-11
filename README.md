@@ -36,6 +36,13 @@ go get -u github.com/bxcodec/faker
 ## Example
 
 ### With Tag
+Supported tag :
+* Email
+* IP Address (IPV4 IPV6 )
+* Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
+* Credit Card Number
+* Latitude and Longitude 
+
 ```go
 
 package main
