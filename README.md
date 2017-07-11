@@ -35,6 +35,44 @@ go get -u github.com/bxcodec/faker
 ```
 ## Example
 
+### With Tag
+```go
+
+package main
+
+import (
+	"fmt"
+	"github.com/bxcodec/faker"
+)
+
+type SomeStruct struct {
+ Latitude         float32 `faker:"lat"`
+ Long             float32 `faker:"long"`
+ CreditCardType   string  `faker:"cc_type"`
+ CreditCardNumber string  `faker:"cc_number"`
+ Email            string  `faker:"email"`
+ IPV4             string  `faker:"ipv4"`
+ IPV6             string  `faker:"ipv6"`
+
+}
+
+func main() {
+
+  a= SomeStruct{}
+  err:= faker.FakeData(&a)
+  if err!= nil {
+    fmt.Println(err)
+  }
+  fmt.Printf("%+v", a)
+	//Will Print  :
+	// {Latitude:31.456718 Long:159.9867 CreditCardType:Discover CreditCardNumber:6011091892846730 Email:MeHOZEM@Zxhmd.com IPV4:76.24.239.144 IPV6:e8e9:4a26:4c2b:20d3:541e:98b:c5fd:aa26}PASS
+
+}
+
+```
+
+### Without Tag
+
 ```go
 
 package main
@@ -106,5 +144,3 @@ Support Only For :
 * float32 float64 []float32 []float64
 * Nested Struct Field for Non POINTER
 * time.Time []time.Time
-
-

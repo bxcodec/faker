@@ -4,7 +4,6 @@ package faker
 // Save your time, and Fake your data for your testing now.
 import (
 	"errors"
-	"fmt"
 	"math/rand"
 	"net"
 	"reflect"
@@ -31,9 +30,6 @@ const (
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
-
-	st := reflect.TypeOf(a)
-	fmt.Println(" DAMBA ", st)
 
 	return setData(reflect.ValueOf(a))
 }
