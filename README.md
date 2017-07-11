@@ -132,11 +132,12 @@ Output :
 Bench To Generate Fake Data
 #### Without Tag
 ```bash
-BenchmarkFakerData-4      300000              4653 ns/op             880 B/op         31 allocs/op
+ BenchmarkFakerDataNOTTagged-4             500000              2871 ns/op             488 B/op         20 allocs/op
+
 ```
 #### Using Tag
 ```bash
-BenchmarkFakerData-4      100000             13629 ns/op            1920 B/op         97 allocs/op
+ BenchmarkFakerDataTagged-4                300000              4041 ns/op             383 B/op         26 allocs/op
 ```
 
 ### MUST KNOW

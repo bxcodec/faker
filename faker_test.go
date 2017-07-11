@@ -62,6 +62,16 @@ type TaggedStruct struct {
 	IPV6             string  `faker:"ipv6"`
 }
 
+type NotTaggedStruct struct {
+	Latitude         float32
+	Long             float32
+	CreditCardType   string
+	CreditCardNumber string
+	Email            string
+	IPV4             string
+	IPV6             string
+}
+
 func TestFakerData(t *testing.T) {
 	var a SomeStruct
 	err := FakeData(&a)
@@ -81,9 +91,19 @@ func TestFakerData(t *testing.T) {
 
 }
 
-func BenchmarkFakerData(b *testing.B) {
+func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		a := SomeStruct{}
+		a := NotTaggedStruct{}
+		err := FakeData(&a)
+		if err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+func BenchmarkFakerDataTagged(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		a := TaggedStruct{}
 		err := FakeData(&a)
 		if err != nil {
 			b.Fatal(err)
