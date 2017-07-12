@@ -214,11 +214,11 @@ func userDefinedString(v reflect.Value, tag string) error {
 		val = ipv6()
 	case CREDIT_CARD_NUMBER:
 
-		val = CreditCardNum("")
+		val = creditCardNum("")
 
 	case CREDIT_CARD_TYPE:
 
-		val = CreditCardType()
+		val = creditCardType()
 
 	}
 	v.SetString(val)

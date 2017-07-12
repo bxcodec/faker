@@ -17,17 +17,17 @@ const (
 )
 
 var creditCards = map[string]creditCard{
-	"VISA":             {"VISA", 16, []int{4539, 4556, 4916, 4532, 4929, 40240071, 4485, 4716, 4}},
-	"MasterCard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
-	"American Express": {"American Express", 15, []int{34, 37}},
-	"Discover":         {"Discover", 16, []int{6011}},
+	"visa":             {"VISA", 16, []int{4539, 4556, 4916, 4532, 4929, 40240071, 4485, 4716, 4}},
+	"mastercard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
+	"american express": {"American Express", 15, []int{34, 37}},
+	"discover":         {"Discover", 16, []int{6011}},
 }
 
 // CreditCardType returns one of the following credit values:
 // VISA, MasterCard, American Express and Discover
 var cacheCreditCard string
 
-func CreditCardType() string {
+func creditCardType() string {
 	n := len(creditCards)
 	r := rand.New(src)
 	if cacheCreditCard != "" {
@@ -43,15 +43,15 @@ func CreditCardType() string {
 }
 
 // CreditCardNum generated credit card number according to the card number rules
-func CreditCardNum(ccType string) string {
+func creditCardNum(ccType string) string {
 	r := rand.New(src)
 	if ccType != "" {
 		ccType = strings.ToLower(ccType)
+		cacheCreditCard = ccType
 	} else if cacheCreditCard != "" {
-		ccType = cacheCreditCard
+		ccType = strings.ToLower(cacheCreditCard)
 	} else {
-
-		ccType = strings.ToLower(CreditCardType())
+		ccType = strings.ToLower(creditCardType())
 		cacheCreditCard = ccType
 	}
 	card := creditCards[ccType]

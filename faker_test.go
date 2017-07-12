@@ -55,8 +55,8 @@ type CStruct struct {
 type TaggedStruct struct {
 	Latitude         float32 `faker:"lat"`
 	Long             float32 `faker:"long"`
-	CreditCardType   string  `faker:"cc_type"`
 	CreditCardNumber string  `faker:"cc_number"`
+	CreditCardType   string  `faker:"cc_type"`
 	Email            string  `faker:"email"`
 	IPV4             string  `faker:"ipv4"`
 	IPV6             string  `faker:"ipv6"`
