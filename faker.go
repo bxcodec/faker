@@ -41,6 +41,7 @@ var ErrValueNotPtr = "Not a pointer value"
 var ErrTagNotSupported = "String Tag not unsupported"
 
 type Faker interface {
+
 }
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
@@ -108,7 +109,7 @@ func setSliceData(v reflect.Value) error {
 	return err
 }
 
-func setData(v reflect.Value) error {
+func setData(v reflect.Value) (err error) {
 	r := rand.New(src)
 
 	if v.Kind() != reflect.Ptr {
@@ -150,7 +151,6 @@ func setData(v reflect.Value) error {
 			t := v.Type()
 			for i := 0; i < v.NumField(); i++ {
 				tag := t.Field(i).Tag.Get(tagName)
-				var err error
 
 				if tag != "" {
 					err = setDataWithTag(v.Field(i).Addr(), tag)
@@ -161,10 +161,8 @@ func setData(v reflect.Value) error {
 				if err != nil {
 					return err
 				}
-
 			}
 		}
-
 	case reflect.Ptr:
 		return fmt.Errorf(ErrUnsupportedKindPtr, v.Kind().String(), v.Type().String())
 	default:
