@@ -4,6 +4,7 @@ package faker
 // Save your time, and Fake your data for your testing now.
 import (
 	"errors"
+	"fmt"
 	"math/rand"
 	"net"
 	"reflect"
@@ -27,10 +28,24 @@ const (
 	CREDIT_CARD_TYPE   = "cc_type"
 )
 
+// Error when get fake from ptr
+var ErrUnsupportedKindPtr = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
+
+// Error when pass unsupported kind
+var ErrUnsupportedKind = "Unsupported kind: %s"
+
+// Error when value  is not pointer
+var ErrValueNotPtr = "Not a pointer value"
+
+// Error when tah not supported
+var ErrTagNotSupported = "String Tag not unsupported"
+
+type Faker interface {
+}
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
-
 	return setData(reflect.ValueOf(a))
 }
 
@@ -92,11 +107,12 @@ func setSliceData(v reflect.Value) error {
 	}
 	return err
 }
+
 func setData(v reflect.Value) error {
 	r := rand.New(src)
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New("Not a pointer value")
+		return errors.New(ErrValueNotPtr)
 	}
 
 	v = reflect.Indirect(v)
@@ -150,9 +166,9 @@ func setData(v reflect.Value) error {
 		}
 
 	case reflect.Ptr:
-		return errors.New("Unsupported kind: " + v.Kind().String() + " Change Without using * (pointer) in Field of " + v.Type().String())
+		return fmt.Errorf(ErrUnsupportedKindPtr, v.Kind().String(), v.Type().String())
 	default:
-		return errors.New("Unsupported kind: " + v.Kind().String())
+		return fmt.Errorf(ErrUnsupportedKind, v.Kind().String())
 	}
 
 	return nil
@@ -161,7 +177,7 @@ func setData(v reflect.Value) error {
 func setDataWithTag(v reflect.Value, tag string) error {
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New("Not a pointer value")
+		return errors.New(ErrValueNotPtr)
 	}
 
 	v = reflect.Indirect(v)
@@ -220,7 +236,7 @@ func userDefinedString(v reflect.Value, tag string) error {
 
 		val = creditCardType()
 	default:
-		return errors.New("String Tag not unsupported")
+		return errors.New(ErrTagNotSupported)
 	}
 	v.SetString(val)
 	return nil
