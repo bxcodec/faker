@@ -40,10 +40,6 @@ var ErrValueNotPtr = "Not a pointer value"
 // Error when tah not supported
 var ErrTagNotSupported = "String Tag not unsupported"
 
-type Faker interface {
-
-}
-
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
@@ -185,7 +181,6 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	case reflect.String:
 		return userDefinedString(v, tag)
 	case reflect.Slice:
-
 		return setSliceData(v)
 	}
 	return nil
@@ -275,4 +270,9 @@ func randomString(n int) string {
 	}
 
 	return string(b)
+}
+
+func randomElementFromSliceString(s []string) string {
+	rand.Seed(time.Now().Unix())
+	return s[rand.Int() % len(s)]
 }
