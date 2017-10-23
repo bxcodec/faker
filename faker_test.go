@@ -2,6 +2,7 @@ package faker
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -91,6 +92,70 @@ func TestFakerData(t *testing.T) {
 
 }
 
+func TestSetSliceDataNotFoundType(t *testing.T) {
+	if "Slice of string Not Supported Yet" != setSliceData(reflect.ValueOf("")).Error() {
+		t.Error("Expected error from func setSliceData")
+	}
+}
+
+func TestSetDataIfArgumentNotPtr(t *testing.T) {
+	temp := struct{}{}
+	if "Not a pointer value" != setData(reflect.ValueOf(temp)).Error() {
+		t.Error("Expected in arguments not ptr")
+	}
+}
+
+func TestSetDataIfArgumentPtr(t *testing.T)  {
+	temp := &struct{}{}
+	if "Unsupported kind: ptr Change Without using * (pointer) in Field of *struct {}" != setData(reflect.ValueOf(&temp)).Error() {
+		t.Error("Exptected error Unsupported kind ptr")
+	}
+}
+
+func TestSetDataIfArgumentNotHaveReflect(t *testing.T)  {
+	temp := func() {}
+	if "Unsupported kind: func" != setData(reflect.ValueOf(&temp)).Error() {
+		t.Error("Exptected error Unsupported kind")
+	}
+}
+
+func TestSetDataErrorDataParseTag(t *testing.T)  {
+	temp := &struct{
+		test string `faker:"test"`
+	}{}
+	if "String Tag not unsupported" != setData(reflect.ValueOf(temp)).Error() {
+		t.Error("Exptected error Unsupported tag")
+	}
+}
+
+func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T)  {
+	temp := struct{}{}
+	if "Not a pointer value" != setDataWithTag(reflect.ValueOf(temp), "").Error() {
+		t.Error("Expected in arguments not ptr")
+	}
+}
+
+func TestSetDataWithTagIfFirstArgumentSlice(t *testing.T)  {
+	temp := []int{}
+	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
+		t.Error("Not expected errors if first argument slice type")
+	}
+}
+
+func TestSetDataWithTagIfFirstArgumentNotFound(t *testing.T)  {
+	temp := struct{}{}
+	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
+		t.Error("First argument is struct type, expected return nil")
+	}
+}
+
+func TestUserDefinedFloatNotFoundTag(t *testing.T)  {
+	temp := struct{}{}
+
+	if userDefinedFloat(reflect.ValueOf(&temp), "") != nil {
+		t.Error("Not expected errors if first argument tag is not defined")
+	}
+}
 func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := NotTaggedStruct{}

@@ -219,7 +219,8 @@ func userDefinedString(v reflect.Value, tag string) error {
 	case CREDIT_CARD_TYPE:
 
 		val = creditCardType()
-
+	default:
+		return errors.New("String Tag not unsupported")
 	}
 	v.SetString(val)
 	return nil
