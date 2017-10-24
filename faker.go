@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
-	"net"
 	"reflect"
 	"time"
 )
@@ -33,13 +32,15 @@ const (
 )
 
 var mapperTag = map[string]func() string{
-	Email:      internet.Email,
-	MacAddress: internet.MacAddress,
-	DomainName: internet.DomainName,
-	Url:        internet.Url,
-	UserName:   internet.UserName,
-	IPV4:       internet.Ipv4,
-	IPV6:       internet.Ipv6,
+	Email:              getNetworker().Email,
+	MacAddress:         getNetworker().MacAddress,
+	DomainName:         getNetworker().DomainName,
+	Url:                getNetworker().Url,
+	UserName:           getNetworker().UserName,
+	IPV4:               getNetworker().Ipv4,
+	IPV6:               getNetworker().Ipv6,
+	CREDIT_CARD_TYPE:   getPayment().CreditCardType,
+	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
 }
 
 // Error when get fake from ptr
@@ -238,43 +239,8 @@ func userDefinedString(v reflect.Value, tag string) error {
 		return errors.New(ErrTagNotSupported)
 	}
 	val = mapperTag[tag]()
-
-	//switch tag {
-	//case Email:
-	//	val = randomString(7) + "@" + randomString(5) + ".com"
-	//case IPV4:
-	//	val = ipv4()
-	//case IPV6:
-	//	val = ipv6()
-	//case CREDIT_CARD_NUMBER:
-	//	val = creditCardNum("")
-	//case CREDIT_CARD_TYPE:
-	//	val = creditCardType()
-	//default:
-	//	return errors.New(ErrTagNotSupported)
-	//}
 	v.SetString(val)
 	return nil
-}
-
-func ipv4() string {
-	r := rand.New(src)
-	size := 4
-	ip := make([]byte, size)
-	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
-	}
-	return net.IP(ip).To4().String()
-}
-
-func ipv6() string {
-	r := rand.New(src)
-	size := 16
-	ip := make([]byte, size)
-	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
-	}
-	return net.IP(ip).To16().String()
 }
 
 func randomString(n int) string {

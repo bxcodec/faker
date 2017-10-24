@@ -3,7 +3,6 @@ package faker
 import (
 	"testing"
 	"strings"
-	"log"
 )
 
 func TestUrl(t *testing.T)  {
@@ -17,5 +16,7 @@ func TestUrl(t *testing.T)  {
 func TestMacAddress(t *testing.T)  {
 	i := Internet{}
 
-	log.Println(i.MacAddress())
+	if 	strings.Count(i.MacAddress(), ":") != 5 {
+		t.Error("Expected mac address")
+	}
 }

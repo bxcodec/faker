@@ -2,7 +2,6 @@ package faker
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"net"
 	"strings"
@@ -39,7 +38,7 @@ func getNetworker() Networker {
 
 // this set custom Network
 func SetNetwork(net Networker) {
-	internet = &net
+	internet = net
 }
 
 type Networker interface {
@@ -59,21 +58,12 @@ func (i Internet) Email() string {
 }
 func (i Internet) MacAddress() string {
 	r := rand.New(src)
-	size := 6
-	ip := make([]string, size*3)
+	ip := make([]byte, 6)
 	for i := 0; i < 6; i++ {
-		ip[i] = string(r.Intn(256))
-	}
-	mac := strings.Join(ip, ":")
-
-	log.Println(mac)
-	parseMacAddr, err := net.ParseMAC(mac)
-
-	if err != nil {
-		panic(err)
+		ip[i] = byte(r.Intn(256))
 	}
 
-	return parseMacAddr.String()
+	return net.HardwareAddr(ip).String()
 }
 func (i Internet) DomainName() string {
 	return randomString(7) + "." + randomElementFromSliceString(tld)
