@@ -20,6 +20,10 @@ const (
 	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	tagName            = "faker"
 	Email              = "email"
+	MacAddress         = "mac_address"
+	DomainName         = "domain_name"
+	UserName           = "username"
+	Url                = "url"
 	IPV4               = "ipv4"
 	IPV6               = "ipv6"
 	LATITUDE           = "lat"
@@ -27,6 +31,16 @@ const (
 	CREDIT_CARD_NUMBER = "cc_number"
 	CREDIT_CARD_TYPE   = "cc_type"
 )
+
+var mapperTag = map[string]func() string{
+	Email:      internet.Email,
+	MacAddress: internet.MacAddress,
+	DomainName: internet.DomainName,
+	Url:        internet.Url,
+	UserName:   internet.UserName,
+	IPV4:       internet.Ipv4,
+	IPV6:       internet.Ipv6,
+}
 
 // Error when get fake from ptr
 var ErrUnsupportedKindPtr = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
@@ -43,7 +57,13 @@ var ErrTagNotSupported = "String Tag not unsupported"
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
+	bootstrap()
 	return setData(reflect.ValueOf(a))
+}
+
+// pre load
+func bootstrap() {
+	getNetworker()
 }
 
 func setSliceData(v reflect.Value) error {
@@ -214,23 +234,25 @@ func userDefinedFloat(v reflect.Value, tag string) error {
 
 func userDefinedString(v reflect.Value, tag string) error {
 	val := ""
-	switch tag {
-	case Email:
-		val = randomString(7) + "@" + randomString(5) + ".com"
-	case IPV4:
-		val = ipv4()
-	case IPV6:
-		val = ipv6()
-	case CREDIT_CARD_NUMBER:
-
-		val = creditCardNum("")
-
-	case CREDIT_CARD_TYPE:
-
-		val = creditCardType()
-	default:
+	if _, exist := mapperTag[tag]; !exist {
 		return errors.New(ErrTagNotSupported)
 	}
+	val = mapperTag[tag]()
+
+	//switch tag {
+	//case Email:
+	//	val = randomString(7) + "@" + randomString(5) + ".com"
+	//case IPV4:
+	//	val = ipv4()
+	//case IPV6:
+	//	val = ipv6()
+	//case CREDIT_CARD_NUMBER:
+	//	val = creditCardNum("")
+	//case CREDIT_CARD_TYPE:
+	//	val = creditCardType()
+	//default:
+	//	return errors.New(ErrTagNotSupported)
+	//}
 	v.SetString(val)
 	return nil
 }
@@ -274,5 +296,5 @@ func randomString(n int) string {
 
 func randomElementFromSliceString(s []string) string {
 	rand.Seed(time.Now().Unix())
-	return s[rand.Int() % len(s)]
+	return s[rand.Int()%len(s)]
 }
