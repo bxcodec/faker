@@ -25,7 +25,18 @@ func TestDomainName(t *testing.T) {
 		t.Error("Expected get DomainName")
 	}
 }
-func TestUrl(t *testing.T) {
+func TestUrlOneVerbs(t *testing.T) {
+	urlFormats = []string{
+		"http://www.%s/"}
+
+	if strings.Contains(getNetworker().Url(), "http") == false {
+		t.Error("Expected get url")
+	}
+}
+func TestUrlTwoVerbs(t *testing.T) {
+	urlFormats = []string{
+		"http://www.%s/%s"}
+
 	if strings.Contains(getNetworker().Url(), "http") == false {
 		t.Error("Expected get url")
 	}
@@ -42,4 +53,7 @@ func TestIpv6(t *testing.T) {
 	if strings.Count(getNetworker().Ipv6(), ":") != 7 {
 		t.Error("Expected Ipv4 format")
 	}
+}
+func TestSetNetwork(t *testing.T) {
+	SetNetwork(Internet{})
 }
