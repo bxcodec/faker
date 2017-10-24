@@ -48,7 +48,6 @@ func SetPayment(p Render) {
 type Render interface {
 	CreditCardType() string
 	CreditCardNumber() string
-	CreditCardExpirationDate() string
 }
 
 type Payment struct{}
@@ -83,23 +82,4 @@ func (p Payment) CreditCardNumber() string {
 	return num
 }
 
-func (p Payment) CreditCardExpirationDate() string {
-	return ""
-}
 
-func randomStringNumber(n int) string {
-	b := make([]byte, n)
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(numberBytes) {
-			b[i] = numberBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
-	}
-
-	return string(b)
-}

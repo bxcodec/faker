@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"net"
 	"strings"
-	"sync"
 )
 
 var tld = []string{"com", "com", "biz", "info", "net", "org", "ru"}
@@ -21,9 +20,7 @@ var urlFormats = []string{
 	"https://%s/%s.html",
 	"http://%s/%s.php",
 }
-
 var internet Networker
-var mu sync.Mutex
 
 // Constructor
 func getNetworker() Networker {

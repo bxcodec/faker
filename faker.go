@@ -7,16 +7,18 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"sync"
 	"time"
 )
 
 var src = rand.NewSource(time.Now().UnixNano())
+var mu sync.Mutex
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const (
 	letterIdxBits      = 6                    // 6 bits to represent a letter index
 	letterIdxMask      = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName            = "faker"
 	Email              = "email"
 	MacAddress         = "mac_address"
@@ -31,7 +33,7 @@ const (
 	CREDIT_CARD_TYPE   = "cc_type"
 )
 
-var mapperTag = map[string]func() string{
+var mapperTag = map[string]interface{}{
 	Email:              getNetworker().Email,
 	MacAddress:         getNetworker().MacAddress,
 	DomainName:         getNetworker().DomainName,
@@ -41,6 +43,8 @@ var mapperTag = map[string]func() string{
 	IPV6:               getNetworker().Ipv6,
 	CREDIT_CARD_TYPE:   getPayment().CreditCardType,
 	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
+	LATITUDE:           getAddress().Latitude,
+	LONGITUDE:          getAddress().Longitude,
 }
 
 // Error when get fake from ptr
@@ -58,13 +62,7 @@ var ErrTagNotSupported = "String Tag not unsupported"
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
-	bootstrap()
 	return setData(reflect.ValueOf(a))
-}
-
-// pre load
-func bootstrap() {
-	getNetworker()
 }
 
 func setSliceData(v reflect.Value) error {
@@ -151,7 +149,6 @@ func setData(v reflect.Value) (err error) {
 	case reflect.Float64:
 		v.Set(reflect.ValueOf(r.Float64()))
 	case reflect.String:
-
 		v.SetString(randomString(25))
 	case reflect.Bool:
 		val := r.Intn(2) > 0
@@ -208,28 +205,10 @@ func setDataWithTag(v reflect.Value, tag string) error {
 }
 
 func userDefinedFloat(v reflect.Value, tag string) error {
-	r := rand.New(src)
-	kind := v.Kind()
-	switch tag {
-	case LATITUDE:
-		val := r.Float32()*180 - 90
-		if kind == reflect.Float32 {
-
-			v.Set(reflect.ValueOf(val))
-			return nil
-		}
-		v.Set(reflect.ValueOf(float64(val)))
-		return nil
-	case LONGITUDE:
-		val := r.Float32()*360 - 180
-		if kind == reflect.Float32 {
-			v.Set(reflect.ValueOf(val))
-			return nil
-		}
-		v.Set(reflect.ValueOf(float64(val)))
-		return nil
-
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
 	}
+	mapperTag[tag].(func(v reflect.Value) error)(v)
 	return nil
 }
 
@@ -238,7 +217,7 @@ func userDefinedString(v reflect.Value, tag string) error {
 	if _, exist := mapperTag[tag]; !exist {
 		return errors.New(ErrTagNotSupported)
 	}
-	val = mapperTag[tag]()
+	val = mapperTag[tag].(func() string)()
 	v.SetString(val)
 	return nil
 }
@@ -263,4 +242,20 @@ func randomString(n int) string {
 func randomElementFromSliceString(s []string) string {
 	rand.Seed(time.Now().Unix())
 	return s[rand.Int()%len(s)]
+}
+func randomStringNumber(n int) string {
+	b := make([]byte, n)
+	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = src.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(numberBytes) {
+			b[i] = numberBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
 }
