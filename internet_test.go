@@ -1,22 +1,45 @@
 package faker
 
 import (
-	"testing"
+	"github.com/agoalofalife/faker/support/slice"
 	"strings"
+	"testing"
 )
 
-func TestUrl(t *testing.T)  {
+func TestEmail(t *testing.T) {
+	if strings.Contains(getNetworker().Email(), "@") == false {
+		t.Error("Expected  email")
+	}
+}
+func TestMacAddress(t *testing.T) {
 	i := Internet{}
 
-	if strings.Contains(i.Url(), "http") == false {
+	if strings.Count(i.MacAddress(), ":") != 5 {
+		t.Error("Expected mac address")
+	}
+}
+func TestDomainName(t *testing.T) {
+	preTld := strings.Split(getNetworker().DomainName(), ".")
+
+	if !slice.Contains(tld, preTld[1]) {
+		t.Error("Expected get DomainName")
+	}
+}
+func TestUrl(t *testing.T) {
+	if strings.Contains(getNetworker().Url(), "http") == false {
 		t.Error("Expected get url")
 	}
 }
-
-func TestMacAddress(t *testing.T)  {
-	i := Internet{}
-
-	if 	strings.Count(i.MacAddress(), ":") != 5 {
-		t.Error("Expected mac address")
+func TestUserName(t *testing.T) {
+	getNetworker().UserName()
+}
+func TestIpv4(t *testing.T) {
+	if strings.Count(getNetworker().Ipv4(), ".") != 3 {
+		t.Error("Expected Ipv4 format")
+	}
+}
+func TestIpv6(t *testing.T) {
+	if strings.Count(getNetworker().Ipv6(), ":") != 7 {
+		t.Error("Expected Ipv4 format")
 	}
 }

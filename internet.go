@@ -54,7 +54,7 @@ type Networker interface {
 type Internet struct{}
 
 func (i Internet) Email() string {
-	return randomString(7) + "@" + randomString(5) + randomElementFromSliceString(tld)
+	return randomString(7) + "@" + randomString(5) + "." + randomElementFromSliceString(tld)
 }
 func (i Internet) MacAddress() string {
 	r := rand.New(src)
