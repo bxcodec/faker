@@ -156,6 +156,7 @@ func TestUserDefinedFloatNotFoundTag(t *testing.T)  {
 		t.Error("Not expected errors")
 	}
 }
+
 func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := NotTaggedStruct{}
