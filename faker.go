@@ -12,7 +12,7 @@ import (
 )
 
 var src = rand.NewSource(time.Now().UnixNano())
-var mu sync.Mutex
+var mu =  &sync.Mutex{}
 
 const (
 	letterIdxBits      = 6                    // 6 bits to represent a letter index
