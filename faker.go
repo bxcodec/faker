@@ -56,7 +56,7 @@ var ErrUnsupportedKind = "Unsupported kind: %s"
 // Error when value  is not pointer
 var ErrValueNotPtr = "Not a pointer value"
 
-// Error when tah not supported
+// Error when tag not supported
 var ErrTagNotSupported = "String Tag not unsupported"
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
