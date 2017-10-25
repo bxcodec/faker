@@ -42,7 +42,10 @@ func TestUrlTwoVerbs(t *testing.T) {
 	}
 }
 func TestUserName(t *testing.T) {
-	getNetworker().UserName()
+	if getNetworker().UserName() == "" {
+		t.Error("Expected get username")
+	}
+
 }
 func TestIpv4(t *testing.T) {
 	if strings.Count(getNetworker().Ipv4(), ".") != 3 {

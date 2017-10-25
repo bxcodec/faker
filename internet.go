@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-var tld = []string{"com", "com", "biz", "info", "net", "org", "ru"}
+var tld = []string{"com","biz", "info", "net", "org", "ru"}
 var urlFormats = []string{
 	"http://www.%s/",
 	"http://%s/",
