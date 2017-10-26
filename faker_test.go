@@ -66,6 +66,7 @@ type TaggedStruct struct {
 	MacAddress       string  `faker:"mac_address"`
 	Url              string  `faker:"url"`
 	UserName         string  `faker:"username"`
+	ToolFreeNumber   string  `faker:"tool_free_number"`
 }
 
 func (t TaggedStruct) String() string {
@@ -81,7 +82,8 @@ func (t TaggedStruct) String() string {
 	MacAddress: %s,
 	Url: %s,
 	UserName: %s,
-}`, t.Latitude, t.Long, t.CreditCardNumber, t.CreditCardType, t.Email, t.IPV4, t.IPV6, t.PhoneNumber, t.MacAddress, t.Url, t.UserName)
+	ToolFreeNumber: %s,
+}`, t.Latitude, t.Long, t.CreditCardNumber, t.CreditCardType, t.Email, t.IPV4, t.IPV6, t.PhoneNumber, t.MacAddress, t.Url, t.UserName, t.ToolFreeNumber)
 }
 
 type NotTaggedStruct struct {
