@@ -1,9 +1,11 @@
 package faker
 
 import (
-	"github.com/agoalofalife/faker/support/slice"
-	"strings"
 	"fmt"
+	"github.com/agoalofalife/faker/support/slice"
+	"math/rand"
+	"strings"
+
 )
 
 var phone Phoner
@@ -27,6 +29,7 @@ func SetPhoner(p Phoner) {
 type Phoner interface {
 	PhoneNumber() string
 	TollFreePhoneNumber() string
+	E164PhoneNumber() string
 }
 
 type Phone struct{}
@@ -39,13 +42,26 @@ func (p Phone) PhoneNumber() string {
 // example : (888) 937-7238
 func (p Phone) TollFreePhoneNumber() string {
 	out := ""
-	ints, _ := RandomInt(1, 9, 7)
-		for index, v := range slice.SliceIntToString(ints) {
-			if	index == 3{
-				out += "-"
-			}
-			out += string(v)
-		}
+	boxDigitsStart := []string{"777", "888"}
 
-	return fmt.Sprintf("(888) %s", out)
+	ints, _ := RandomInt(1, 9, 10)
+	for index, v := range slice.SliceIntToString(ints) {
+		if index == 3 {
+			out += "-"
+		}
+		out += string(v)
+	}
+	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(1)], out)
+}
+
+// '+27113456789'
+func (p Phone) E164PhoneNumber() string {
+	out := ""
+	boxDigitsStart := []string{"7", "8"}
+	ints, _ := RandomInt(1, 9, 10)
+
+	for _, v := range slice.SliceIntToString(ints) {
+		out += string(v)
+	}
+	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(1)], strings.Join(slice.SliceIntToString(ints), ""))
 }

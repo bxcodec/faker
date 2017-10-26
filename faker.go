@@ -33,6 +33,7 @@ const (
 	CREDIT_CARD_TYPE   = "cc_type"
 	PHONE_NUMBER       = "phone_number"
 	TOLL_FREE_NUMBER   = "tool_free_number"
+	E164_PHONE_NUMBER  = "e_164_phone_number"
 )
 
 var mapperTag = map[string]interface{}{
@@ -49,6 +50,7 @@ var mapperTag = map[string]interface{}{
 	LONGITUDE:          getAddress().Longitude,
 	PHONE_NUMBER:       getPhoner().PhoneNumber,
 	TOLL_FREE_NUMBER:   getPhoner().TollFreePhoneNumber,
+	E164_PHONE_NUMBER:  getPhoner().E164PhoneNumber,
 }
 
 // Error when get fake from ptr
