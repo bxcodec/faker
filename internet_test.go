@@ -1,9 +1,10 @@
 package faker
 
 import (
-	"github.com/agoalofalife/faker/support/slice"
 	"strings"
 	"testing"
+
+	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestEmail(t *testing.T) {
