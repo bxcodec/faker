@@ -2,6 +2,7 @@ package faker
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
 	"testing"
 	"time"
@@ -61,6 +62,19 @@ type TaggedStruct struct {
 	Email            string  `faker:"email"`
 	IPV4             string  `faker:"ipv4"`
 	IPV6             string  `faker:"ipv6"`
+	PhoneNumber      string  `faker:"phone_number"`
+}
+
+func (t TaggedStruct) String() string {
+	return fmt.Sprintf(`{
+	Latitude: %f,
+	Long: %f,
+	CreditCardNumber: %s,
+	Email: %s,
+	IPV4: %s,
+	IPV6: %s,
+	PhoneNumber: %s,
+}`, t.Latitude, t.Long, t.CreditCardNumber, t.Email, t.IPV4, t.IPV6, t.PhoneNumber)
 }
 
 type NotTaggedStruct struct {
@@ -77,12 +91,15 @@ func TestFakerData(t *testing.T) {
 	var a SomeStruct
 	err := FakeData(&a)
 	if err == nil {
-		fmt.Printf("%+v \n", a)
+		fmt.Println("SomeStruct:")
+		fmt.Printf("%+v\n", a)
 	}
 	var b TaggedStruct
 	err = FakeData(&b)
 	if err == nil {
-		fmt.Printf("%+v \n", b)
+		fmt.Println("TaggedStruct:")
+		fmt.Printf("%+v\n", b)
+
 	} else {
 		fmt.Println(" ER ", err)
 	}
@@ -174,5 +191,40 @@ func BenchmarkFakerDataTagged(b *testing.B) {
 		if err != nil {
 			b.Fatal(err)
 		}
+	}
+}
+
+func TestRandomIntOnlyFirstParameter(t *testing.T) {
+	r := rand.Intn(100)
+	res, _ := RandomInt(r)
+	if len(res) != r {
+		t.Error("It is expected that the refund amount is equal to the argument (RandomInt)")
+	}
+}
+
+func TestRandomIntOnlySecondParameters(t *testing.T) {
+	first := rand.Intn(50)
+	second := rand.Intn(100) + first
+	res, _ := RandomInt(first, second)
+	if len(res) != (second - first + 1) {
+		t.Error("It is expected that the refund amount is equal to the argument (RandomInt)")
+	}
+}
+
+func TestRandomIntOnlyTreeParameters(t *testing.T) {
+	first := rand.Intn(50)
+	second := rand.Intn(100) + first
+	maxCount := rand.Intn(7)
+	res, _ := RandomInt(first, second, maxCount)
+	if len(res) != maxCount {
+		t.Error("It is expected that the refund amount is equal to the argument (RandomInt)")
+	}
+}
+
+func TestRandomIntOnlyError(t *testing.T) {
+	arguments := []int{1, 3, 4, 5, 6}
+	_, err := RandomInt(arguments...)
+	if err == nil && err.Error() == fmt.Errorf(ErrMoreArguments, len(arguments)).Error() {
+		t.Error("Expected error from function RandomInt")
 	}
 }
