@@ -31,6 +31,7 @@ const (
 	LONGITUDE          = "long"
 	CREDIT_CARD_NUMBER = "cc_number"
 	CREDIT_CARD_TYPE   = "cc_type"
+	PHONE_NUMBER       = "phone_number"
 )
 
 var mapperTag = map[string]interface{}{
@@ -45,6 +46,7 @@ var mapperTag = map[string]interface{}{
 	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
 	LATITUDE:           getAddress().Latitude,
 	LONGITUDE:          getAddress().Longitude,
+	PHONE_NUMBER:       getPhoner().PhoneNumber,
 }
 
 // Error when get fake from ptr
@@ -58,6 +60,9 @@ var ErrValueNotPtr = "Not a pointer value"
 
 // Error when tag not supported
 var ErrTagNotSupported = "String Tag unsupported"
+
+// Error when passed more arguments
+var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
@@ -258,4 +263,41 @@ func randomStringNumber(n int) string {
 	}
 
 	return string(b)
+}
+
+/**
+/ Get three parameters , only first mandatory and the rest are optional
+/ --- If only set one parameter :  This means the minimum number of digits and the total number
+/ --- If only set two parameters : First this is min digit and second max digit and the total number the difference between them
+/ --- If only three parameters: the third argument set Max count Digit
+*/
+func RandomInt(parameters ...int) (p []int, err error) {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	switch len(parameters) {
+	case 1:
+		minCount := parameters[0]
+		p = r.Perm(minCount)
+		for i := range p {
+			p[i] += minCount
+		}
+	case 2:
+		minDigit, maxDigit := parameters[0], parameters[1]
+		p = r.Perm(maxDigit - minDigit + 1)
+
+		for i := range p {
+			p[i] += minDigit
+		}
+	case 3:
+		minDigit, maxDigit, maxCount := parameters[0], parameters[1], parameters[2]
+		p = r.Perm(maxDigit - minDigit + 1)
+
+		for i := range p {
+			p[i] += minDigit
+		}
+		p = p[:maxCount]
+	default:
+		err = fmt.Errorf(ErrMoreArguments, len(parameters))
+	}
+	return p, err
 }
