@@ -26,3 +26,7 @@ func TestE164PhoneNumber(t *testing.T) {
 		t.Error("Expected character '(888)', in function TollFreePhoneNumber")
 	}
 }
+
+func TestSetPhoner(t *testing.T)  {
+	SetPhoner(Phone{})
+}
