@@ -41,7 +41,7 @@ Supported tag :
 * IP Address (IPV4 IPV6 )
 * Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
 * Credit Card Number
-* Latitude and Longitude 
+* Latitude and Longitude
 
 ```go
 
@@ -139,12 +139,12 @@ Output :
 Bench To Generate Fake Data
 #### Without Tag
 ```bash
- BenchmarkFakerDataNOTTagged-4             500000              2871 ns/op             488 B/op         20 allocs/op
-
+BenchmarkFakerDataNOTTagged-4             500000              3049 ns/op             488 B/op         20 allocs/op
 ```
+
 #### Using Tag
 ```bash
- BenchmarkFakerDataTagged-4                300000              4041 ns/op             383 B/op         26 allocs/op
+ BenchmarkFakerDataTagged-4                100000             17470 ns/op             380 B/op         26 allocs/op
 ```
 
 ### MUST KNOW
