@@ -44,7 +44,7 @@ func (p Phone) TollFreePhoneNumber() string {
 	out := ""
 	boxDigitsStart := []string{"777", "888"}
 
-	ints, _ := RandomInt(1, 9, 10)
+	ints, _ := RandomInt(1, 9)
 	for index, v := range slice.SliceIntToString(ints) {
 		if index == 3 {
 			out += "-"
@@ -58,7 +58,7 @@ func (p Phone) TollFreePhoneNumber() string {
 func (p Phone) E164PhoneNumber() string {
 	out := ""
 	boxDigitsStart := []string{"7", "8"}
-	ints, _ := RandomInt(1, 9, 10)
+	ints, _ := RandomInt(1, 10)
 
 	for _, v := range slice.SliceIntToString(ints) {
 		out += string(v)

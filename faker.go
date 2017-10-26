@@ -292,14 +292,6 @@ func RandomInt(parameters ...int) (p []int, err error) {
 		for i := range p {
 			p[i] += minDigit
 		}
-	case 3:
-		minDigit, maxDigit, maxCount := parameters[0], parameters[1], parameters[2]
-		p = r.Perm(maxDigit - minDigit + 1)
-
-		for i := range p {
-			p[i] += minDigit
-		}
-		p = p[:maxCount]
 	default:
 		err = fmt.Errorf(ErrMoreArguments, len(parameters))
 	}
