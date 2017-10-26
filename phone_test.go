@@ -3,12 +3,10 @@ package faker
 import (
 	"strings"
 	"testing"
-	"log"
 )
 
 func TestPhoneNumber(t *testing.T) {
 	ph := getPhoner()
-	log.Println(ph.PhoneNumber())
 	if strings.Count(ph.PhoneNumber(), "-") != 2 {
 		t.Error("Expected no more than two characters '-'")
 	}

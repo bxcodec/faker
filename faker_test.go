@@ -222,16 +222,6 @@ func TestRandomIntOnlySecondParameters(t *testing.T) {
 	}
 }
 
-func TestRandomIntOnlyTreeParameters(t *testing.T) {
-	first := rand.Intn(50)
-	second := rand.Intn(100) + first
-	maxCount := rand.Intn(7)
-	res, _ := RandomInt(first, second, maxCount)
-	if len(res) != maxCount {
-		t.Error("It is expected that the refund amount is equal to the argument (RandomInt)")
-	}
-}
-
 func TestRandomIntOnlyError(t *testing.T) {
 	arguments := []int{1, 3, 4, 5, 6}
 	_, err := RandomInt(arguments...)

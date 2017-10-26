@@ -5,7 +5,6 @@ import (
 	"github.com/agoalofalife/faker/support/slice"
 	"math/rand"
 	"strings"
-
 )
 
 var phone Phoner
@@ -34,9 +33,11 @@ type Phoner interface {
 
 type Phone struct{}
 
+// 201-886-0269
 func (p Phone) PhoneNumber() string {
-	str, _ := RandomInt(100, 999, 3)
-	return strings.Join(slice.SliceIntToString(str), "-")
+	randInt, _ := RandomInt(1, 10)
+	str:= strings.Join(slice.SliceIntToString(randInt), "")
+	return fmt.Sprintf("%s-%s-%s", str[:3],str[3:6], str[6:10])
 }
 
 // example : (888) 937-7238
