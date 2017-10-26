@@ -1,13 +1,14 @@
 package faker
 
 import (
-	"github.com/agoalofalife/faker/support/slice"
 	"strings"
 	"testing"
+
+	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestEmail(t *testing.T) {
-	if strings.Contains(getNetworker().Email(), "@") == false {
+	if !strings.Contains(getNetworker().Email(), "@") {
 		t.Error("Expected  email")
 	}
 }
@@ -29,7 +30,7 @@ func TestUrlOneVerbs(t *testing.T) {
 	urlFormats = []string{
 		"http://www.%s/"}
 
-	if strings.Contains(getNetworker().Url(), "http") == false {
+	if !strings.Contains(getNetworker().Url(), "http") {
 		t.Error("Expected get url")
 	}
 }
@@ -37,7 +38,7 @@ func TestUrlTwoVerbs(t *testing.T) {
 	urlFormats = []string{
 		"http://www.%s/%s"}
 
-	if strings.Contains(getNetworker().Url(), "http") == false {
+	if !strings.Contains(getNetworker().Url(), "http") {
 		t.Error("Expected get url")
 	}
 }
