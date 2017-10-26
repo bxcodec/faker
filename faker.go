@@ -4,21 +4,27 @@ package faker
 // Save your time, and Fake your data for your testing now.
 import (
 	"errors"
+	"fmt"
 	"math/rand"
-	"net"
 	"reflect"
+	"sync"
 	"time"
 )
 
 var src = rand.NewSource(time.Now().UnixNano())
+var mu =  &sync.Mutex{}
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 const (
 	letterIdxBits      = 6                    // 6 bits to represent a letter index
 	letterIdxMask      = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName            = "faker"
 	Email              = "email"
+	MacAddress         = "mac_address"
+	DomainName         = "domain_name"
+	UserName           = "username"
+	Url                = "url"
 	IPV4               = "ipv4"
 	IPV6               = "ipv6"
 	LATITUDE           = "lat"
@@ -27,10 +33,35 @@ const (
 	CREDIT_CARD_TYPE   = "cc_type"
 )
 
+var mapperTag = map[string]interface{}{
+	Email:              getNetworker().Email,
+	MacAddress:         getNetworker().MacAddress,
+	DomainName:         getNetworker().DomainName,
+	Url:                getNetworker().Url,
+	UserName:           getNetworker().UserName,
+	IPV4:               getNetworker().Ipv4,
+	IPV6:               getNetworker().Ipv6,
+	CREDIT_CARD_TYPE:   getPayment().CreditCardType,
+	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
+	LATITUDE:           getAddress().Latitude,
+	LONGITUDE:          getAddress().Longitude,
+}
+
+// Error when get fake from ptr
+var ErrUnsupportedKindPtr = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
+
+// Error when pass unsupported kind
+var ErrUnsupportedKind = "Unsupported kind: %s"
+
+// Error when value  is not pointer
+var ErrValueNotPtr = "Not a pointer value"
+
+// Error when tag not supported
+var ErrTagNotSupported = "String Tag not unsupported"
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
-
 	return setData(reflect.ValueOf(a))
 }
 
@@ -92,11 +123,12 @@ func setSliceData(v reflect.Value) error {
 	}
 	return err
 }
-func setData(v reflect.Value) error {
+
+func setData(v reflect.Value) (err error) {
 	r := rand.New(src)
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New("Not a pointer value")
+		return errors.New(ErrValueNotPtr)
 	}
 
 	v = reflect.Indirect(v)
@@ -117,7 +149,6 @@ func setData(v reflect.Value) error {
 	case reflect.Float64:
 		v.Set(reflect.ValueOf(r.Float64()))
 	case reflect.String:
-
 		v.SetString(randomString(25))
 	case reflect.Bool:
 		val := r.Intn(2) > 0
@@ -134,7 +165,6 @@ func setData(v reflect.Value) error {
 			t := v.Type()
 			for i := 0; i < v.NumField(); i++ {
 				tag := t.Field(i).Tag.Get(tagName)
-				var err error
 
 				if tag != "" {
 					err = setDataWithTag(v.Field(i).Addr(), tag)
@@ -145,14 +175,12 @@ func setData(v reflect.Value) error {
 				if err != nil {
 					return err
 				}
-
 			}
 		}
-
 	case reflect.Ptr:
-		return errors.New("Unsupported kind: " + v.Kind().String() + " Change Without using * (pointer) in Field of " + v.Type().String())
+		return fmt.Errorf(ErrUnsupportedKindPtr, v.Kind().String(), v.Type().String())
 	default:
-		return errors.New("Unsupported kind: " + v.Kind().String())
+		return fmt.Errorf(ErrUnsupportedKind, v.Kind().String())
 	}
 
 	return nil
@@ -161,7 +189,7 @@ func setData(v reflect.Value) error {
 func setDataWithTag(v reflect.Value, tag string) error {
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New("Not a pointer value")
+		return errors.New(ErrValueNotPtr)
 	}
 
 	v = reflect.Indirect(v)
@@ -171,79 +199,27 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	case reflect.String:
 		return userDefinedString(v, tag)
 	case reflect.Slice:
-
 		return setSliceData(v)
 	}
 	return nil
 }
 
 func userDefinedFloat(v reflect.Value, tag string) error {
-	r := rand.New(src)
-	kind := v.Kind()
-	switch tag {
-	case LATITUDE:
-		val := r.Float32()*180 - 90
-		if kind == reflect.Float32 {
-
-			v.Set(reflect.ValueOf(val))
-			return nil
-		}
-		v.Set(reflect.ValueOf(float64(val)))
-		return nil
-	case LONGITUDE:
-		val := r.Float32()*360 - 180
-		if kind == reflect.Float32 {
-			v.Set(reflect.ValueOf(val))
-			return nil
-		}
-		v.Set(reflect.ValueOf(float64(val)))
-		return nil
-
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
 	}
+	mapperTag[tag].(func(v reflect.Value) error)(v)
 	return nil
 }
 
 func userDefinedString(v reflect.Value, tag string) error {
 	val := ""
-	switch tag {
-	case Email:
-		val = randomString(7) + "@" + randomString(5) + ".com"
-	case IPV4:
-		val = ipv4()
-	case IPV6:
-		val = ipv6()
-	case CREDIT_CARD_NUMBER:
-
-		val = creditCardNum("")
-
-	case CREDIT_CARD_TYPE:
-
-		val = creditCardType()
-	default:
-		return errors.New("String Tag not unsupported")
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
 	}
+	val = mapperTag[tag].(func() string)()
 	v.SetString(val)
 	return nil
-}
-
-func ipv4() string {
-	r := rand.New(src)
-	size := 4
-	ip := make([]byte, size)
-	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
-	}
-	return net.IP(ip).To4().String()
-}
-
-func ipv6() string {
-	r := rand.New(src)
-	size := 16
-	ip := make([]byte, size)
-	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
-	}
-	return net.IP(ip).To16().String()
 }
 
 func randomString(n int) string {
@@ -254,6 +230,27 @@ func randomString(n int) string {
 		}
 		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
 			b[i] = letterBytes[idx]
+			i--
+		}
+		cache >>= letterIdxBits
+		remain--
+	}
+
+	return string(b)
+}
+
+func randomElementFromSliceString(s []string) string {
+	rand.Seed(time.Now().Unix())
+	return s[rand.Int()%len(s)]
+}
+func randomStringNumber(n int) string {
+	b := make([]byte, n)
+	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+		if remain == 0 {
+			cache, remain = src.Int63(), letterIdxMax
+		}
+		if idx := int(cache & letterIdxMask); idx < len(numberBytes) {
+			b[i] = numberBytes[idx]
 			i--
 		}
 		cache >>= letterIdxBits

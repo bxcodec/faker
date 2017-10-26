@@ -6,15 +6,15 @@ import (
 	"strings"
 )
 
+const (
+	numberBytes = "0123456789"
+)
+
 type creditCard struct {
 	ccType   string
 	length   int
 	prefixes []int
 }
-
-const (
-	numberBytes = "0123456789"
-)
 
 var creditCards = map[string]creditCard{
 	"visa":             {"VISA", 16, []int{4539, 4556, 4916, 4532, 4929, 40240071, 4485, 4716, 4}},
@@ -23,11 +23,36 @@ var creditCards = map[string]creditCard{
 	"discover":         {"Discover", 16, []int{6011}},
 }
 
+var pay Render
+
 // CreditCardType returns one of the following credit values:
 // VISA, MasterCard, American Express and Discover
 var cacheCreditCard string
 
-func creditCardType() string {
+// Constructor
+func getPayment() Render {
+	mu.Lock()
+	defer mu.Unlock()
+
+	if pay == nil {
+		pay = &Payment{}
+	}
+	return pay
+}
+
+// this set custom Network
+func SetPayment(p Render) {
+	pay = p
+}
+
+type Render interface {
+	CreditCardType() string
+	CreditCardNumber() string
+}
+
+type Payment struct{}
+
+func (p Payment) CreditCardType() string {
 	n := len(creditCards)
 	r := rand.New(src)
 	if cacheCreditCard != "" {
@@ -43,17 +68,10 @@ func creditCardType() string {
 }
 
 // CreditCardNum generated credit card number according to the card number rules
-func creditCardNum(ccType string) string {
+func (p Payment) CreditCardNumber() string {
 	r := rand.New(src)
-	if ccType != "" {
-		ccType = strings.ToLower(ccType)
-		cacheCreditCard = ccType
-	} else if cacheCreditCard != "" {
-		ccType = strings.ToLower(cacheCreditCard)
-	} else {
-		ccType = strings.ToLower(creditCardType())
-		cacheCreditCard = ccType
-	}
+	ccType := strings.ToLower(p.CreditCardType())
+	cacheCreditCard = ccType
 	card := creditCards[ccType]
 	prefix := strconv.Itoa(card.prefixes[r.Intn(len(card.prefixes))])
 
@@ -64,20 +82,4 @@ func creditCardNum(ccType string) string {
 	return num
 }
 
-func randomStringNumber(n int) string {
 
-	b := make([]byte, n)
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(numberBytes) {
-			b[i] = numberBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
-	}
-
-	return string(b)
-}

@@ -152,10 +152,11 @@ func TestSetDataWithTagIfFirstArgumentNotFound(t *testing.T)  {
 func TestUserDefinedFloatNotFoundTag(t *testing.T)  {
 	temp := struct{}{}
 
-	if userDefinedFloat(reflect.ValueOf(&temp), "") != nil {
-		t.Error("Not expected errors if first argument tag is not defined")
+	if userDefinedFloat(reflect.ValueOf(&temp), "") == nil {
+		t.Error("Not expected errors")
 	}
 }
+
 func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := NotTaggedStruct{}
