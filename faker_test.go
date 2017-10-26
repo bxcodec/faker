@@ -63,6 +63,9 @@ type TaggedStruct struct {
 	IPV4             string  `faker:"ipv4"`
 	IPV6             string  `faker:"ipv6"`
 	PhoneNumber      string  `faker:"phone_number"`
+	MacAddress       string  `faker:"mac_address"`
+	Url              string  `faker:"url"`
+	UserName         string  `faker:"username"`
 }
 
 func (t TaggedStruct) String() string {
@@ -70,11 +73,15 @@ func (t TaggedStruct) String() string {
 	Latitude: %f,
 	Long: %f,
 	CreditCardNumber: %s,
+	CreditCardType: %s,
 	Email: %s,
 	IPV4: %s,
 	IPV6: %s,
 	PhoneNumber: %s,
-}`, t.Latitude, t.Long, t.CreditCardNumber, t.Email, t.IPV4, t.IPV6, t.PhoneNumber)
+	MacAddress: %s,
+	Url: %s,
+	UserName: %s,
+}`, t.Latitude, t.Long, t.CreditCardNumber, t.CreditCardType, t.Email, t.IPV4, t.IPV6, t.PhoneNumber, t.MacAddress, t.Url, t.UserName)
 }
 
 type NotTaggedStruct struct {
