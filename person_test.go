@@ -44,8 +44,16 @@ func TestLastName(t *testing.T) {
 	}
 }
 
-func TestName(t *testing.T) {
+func TestNameMale(t *testing.T) {
 	p := getPerson()
+	randNameFlag = 51
+	if p.Name() == "" {
+		t.Error("Expected from function name string get empty string")
+	}
+}
+func TestNameFemale(t *testing.T) {
+	p := getPerson()
+	randNameFlag = 20
 	if p.Name() == "" {
 		t.Error("Expected from function name string get empty string")
 	}

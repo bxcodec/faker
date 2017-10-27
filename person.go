@@ -98,6 +98,7 @@ var lastNames = []string{
 	"Ullrich", "Upton", "Vandervort", "Veum", "Volkman", "Von", "VonRueden", "Waelchi", "Walker", "Walsh", "Walter", "Ward", "Waters", "Watsica", "Weber", "Wehner", "Weimann", "Weissnat", "Welch", "West", "White", "Wiegand", "Wilderman", "Wilkinson", "Will", "Williamson", "Willms", "Windler", "Wintheiser", "Wisoky", "Wisozk", "Witting", "Wiza", "Wolf", "Wolff", "Wuckert", "Wunsch", "Wyman",
 	"Yost", "Yundt", "Zboncak", "Zemlak", "Ziemann", "Zieme", "Zulauf",
 }
+var randNameFlag = rand.Intn(100)
 
 func getPerson() Dowser {
 	mu.Lock()
@@ -138,8 +139,7 @@ func (p Person) LastName() string {
 }
 
 func (p Person) Name() string {
-	flag := rand.Intn(100)
-	if flag > 50 {
+	if randNameFlag > 50 {
 		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesFemale), randomElementFromSliceString(firstNamesFemale), randomElementFromSliceString(lastNames))
 	} else {
 		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
