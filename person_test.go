@@ -7,14 +7,14 @@ import (
 
 func TestTitleMale(t *testing.T) {
 	p := getPerson()
-	if !slice.Contains(titleMales, p.TitleMale()) {
+	if !slice.Contains(titlesMale, p.TitleMale()) {
 		t.Error("Expected value from variable titleMales in function TitleMale")
 	}
 }
 
 func TestTitleFemale(t *testing.T) {
 	p := getPerson()
-	if !slice.Contains(titleFemales, p.TitleFeMale()) {
+	if !slice.Contains(titlesFemales, p.TitleFeMale()) {
 		t.Error("Expected value from variable titleFemales in function TitleFeMale")
 	}
 }

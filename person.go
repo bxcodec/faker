@@ -8,10 +8,10 @@ type Dowser interface {
 }
 
 var person Dowser
-var titleMales = []string{
+var titlesMale = []string{
 	"Mr.", "Dr.", "Prof.",
 }
-var titleFemales = []string{
+var titlesFemales = []string{
 	"Mrs.", "Ms.", "Miss", "Dr.", "Prof.",
 }
 
@@ -89,11 +89,11 @@ type Person struct {
 }
 
 func (p Person) TitleMale() string {
-	return randomElementFromSliceString(titleMales)
+	return randomElementFromSliceString(titlesMale)
 }
 
 func (p Person) TitleFeMale() string {
-	return randomElementFromSliceString(titleFemales)
+	return randomElementFromSliceString(titlesFemales)
 }
 
 func (p Person) FirstNameMale() string {
