@@ -49,6 +49,7 @@ const (
 	DAY_OF_MONTH       = "day_of_month"
 	TIMESTAMP          = "timestamp"
 	CENTURY            = "century"
+	TIMEZONE           = "timezone"
 )
 
 var mapperTag = map[string]interface{}{
@@ -81,6 +82,7 @@ var mapperTag = map[string]interface{}{
 	DAY_OF_MONTH:       getDateTimer().DayOfMonth,
 	TIMESTAMP:          getDateTimer().Timestamp,
 	CENTURY:            getDateTimer().Century,
+	TIMEZONE:           getDateTimer().TimeZone,
 }
 
 // Error when get fake from ptr

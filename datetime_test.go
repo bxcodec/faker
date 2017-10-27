@@ -1,12 +1,12 @@
 package faker
 
 import (
+	"fmt"
+	"github.com/bxcodec/faker/support/slice"
 	"log"
 	"reflect"
 	"testing"
 	"time"
-	"fmt"
-	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -101,8 +101,15 @@ func TestTimestamp(t *testing.T) {
 func TestCentury(t *testing.T) {
 	d := getDateTimer()
 
-	if !slice.Contains(century, d.Century()){
+	if !slice.Contains(century, d.Century()) {
 		t.Error("Expected century from functuon Century")
+	}
+}
+
+func TestTimeZone(t *testing.T) {
+	d := getDateTimer()
+	if !slice.Contains(timezones, d.TimeZone()) {
+		t.Error("Expected timezone from variable timezones")
 	}
 
 }
