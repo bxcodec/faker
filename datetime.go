@@ -5,11 +5,13 @@ import (
 	"reflect"
 	"time"
 )
+
 const (
 	BaseDate = "2006-01-02"
-	Time = "15:04:05"
-	Mounth = "January"
-	Year = "2006"
+	Time     = "15:04:05"
+	Mounth   = "January"
+	Year     = "2006"
+	Day      = "Sunday"
 )
 
 type DateTimer interface {
@@ -18,6 +20,7 @@ type DateTimer interface {
 	Time() string
 	Month() string
 	Year() string
+	DayOfWeek() string
 }
 
 var date DateTimer
@@ -68,6 +71,9 @@ func (d DateTime) Year() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Year)
 }
 
+func (d DateTime) DayOfWeek() string {
+	return time.Unix(RandomUnixTime(), 0).Format(Day)
+}
 
 // helper function
 func RandomUnixTime() int64 {

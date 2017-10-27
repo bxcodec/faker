@@ -45,6 +45,7 @@ const (
 	TIME               = "time"
 	MONTH              = "month"
 	YEAR               = "year"
+	DAY_OF_WEEK        = "day_of_week"
 )
 
 var mapperTag = map[string]interface{}{
@@ -73,6 +74,7 @@ var mapperTag = map[string]interface{}{
 	TIME:               getDateTimer().Time,
 	MONTH:              getDateTimer().Month,
 	YEAR:               getDateTimer().Year,
+	DAY_OF_WEEK:        getDateTimer().DayOfWeek,
 }
 
 // Error when get fake from ptr

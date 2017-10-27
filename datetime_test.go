@@ -71,3 +71,11 @@ func TestYear(t *testing.T) {
 		t.Error("function Year need return valid year")
 	}
 }
+
+func TestDayOfWeek(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(Day, d.DayOfWeek())
+	if err != nil {
+		t.Error("function DayOfWeek need return valid day")
+	}
+}
