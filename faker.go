@@ -40,6 +40,17 @@ const (
 	FIRST_NAME_FEMALE  = "first_name_female"
 	LAST_NAME          = "last_name"
 	NAME               = "name"
+	UNIX_TIME          = "unix_time"
+	DATE               = "date"
+	TIME               = "time"
+	MONTH_NAME         = "month_name"
+	YEAR               = "year"
+	DAY_OF_WEEK        = "day_of_week"
+	DAY_OF_MONTH       = "day_of_month"
+	TIMESTAMP          = "timestamp"
+	CENTURY            = "century"
+	TIMEZONE           = "timezone"
+	TIME_PERIOD        = "time_period"
 )
 
 var mapperTag = map[string]interface{}{
@@ -63,6 +74,17 @@ var mapperTag = map[string]interface{}{
 	FIRST_NAME_FEMALE:  getPerson().FirstNameFemale,
 	LAST_NAME:          getPerson().LastName,
 	NAME:               getPerson().Name,
+	UNIX_TIME:          getDateTimer().UnixTime,
+	DATE:               getDateTimer().Date,
+	TIME:               getDateTimer().Time,
+	MONTH_NAME:         getDateTimer().MonthName,
+	YEAR:               getDateTimer().Year,
+	DAY_OF_WEEK:        getDateTimer().DayOfWeek,
+	DAY_OF_MONTH:       getDateTimer().DayOfMonth,
+	TIMESTAMP:          getDateTimer().Timestamp,
+	CENTURY:            getDateTimer().Century,
+	TIMEZONE:           getDateTimer().TimeZone,
+	TIME_PERIOD:        getDateTimer().TimePeriod,
 }
 
 // Error when get fake from ptr
@@ -75,7 +97,7 @@ var ErrUnsupportedKind = "Unsupported kind: %s"
 var ErrValueNotPtr = "Not a pointer value"
 
 // Error when tag not supported
-var ErrTagNotSupported = "String Tag unsupported"
+var ErrTagNotSupported = "Tag unsupported"
 
 // Error when passed more arguments
 var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
@@ -221,6 +243,8 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return userDefinedString(v, tag)
 	case reflect.Slice:
 		return setSliceData(v)
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
+		return userDefinedInt(v, tag)
 	}
 	return nil
 }
@@ -240,6 +264,14 @@ func userDefinedString(v reflect.Value, tag string) error {
 	}
 	val = mapperTag[tag].(func() string)()
 	v.SetString(val)
+	return nil
+}
+
+func userDefinedInt(v reflect.Value, tag string) error {
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
+	}
+	mapperTag[tag].(func(v reflect.Value) error)(v)
 	return nil
 }
 
