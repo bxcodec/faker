@@ -600,6 +600,7 @@ const (
 	Year       = "2006"
 	Day        = "Sunday"
 	DayOfMonth = "_2"
+	TimePeriod = "PM"
 )
 
 type DateTimer interface {
@@ -613,6 +614,7 @@ type DateTimer interface {
 	Timestamp() string
 	Century() string
 	TimeZone() string
+	TimePeriod() string
 }
 
 var date DateTimer
@@ -680,6 +682,10 @@ func (d DateTime) Century() string {
 
 func (d DateTime) TimeZone() string {
 	return randomElementFromSliceString(timezones)
+}
+
+func (d DateTime) TimePeriod() string {
+	return time.Unix(RandomUnixTime(), 0).Format(TimePeriod)
 }
 
 // helper function

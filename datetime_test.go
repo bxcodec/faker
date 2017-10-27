@@ -111,5 +111,12 @@ func TestTimeZone(t *testing.T) {
 	if !slice.Contains(timezones, d.TimeZone()) {
 		t.Error("Expected timezone from variable timezones")
 	}
+}
 
+func TestTimePeriod(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(TimePeriod, d.TimePeriod())
+	if err != nil {
+		t.Error("function TimePeriod need return valid period")
+	}
 }
