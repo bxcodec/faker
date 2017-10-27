@@ -58,7 +58,7 @@ func TestTime(t *testing.T) {
 
 func TestMonth(t *testing.T) {
 	d := getDateTimer()
-	_, err := time.Parse(Mounth, d.Month())
+	_, err := time.Parse(Month, d.Month())
 	if err != nil {
 		t.Error("function Month need return valid month")
 	}
@@ -77,5 +77,13 @@ func TestDayOfWeek(t *testing.T) {
 	_, err := time.Parse(Day, d.DayOfWeek())
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
+	}
+}
+
+func TestDayOfMonth(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(DayOfMonth, d.DayOfMonth())
+	if err != nil {
+		t.Error("function DayOfMonth need return valid digit")
 	}
 }

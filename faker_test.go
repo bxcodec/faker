@@ -80,6 +80,7 @@ type TaggedStruct struct {
 	Month            string  `faker:"month"`
 	Year             string  `faker:"year"`
 	DayOfWeek        string  `faker:"day_of_week"`
+	DayOfMonth       string  `faker:"day_of_month"`
 }
 
 func (t TaggedStruct) String() string {
@@ -109,6 +110,7 @@ func (t TaggedStruct) String() string {
 	Month: %s,
 	Year: %s,
 	DayOfWeek: %s,
+	DayOfMonth: %s,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.PhoneNumber, t.MacAddress,
@@ -117,6 +119,7 @@ func (t TaggedStruct) String() string {
 		t.FirstNameMale, t.FirstNameFemale, t.LastName,
 		t.Name, t.UnixTime, t.Date,
 		t.Time, t.Month, t.Year, t.DayOfWeek,
+		t.DayOfMonth,
 	)
 }
 

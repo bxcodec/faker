@@ -7,11 +7,12 @@ import (
 )
 
 const (
-	BaseDate = "2006-01-02"
-	Time     = "15:04:05"
-	Mounth   = "January"
-	Year     = "2006"
-	Day      = "Sunday"
+	BaseDate   = "2006-01-02"
+	Time       = "15:04:05"
+	Month     = "January"
+	Year       = "2006"
+	Day        = "Sunday"
+	DayOfMonth = "_2"
 )
 
 type DateTimer interface {
@@ -21,6 +22,7 @@ type DateTimer interface {
 	Month() string
 	Year() string
 	DayOfWeek() string
+	DayOfMonth() string
 }
 
 var date DateTimer
@@ -64,7 +66,7 @@ func (d DateTime) Time() string {
 }
 
 func (d DateTime) Month() string {
-	return time.Unix(RandomUnixTime(), 0).Format(Mounth)
+	return time.Unix(RandomUnixTime(), 0).Format(Month)
 }
 
 func (d DateTime) Year() string {
@@ -73,6 +75,9 @@ func (d DateTime) Year() string {
 
 func (d DateTime) DayOfWeek() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Day)
+}
+func (d DateTime) DayOfMonth() string {
+	return time.Unix(RandomUnixTime(), 0).Format(DayOfMonth)
 }
 
 // helper function
