@@ -18,7 +18,7 @@ func TestTitleMale(t *testing.T) {
 
 func TestTitleFemale(t *testing.T) {
 	p := getPerson()
-	if !slice.Contains(titlesFemales, p.TitleFeMale()) {
+	if !slice.Contains(titlesFemale, p.TitleFeMale()) {
 		t.Error("Expected value from variable titleFemales in function TitleFeMale")
 	}
 }
@@ -41,5 +41,12 @@ func TestLastName(t *testing.T) {
 	p := getPerson()
 	if !slice.Contains(lastNames, p.LastName()) {
 		t.Error("Expected value from variable lastNames in function LastName")
+	}
+}
+
+func TestName(t *testing.T) {
+	p := getPerson()
+	if p.Name() == "" {
+		t.Error("Expected from function name string get empty string")
 	}
 }

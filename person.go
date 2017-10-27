@@ -1,18 +1,24 @@
 package faker
 
+import (
+	"fmt"
+	"math/rand"
+)
+
 type Dowser interface {
 	TitleMale() string
 	TitleFeMale() string
 	FirstNameMale() string
 	FirstNameFemale() string
 	LastName() string
+	Name() string
 }
 
 var person Dowser
 var titlesMale = []string{
 	"Mr.", "Dr.", "Prof.",
 }
-var titlesFemales = []string{
+var titlesFemale = []string{
 	"Mrs.", "Ms.", "Miss", "Dr.", "Prof.",
 }
 var firstNamesMale = []string{
@@ -116,7 +122,7 @@ func (p Person) TitleMale() string {
 }
 
 func (p Person) TitleFeMale() string {
-	return randomElementFromSliceString(titlesFemales)
+	return randomElementFromSliceString(titlesFemale)
 }
 
 func (p Person) FirstNameMale() string {
@@ -129,4 +135,13 @@ func (p Person) FirstNameFemale() string {
 
 func (p Person) LastName() string {
 	return randomElementFromSliceString(lastNames)
+}
+
+func (p Person) Name() string {
+	flag := rand.Intn(100)
+	if flag > 50 {
+		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesFemale), randomElementFromSliceString(firstNamesFemale), randomElementFromSliceString(lastNames))
+	} else {
+		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
+	}
 }
