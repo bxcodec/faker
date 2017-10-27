@@ -55,3 +55,11 @@ func TestTime(t *testing.T) {
 		t.Error("function Time need return valid value")
 	}
 }
+
+func TestMonth(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(Mounth, d.Month())
+	if err != nil {
+		t.Error("function Month need return valid month")
+	}
+}

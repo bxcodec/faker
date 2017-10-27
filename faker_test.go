@@ -77,6 +77,7 @@ type TaggedStruct struct {
 	UnixTime         int64   `faker:"unix_time"`
 	Date             string  `faker:"date"`
 	Time             string  `faker:"time"`
+	Month            string  `faker:"month"`
 }
 
 func (t TaggedStruct) String() string {
@@ -103,6 +104,7 @@ func (t TaggedStruct) String() string {
 	UnixTime: %d,
 	Date: %s,
 	Time: %s,
+	Month: %s,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.PhoneNumber, t.MacAddress,
@@ -110,7 +112,7 @@ func (t TaggedStruct) String() string {
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
 		t.FirstNameMale, t.FirstNameFemale, t.LastName,
 		t.Name, t.UnixTime, t.Date,
-		t.Time,
+		t.Time, t.Month,
 	)
 }
 

@@ -43,6 +43,7 @@ const (
 	UNIX_TIME          = "unix_time"
 	DATE               = "date"
 	TIME               = "time"
+	MONTH              = "month"
 )
 
 var mapperTag = map[string]interface{}{
@@ -69,6 +70,7 @@ var mapperTag = map[string]interface{}{
 	UNIX_TIME:          getDateTimer().UnixTime,
 	DATE:               getDateTimer().Date,
 	TIME:               getDateTimer().Time,
+	MONTH:              getDateTimer().Month,
 }
 
 // Error when get fake from ptr

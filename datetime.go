@@ -8,12 +8,14 @@ import (
 const (
 	BaseDate = "2006-01-02"
 	Time = "15:04:05"
+	Mounth = "January"
 )
 
 type DateTimer interface {
 	UnixTime(v reflect.Value) error
 	Date() string
 	Time() string
+	Month() string
 }
 
 var date DateTimer
@@ -54,6 +56,10 @@ func (d DateTime) Date() string {
 
 func (d DateTime) Time() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Time)
+}
+
+func (d DateTime) Month() string {
+	return time.Unix(RandomUnixTime(), 0).Format(Mounth)
 }
 
 // helper function
