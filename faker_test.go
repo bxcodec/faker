@@ -75,6 +75,8 @@ type TaggedStruct struct {
 	LastName         string  `faker:"last_name"`
 	Name             string  `faker:"name"`
 	UnixTime         int64   `faker:"unix_time"`
+	Date             string  `faker:"date"`
+	Time             string  `faker:"time"`
 }
 
 func (t TaggedStruct) String() string {
@@ -99,13 +101,17 @@ func (t TaggedStruct) String() string {
 	LastName: %s,
 	Name: %s,
 	UnixTime: %d,
+	Date: %s,
+	Time: %s,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.PhoneNumber, t.MacAddress,
 		t.Url, t.UserName, t.ToolFreeNumber,
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
 		t.FirstNameMale, t.FirstNameFemale, t.LastName,
-		t.Name, t.UnixTime)
+		t.Name, t.UnixTime, t.Date,
+		t.Time,
+	)
 }
 
 type NotTaggedStruct struct {

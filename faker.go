@@ -41,6 +41,8 @@ const (
 	LAST_NAME          = "last_name"
 	NAME               = "name"
 	UNIX_TIME          = "unix_time"
+	DATE               = "date"
+	TIME               = "time"
 )
 
 var mapperTag = map[string]interface{}{
@@ -65,6 +67,8 @@ var mapperTag = map[string]interface{}{
 	LAST_NAME:          getPerson().LastName,
 	NAME:               getPerson().Name,
 	UNIX_TIME:          getDateTimer().UnixTime,
+	DATE:               getDateTimer().Date,
+	TIME:               getDateTimer().Time,
 }
 
 // Error when get fake from ptr

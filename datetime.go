@@ -5,9 +5,15 @@ import (
 	"reflect"
 	"time"
 )
+const (
+	BaseDate = "2006-01-02"
+	Time = "15:04:05"
+)
 
 type DateTimer interface {
 	UnixTime(v reflect.Value) error
+	Date() string
+	Time() string
 }
 
 var date DateTimer
@@ -29,13 +35,28 @@ func SetDateTimer(d DateTimer) {
 type DateTime struct {
 }
 
+// get unix time
 func (d DateTime) UnixTime(v reflect.Value) error {
 	kind := v.Kind()
 
 	if kind == reflect.Int64 {
-		v.SetInt(rand.Int63n(time.Now().Unix()))
+		v.SetInt(RandomUnixTime())
 	} else {
 		v.SetInt(0)
 	}
 	return nil
+}
+
+// format example BaseDate const
+func (d DateTime) Date() string {
+	return time.Unix(RandomUnixTime(), 0).Format(BaseDate)
+}
+
+func (d DateTime) Time() string {
+	return time.Unix(RandomUnixTime(), 0).Format(Time)
+}
+
+// helper function
+func RandomUnixTime() int64 {
+	return rand.Int63n(time.Now().Unix())
 }

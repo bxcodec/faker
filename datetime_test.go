@@ -1,10 +1,10 @@
 package faker
 
 import (
-	"testing"
-	"reflect"
-	"time"
 	"log"
+	"reflect"
+	"testing"
+	"time"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -33,7 +33,25 @@ func TestUnixTimeValueNotValid(t *testing.T) {
 	}
 	d.UnixTime(reflect.ValueOf(&ref.some).Elem())
 	log.Println(ref.some)
-	if ref.some != 0{
+	if ref.some != 0 {
 		t.Errorf("UnixTime should return 0, get : %v", ref.some)
+	}
+}
+
+func TestDate(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(BaseDate, d.Date())
+
+	if err != nil {
+		t.Error("function Date need return valid value")
+	}
+}
+
+func TestTime(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(Time, d.Time())
+
+	if err != nil {
+		t.Error("function Time need return valid value")
 	}
 }
