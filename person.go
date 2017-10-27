@@ -5,6 +5,7 @@ type Dowser interface {
 	TitleFeMale() string
 	FirstNameMale() string
 	FirstNameFemale() string
+	LastName() string
 }
 
 var person Dowser
@@ -14,7 +15,6 @@ var titlesMale = []string{
 var titlesFemales = []string{
 	"Mrs.", "Ms.", "Miss", "Dr.", "Prof.",
 }
-
 var firstNamesMale = []string{
 	"Aaron", "Abdiel", "Abdul", "Abdullah", "Abe", "Abel", "Abelardo", "Abner", "Abraham", "Adalberto", "Adam", "Adan", "Adelbert", "Adolf", "Adolfo", "Adolph", "Adolphus", "Adonis", "Adrain", "Adrian", "Adriel", "Adrien", "Afton", "Agustin", "Ahmad", "Ahmed", "Aidan", "Aiden", "Akeem", "Al", "Alan", "Albert", "Alberto", "Albin", "Alden", "Alec", "Alejandrin", "Alek", "Alessandro", "Alex", "Alexander", "Alexandre", "Alexandro", "Alexie", "Alexis", "Alexys", "Alexzander", "Alf", "Alfonso", "Alfonzo", "Alford", "Alfred", "Alfredo", "Ali", "Allan", "Allen", "Alphonso", "Alvah", "Alvis", "Amani", "Amari", "Ambrose", "Americo", "Amir", "Amos", "Amparo", "Anastacio", "Anderson", "Andre", "Andres", "Andrew", "Andy", "Angel", "Angelo", "Angus", "Anibal", "Ansel", "Ansley", "Anthony", "Antone", "Antonio", "Antwan", "Antwon", "Arch", "Archibald", "Arden", "Arely", "Ari", "Aric", "Ariel", "Arjun", "Arlo", "Armand", "Armando", "Armani", "Arnaldo", "Arne", "Arno", "Arnold", "Arnoldo", "Arnulfo", "Aron", "Art", "Arthur", "Arturo", "Arvel", "Arvid", "Ashton", "August", "Augustus", "Aurelio", "Austen", "Austin", "Austyn", "Avery", "Axel", "Ayden",
 	"Bailey", "Barney", "Baron", "Barrett", "Barry", "Bart", "Bartholome", "Barton", "Baylee", "Beau", "Bell", "Ben", "Benedict", "Benjamin", "Bennett", "Bennie", "Benny", "Benton", "Bernard", "Bernardo", "Bernhard", "Bernie", "Berry", "Berta", "Bertha", "Bertram", "Bertrand", "Bill", "Billy", "Blair", "Blaise", "Blake", "Blaze", "Bo", "Bobbie", "Bobby", "Boris", "Boyd", "Brad", "Braden", "Bradford", "Bradley", "Bradly", "Brady", "Braeden", "Brain", "Brando", "Brandon", "Brandt", "Brannon", "Branson", "Brant", "Braulio", "Braxton", "Brayan", "Brendan", "Brenden", "Brendon", "Brennan", "Brennon", "Brent", "Bret", "Brett", "Brian", "Brice", "Brock", "Broderick", "Brody", "Brook", "Brooks", "Brown", "Bruce", "Bryce", "Brycen", "Bryon", "Buck", "Bud", "Buddy", "Buford", "Burley", "Buster",
@@ -69,6 +69,29 @@ var firstNamesFemale = []string{
 	"Yadira", "Yasmeen", "Yasmin", "Yasmine", "Yazmin", "Yesenia", "Yessenia", "Yolanda", "Yoshiko", "Yvette", "Yvonne",
 	"Zaria", "Zelda", "Zella", "Zelma", "Zena", "Zetta", "Zita", "Zoe", "Zoey", "Zoie", "Zoila", "Zola", "Zora", "Zula",
 }
+var lastNames = []string{
+	"Abbott", "Abernathy", "Abshire", "Adams", "Altenwerth", "Anderson", "Ankunding", "Armstrong", "Auer", "Aufderhar",
+	"Bahringer", "Bailey", "Balistreri", "Barrows", "Bartell", "Bartoletti", "Barton", "Bashirian", "Batz", "Bauch", "Baumbach", "Bayer", "Beahan", "Beatty", "Bechtelar", "Becker", "Bednar", "Beer", "Beier", "Berge", "Bergnaum", "Bergstrom", "Bernhard", "Bernier", "Bins", "Blanda", "Blick", "Block", "Bode", "Boehm", "Bogan", "Bogisich", "Borer", "Bosco", "Botsford", "Boyer", "Boyle", "Bradtke", "Brakus", "Braun", "Breitenberg", "Brekke", "Brown", "Bruen", "Buckridge",
+	"Carroll", "Carter", "Cartwright", "Casper", "Cassin", "Champlin", "Christiansen", "Cole", "Collier", "Collins", "Conn", "Connelly", "Conroy", "Considine", "Corkery", "Cormier", "Corwin", "Cremin", "Crist", "Crona", "Cronin", "Crooks", "Cruickshank", "Cummerata", "Cummings",
+	"Dach", "D\"Amore", "Daniel", "Dare", "Daugherty", "Davis", "Deckow", "Denesik", "Dibbert", "Dickens", "Dicki", "Dickinson", "Dietrich", "Donnelly", "Dooley", "Douglas", "Doyle", "DuBuque", "Durgan",
+	"Ebert", "Effertz", "Eichmann", "Emard", "Emmerich", "Erdman", "Ernser", "Fadel",
+	"Fahey", "Farrell", "Fay", "Feeney", "Feest", "Feil", "Ferry", "Fisher", "Flatley", "Frami", "Franecki", "Friesen", "Fritsch", "Funk",
+	"Gaylord", "Gerhold", "Gerlach", "Gibson", "Gislason", "Gleason", "Gleichner", "Glover", "Goldner", "Goodwin", "Gorczany", "Gottlieb", "Goyette", "Grady", "Graham", "Grant", "Green", "Greenfelder", "Greenholt", "Grimes", "Gulgowski", "Gusikowski", "Gutkowski", "Gutmann",
+	"Haag", "Hackett", "Hagenes", "Hahn", "Haley", "Halvorson", "Hamill", "Hammes", "Hand", "Hane", "Hansen", "Harber", "Harris", "Hartmann", "Harvey", "Hauck", "Hayes", "Heaney", "Heathcote", "Hegmann", "Heidenreich", "Heller", "Herman", "Hermann", "Hermiston", "Herzog", "Hessel", "Hettinger", "Hickle", "Hilll", "Hills", "Hilpert", "Hintz", "Hirthe", "Hodkiewicz", "Hoeger", "Homenick", "Hoppe", "Howe", "Howell", "Hudson", "Huel", "Huels", "Hyatt",
+	"Jacobi", "Jacobs", "Jacobson", "Jakubowski", "Jaskolski", "Jast", "Jenkins", "Jerde", "Johns", "Johnson", "Johnston", "Jones",
+	"Kassulke", "Kautzer", "Keebler", "Keeling", "Kemmer", "Kerluke", "Kertzmann", "Kessler", "Kiehn", "Kihn", "Kilback", "King", "Kirlin", "Klein", "Kling", "Klocko", "Koch", "Koelpin", "Koepp", "Kohler", "Konopelski", "Koss", "Kovacek", "Kozey", "Krajcik", "Kreiger", "Kris", "Kshlerin", "Kub", "Kuhic", "Kuhlman", "Kuhn", "Kulas", "Kunde", "Kunze", "Kuphal", "Kutch", "Kuvalis",
+	"Labadie", "Lakin", "Lang", "Langosh", "Langworth", "Larkin", "Larson", "Leannon", "Lebsack", "Ledner", "Leffler", "Legros", "Lehner", "Lemke", "Lesch", "Leuschke", "Lind", "Lindgren", "Littel", "Little", "Lockman", "Lowe", "Lubowitz", "Lueilwitz", "Luettgen", "Lynch",
+	"Macejkovic", "Maggio", "Mann", "Mante", "Marks", "Marquardt", "Marvin", "Mayer", "Mayert", "McClure", "McCullough", "McDermott", "McGlynn", "McKenzie", "McLaughlin", "Medhurst", "Mertz", "Metz", "Miller", "Mills", "Mitchell", "Moen", "Mohr", "Monahan", "Moore", "Morar", "Morissette", "Mosciski", "Mraz", "Mueller", "Muller", "Murazik", "Murphy", "Murray",
+	"Nader", "Nicolas", "Nienow", "Nikolaus", "Nitzsche", "Nolan",
+	"Oberbrunner", "O\"Connell", "O\"Conner", "O\"Hara", "O\"Keefe", "O\"Kon", "Okuneva", "Olson", "Ondricka", "O\"Reilly", "Orn", "Ortiz", "Osinski",
+	"Pacocha", "Padberg", "Pagac", "Parisian", "Parker", "Paucek", "Pfannerstill", "Pfeffer", "Pollich", "Pouros", "Powlowski", "Predovic", "Price", "Prohaska", "Prosacco", "Purdy",
+	"Quigley", "Quitzon",
+	"Rath", "Ratke", "Rau", "Raynor", "Reichel", "Reichert", "Reilly", "Reinger", "Rempel", "Renner", "Reynolds", "Rice", "Rippin", "Ritchie", "Robel", "Roberts", "Rodriguez", "Rogahn", "Rohan", "Rolfson", "Romaguera", "Roob", "Rosenbaum", "Rowe", "Ruecker", "Runolfsdottir", "Runolfsson", "Runte", "Russel", "Rutherford", "Ryan", "Sanford", "Satterfield", "Sauer", "Sawayn",
+	"Schaden", "Schaefer", "Schamberger", "Schiller", "Schimmel", "Schinner", "Schmeler", "Schmidt", "Schmitt", "Schneider", "Schoen", "Schowalter", "Schroeder", "Schulist", "Schultz", "Schumm", "Schuppe", "Schuster", "Senger", "Shanahan", "Shields", "Simonis", "Sipes", "Skiles", "Smith", "Smitham", "Spencer", "Spinka", "Sporer", "Stamm", "Stanton", "Stark", "Stehr", "Steuber", "Stiedemann", "Stokes", "Stoltenberg", "Stracke", "Streich", "Stroman", "Strosin", "Swaniawski", "Swift",
+	"Terry", "Thiel", "Thompson", "Tillman", "Torp", "Torphy", "Towne", "Toy", "Trantow", "Tremblay", "Treutel", "Tromp", "Turcotte", "Turner",
+	"Ullrich", "Upton", "Vandervort", "Veum", "Volkman", "Von", "VonRueden", "Waelchi", "Walker", "Walsh", "Walter", "Ward", "Waters", "Watsica", "Weber", "Wehner", "Weimann", "Weissnat", "Welch", "West", "White", "Wiegand", "Wilderman", "Wilkinson", "Will", "Williamson", "Willms", "Windler", "Wintheiser", "Wisoky", "Wisozk", "Witting", "Wiza", "Wolf", "Wolff", "Wuckert", "Wunsch", "Wyman",
+	"Yost", "Yundt", "Zboncak", "Zemlak", "Ziemann", "Zieme", "Zulauf",
+}
 
 func getPerson() Dowser {
 	mu.Lock()
@@ -102,4 +125,8 @@ func (p Person) FirstNameMale() string {
 
 func (p Person) FirstNameFemale() string {
 	return randomElementFromSliceString(firstNamesFemale)
+}
+
+func (p Person) LastName() string {
+	return randomElementFromSliceString(lastNames)
 }

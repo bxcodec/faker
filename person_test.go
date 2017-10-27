@@ -5,6 +5,10 @@ import (
 	"testing"
 )
 
+func TestSetDowser(t *testing.T) {
+	SetDowser(Person{})
+}
+
 func TestTitleMale(t *testing.T) {
 	p := getPerson()
 	if !slice.Contains(titlesMale, p.TitleMale()) {
@@ -30,5 +34,12 @@ func TestFirstNameFemale(t *testing.T) {
 	p := getPerson()
 	if !slice.Contains(firstNamesFemale, p.FirstNameFemale()) {
 		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
+	}
+}
+
+func TestLastName(t *testing.T) {
+	p := getPerson()
+	if !slice.Contains(lastNames, p.LastName()) {
+		t.Error("Expected value from variable lastNames in function LastName")
 	}
 }
