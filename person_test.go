@@ -25,3 +25,10 @@ func TestFirstNameMale(t *testing.T) {
 		t.Error("Expected value from variable firstNamesMale in function FirstNameMale")
 	}
 }
+
+func TestFirstNameFemale(t *testing.T) {
+	p := getPerson()
+	if !slice.Contains(firstNamesFemale, p.FirstNameFemale()) {
+		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
+	}
+}

@@ -37,6 +37,7 @@ const (
 	TITLE_MALE         = "title_male"
 	TITLE_FEMALE       = "title_female"
 	FIRST_NAME_MALE    = "first_name_male"
+	FIRST_NAME_FEMALE  = "first_name_female"
 )
 
 var mapperTag = map[string]interface{}{
@@ -57,6 +58,7 @@ var mapperTag = map[string]interface{}{
 	TITLE_MALE:         getPerson().TitleMale,
 	TITLE_FEMALE:       getPerson().TitleFeMale,
 	FIRST_NAME_MALE:    getPerson().FirstNameMale,
+	FIRST_NAME_FEMALE:  getPerson().FirstNameFemale,
 }
 
 // Error when get fake from ptr
