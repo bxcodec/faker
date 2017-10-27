@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 	"fmt"
+	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -95,4 +96,13 @@ func TestTimestamp(t *testing.T) {
 	if err != nil {
 		t.Error("function Timestamp need return valid timestamp format")
 	}
+}
+
+func TestCentury(t *testing.T) {
+	d := getDateTimer()
+
+	if !slice.Contains(century, d.Century()){
+		t.Error("Expected century from functuon Century")
+	}
+
 }

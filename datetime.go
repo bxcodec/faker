@@ -7,6 +7,8 @@ import (
 	"time"
 )
 
+var century = []string{"I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX","XXI"}
+
 const (
 	BaseDate   = "2006-01-02"
 	Time       = "15:04:05"
@@ -25,6 +27,7 @@ type DateTimer interface {
 	DayOfWeek() string
 	DayOfMonth() string
 	Timestamp() string
+	Century() string
 }
 
 var date DateTimer
@@ -86,6 +89,9 @@ func (d DateTime) Timestamp() string {
 	return time.Unix(RandomUnixTime(), 0).Format(fmt.Sprintf("%s %s", BaseDate, Time))
 }
 
+func (d DateTime) Century() string {
+	return randomElementFromSliceString(century)
+}
 // helper function
 func RandomUnixTime() int64 {
 	return rand.Int63n(time.Now().Unix())

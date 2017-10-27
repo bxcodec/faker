@@ -48,6 +48,7 @@ const (
 	DAY_OF_WEEK        = "day_of_week"
 	DAY_OF_MONTH       = "day_of_month"
 	TIMESTAMP          = "timestamp"
+	CENTURY            = "century"
 )
 
 var mapperTag = map[string]interface{}{
@@ -79,6 +80,7 @@ var mapperTag = map[string]interface{}{
 	DAY_OF_WEEK:        getDateTimer().DayOfWeek,
 	DAY_OF_MONTH:       getDateTimer().DayOfMonth,
 	TIMESTAMP:          getDateTimer().Timestamp,
+	CENTURY:            getDateTimer().Century,
 }
 
 // Error when get fake from ptr
