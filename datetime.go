@@ -1,6 +1,7 @@
 package faker
 
 import (
+	"fmt"
 	"math/rand"
 	"reflect"
 	"time"
@@ -9,7 +10,7 @@ import (
 const (
 	BaseDate   = "2006-01-02"
 	Time       = "15:04:05"
-	Month     = "January"
+	Month      = "January"
 	Year       = "2006"
 	Day        = "Sunday"
 	DayOfMonth = "_2"
@@ -19,10 +20,11 @@ type DateTimer interface {
 	UnixTime(v reflect.Value) error
 	Date() string
 	Time() string
-	Month() string
+	MonthName() string
 	Year() string
 	DayOfWeek() string
 	DayOfMonth() string
+	Timestamp() string
 }
 
 var date DateTimer
@@ -65,7 +67,7 @@ func (d DateTime) Time() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Time)
 }
 
-func (d DateTime) Month() string {
+func (d DateTime) MonthName() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Month)
 }
 
@@ -78,6 +80,10 @@ func (d DateTime) DayOfWeek() string {
 }
 func (d DateTime) DayOfMonth() string {
 	return time.Unix(RandomUnixTime(), 0).Format(DayOfMonth)
+}
+
+func (d DateTime) Timestamp() string {
+	return time.Unix(RandomUnixTime(), 0).Format(fmt.Sprintf("%s %s", BaseDate, Time))
 }
 
 // helper function

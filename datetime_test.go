@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"testing"
 	"time"
+	"fmt"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -56,9 +57,9 @@ func TestTime(t *testing.T) {
 	}
 }
 
-func TestMonth(t *testing.T) {
+func TestMonthName(t *testing.T) {
 	d := getDateTimer()
-	_, err := time.Parse(Month, d.Month())
+	_, err := time.Parse(Month, d.MonthName())
 	if err != nil {
 		t.Error("function Month need return valid month")
 	}
@@ -85,5 +86,13 @@ func TestDayOfMonth(t *testing.T) {
 	_, err := time.Parse(DayOfMonth, d.DayOfMonth())
 	if err != nil {
 		t.Error("function DayOfMonth need return valid digit")
+	}
+}
+
+func TestTimestamp(t *testing.T) {
+	d := getDateTimer()
+	_, err := time.Parse(fmt.Sprintf("%s %s", BaseDate, Time), d.Timestamp())
+	if err != nil {
+		t.Error("function Timestamp need return valid timestamp format")
 	}
 }
