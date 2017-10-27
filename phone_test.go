@@ -27,6 +27,6 @@ func TestE164PhoneNumber(t *testing.T) {
 	}
 }
 
-func TestSetPhoner(t *testing.T)  {
+func TestSetPhoner(t *testing.T) {
 	SetPhoner(Phone{})
 }

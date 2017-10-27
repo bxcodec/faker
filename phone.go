@@ -2,9 +2,10 @@ package faker
 
 import (
 	"fmt"
-	"github.com/agoalofalife/faker/support/slice"
 	"math/rand"
 	"strings"
+
+	"github.com/bxcodec/faker/support/slice"
 )
 
 var phone Phoner
@@ -36,8 +37,8 @@ type Phone struct{}
 // 201-886-0269
 func (p Phone) PhoneNumber() string {
 	randInt, _ := RandomInt(1, 10)
-	str:= strings.Join(slice.SliceIntToString(randInt), "")
-	return fmt.Sprintf("%s-%s-%s", str[:3],str[3:6], str[6:10])
+	str := strings.Join(slice.SliceIntToString(randInt), "")
+	return fmt.Sprintf("%s-%s-%s", str[:3], str[3:6], str[6:10])
 }
 
 // example : (888) 937-7238
