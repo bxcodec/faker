@@ -73,7 +73,8 @@ type TaggedStruct struct {
 	FirstNameMale    string  `faker:"first_name_male"`
 	FirstNameFemale  string  `faker:"first_name_female"`
 	LastName         string  `faker:"last_name"`
-	Name         string  `faker:"name"`
+	Name             string  `faker:"name"`
+	UnixTime         int64   `faker:"unix_time"`
 }
 
 func (t TaggedStruct) String() string {
@@ -97,13 +98,14 @@ func (t TaggedStruct) String() string {
 	FirstNameFemale: %s,
 	LastName: %s,
 	Name: %s,
+	UnixTime: %d,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.PhoneNumber, t.MacAddress,
 		t.Url, t.UserName, t.ToolFreeNumber,
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
 		t.FirstNameMale, t.FirstNameFemale, t.LastName,
-		t.Name)
+		t.Name, t.UnixTime)
 }
 
 type NotTaggedStruct struct {
@@ -165,11 +167,20 @@ func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 	}
 }
 
-func TestSetDataErrorDataParseTag(t *testing.T) {
+func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 	temp := &struct {
 		test string `faker:"test"`
 	}{}
-	if "String Tag unsupported" != setData(reflect.ValueOf(temp)).Error() {
+	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
+		t.Error("Exptected error Unsupported tag")
+	}
+}
+
+func TestSetDataErrorDataParseTagIntType(t *testing.T) {
+	temp := &struct {
+		test int `faker:"test"`
+	}{}
+	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
 		t.Error("Exptected error Unsupported tag")
 	}
 }
