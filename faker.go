@@ -34,6 +34,7 @@ const (
 	PHONE_NUMBER       = "phone_number"
 	TOLL_FREE_NUMBER   = "tool_free_number"
 	E164_PHONE_NUMBER  = "e_164_phone_number"
+	TITLE_MALE         = "title_male"
 )
 
 var mapperTag = map[string]interface{}{
@@ -51,6 +52,7 @@ var mapperTag = map[string]interface{}{
 	PHONE_NUMBER:       getPhoner().PhoneNumber,
 	TOLL_FREE_NUMBER:   getPhoner().TollFreePhoneNumber,
 	E164_PHONE_NUMBER:  getPhoner().E164PhoneNumber,
+	TITLE_MALE:         getPerson().TitleMale,
 }
 
 // Error when get fake from ptr
