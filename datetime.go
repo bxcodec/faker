@@ -9,6 +9,7 @@ const (
 	BaseDate = "2006-01-02"
 	Time = "15:04:05"
 	Mounth = "January"
+	Year = "2006"
 )
 
 type DateTimer interface {
@@ -16,6 +17,7 @@ type DateTimer interface {
 	Date() string
 	Time() string
 	Month() string
+	Year() string
 }
 
 var date DateTimer
@@ -61,6 +63,11 @@ func (d DateTime) Time() string {
 func (d DateTime) Month() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Mounth)
 }
+
+func (d DateTime) Year() string {
+	return time.Unix(RandomUnixTime(), 0).Format(Year)
+}
+
 
 // helper function
 func RandomUnixTime() int64 {
