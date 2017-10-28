@@ -36,12 +36,49 @@ go get -u github.com/bxcodec/faker
 ## Example
 
 ### With Tag
-Supported tag :
+Supported tag:
+
+**Internet :**
 * Email
+* Mac address
+* Domain name
+* Url
+* UserName
 * IP Address (IPV4 IPV6 )
+ 
+**Payment :**
 * Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
 * Credit Card Number
+
+**Address :**
 * Latitude and Longitude
+
+**Phone :**
+* Phone number
+* Toll free phone number
+* E164PhoneNumber
+
+**Person :**
+* Title male
+* Title female
+* FirstName male
+* FirstName female
+* LastName
+* Name
+
+**DateTime :**
+* UnixTime
+* Date
+* Time
+* MonthName
+* Year
+* DayOfWeek
+* DayOfMonth
+* Timestamp
+* Century
+* TimeZone
+* TimePeriod
+
 
 ```go
 
@@ -60,7 +97,29 @@ type SomeStruct struct {
  Email            string  `faker:"email"`
  IPV4             string  `faker:"ipv4"`
  IPV6             string  `faker:"ipv6"`
-
+ PhoneNumber      string  `faker:"phone_number"`
+ MacAddress       string  `faker:"mac_address"`
+ Url              string  `faker:"url"`
+ UserName         string  `faker:"username"`
+ ToolFreeNumber   string  `faker:"tool_free_number"`
+ E164PhoneNumber  string  `faker:"e_164_phone_number"`
+ TitleMale        string  `faker:"title_male"`
+ TitleFemale      string  `faker:"title_female"`
+ FirstNameMale    string  `faker:"first_name_male"`
+ FirstNameFemale  string  `faker:"first_name_female"`
+ LastName         string  `faker:"last_name"`
+ Name             string  `faker:"name"`
+ UnixTime         int64   `faker:"unix_time"`
+ Date             string  `faker:"date"`
+ Time             string  `faker:"time"`
+ MonthName        string  `faker:"month_name"`
+ Year             string  `faker:"year"`
+ DayOfWeek        string  `faker:"day_of_week"`
+ DayOfMonth       string  `faker:"day_of_month"`
+ Timestamp        string  `faker:"timestamp"`
+ Century          string  `faker:"century"`
+ TimeZone         string  `faker:"timezone"`
+ TimePeriod       string  `faker:"time_period"`
 }
 
 func main() {
@@ -72,8 +131,36 @@ func main() {
   }
   fmt.Printf("%+v", a)
 	//Will Print  :
-	// {Latitude:31.456718 Long:159.9867 CreditCardType:Discover CreditCardNumber:6011091892846730 Email:MeHOZEM@Zxhmd.com IPV4:76.24.239.144 IPV6:e8e9:4a26:4c2b:20d3:541e:98b:c5fd:aa26}PASS
-
+	 /* Latitude: -74.209991,
+        Long: -4.394531,
+        CreditCardNumber: 376243757700558,
+        CreditCardType: american express,
+        Email: QjTIcmn@lmErh.info,
+        IPV4: 80.206.109.93,
+        IPV6: 448f:a391:90c6:d165:1d1f:b536:45f7:f084,
+        PhoneNumber: 865-321-1047,
+        MacAddress: 46:77:6f:bb:d0:fc,
+        Url: https://sFUBEIj.info/kYvcpYL.html,
+        UserName: VwrVhzZ,
+        ToolFreeNumber: (777) 372-148965,
+        E164PhoneNumber: +765101283947,
+        TitleMale: Prof.,
+        TitleFemale: Dr.,
+        FirstNameMale: Charley,
+        FirstNameFemale: Freeda,
+        LastName: Runte,
+        Name: Dr. Freeda Runte,
+        UnixTime: 679631083,
+        Date: 2010-06-12,
+        Time: 11:33:24,
+        MonthName: January,
+        Year: 1982,
+        DayOfWeek: Sunday,
+        DayOfMonth: 26,
+        Timestamp: 1972-06-24 14:03:32,
+        Century: XV,
+        TimeZone: Navajo,
+        TimePeriod: AM,*/
 }
 
 ```
