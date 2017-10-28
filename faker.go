@@ -52,6 +52,7 @@ const (
 	CENTURY            = "century"
 	TIMEZONE           = "timezone"
 	TIME_PERIOD        = "time_period"
+	WORD               = "word"
 )
 
 var mapperTag = map[string]interface{}{
@@ -87,6 +88,7 @@ var mapperTag = map[string]interface{}{
 	CENTURY:            getDateTimer().Century,
 	TIMEZONE:           getDateTimer().TimeZone,
 	TIME_PERIOD:        getDateTimer().TimePeriod,
+	WORD:               getLorem().Word,
 }
 
 // Error when get fake from ptr
