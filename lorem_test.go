@@ -22,3 +22,10 @@ func TestSentence(t *testing.T) {
 		t.Error("Expected sentence")
 	}
 }
+
+func TestSentences(t *testing.T) {
+	s := getLorem().Sentences()
+	if s == "" || !strings.HasSuffix(s, ".") {
+		t.Error("Expected sentences")
+	}
+}

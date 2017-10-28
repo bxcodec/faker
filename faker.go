@@ -54,6 +54,7 @@ const (
 	TIME_PERIOD        = "time_period"
 	WORD               = "word"
 	SENTENCE           = "sentence"
+	SENTENCES           = "sentences"
 )
 
 var mapperTag = map[string]interface{}{
@@ -91,6 +92,7 @@ var mapperTag = map[string]interface{}{
 	TIME_PERIOD:        getDateTimer().TimePeriod,
 	WORD:               getLorem().Word,
 	SENTENCE:           getLorem().Sentence,
+	SENTENCES:           getLorem().Sentences,
 }
 
 // Error when get fake from ptr

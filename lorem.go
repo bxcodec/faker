@@ -47,6 +47,7 @@ var wordList = []string{"alias", "consequatur", "aut", "perferendis", "sit", "vo
 type DataFaker interface {
 	Word() string
 	Sentence() string
+	Sentences() string
 }
 
 func SetDataFaker(d DataFaker) {
@@ -80,4 +81,11 @@ func (l Lorem) Sentence() (sentence string) {
 		}
 	}
 	return fmt.Sprintf("%s.", sentence)
+}
+
+func (l Lorem) Sentences() (sentences string) {
+	for i := 0; i < 3; i++ {
+		sentences += l.Sentence()
+	}
+	return sentences
 }
