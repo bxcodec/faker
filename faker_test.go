@@ -62,6 +62,7 @@ type TaggedStruct struct {
 	Email            string  `faker:"email"`
 	IPV4             string  `faker:"ipv4"`
 	IPV6             string  `faker:"ipv6"`
+	Password         string  `faker:"password"`
 	PhoneNumber      string  `faker:"phone_number"`
 	MacAddress       string  `faker:"mac_address"`
 	Url              string  `faker:"url"`
@@ -96,6 +97,7 @@ func (t TaggedStruct) String() string {
 	Email: %s,
 	IPV4: %s,
 	IPV6: %s,
+	Password: %s,
 	PhoneNumber: %s,
 	MacAddress: %s,
 	Url: %s,
@@ -121,7 +123,7 @@ func (t TaggedStruct) String() string {
 	TimePeriod: %s,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
-		t.IPV6, t.PhoneNumber, t.MacAddress,
+		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
 		t.Url, t.UserName, t.ToolFreeNumber,
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
 		t.FirstNameMale, t.FirstNameFemale, t.LastName,

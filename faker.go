@@ -27,6 +27,7 @@ const (
 	Url                = "url"
 	IPV4               = "ipv4"
 	IPV6               = "ipv6"
+	PASSWORD           = "password"
 	LATITUDE           = "lat"
 	LONGITUDE          = "long"
 	CREDIT_CARD_NUMBER = "cc_number"
@@ -61,6 +62,7 @@ var mapperTag = map[string]interface{}{
 	UserName:           getNetworker().UserName,
 	IPV4:               getNetworker().Ipv4,
 	IPV6:               getNetworker().Ipv6,
+	PASSWORD:           getNetworker().Password,
 	CREDIT_CARD_TYPE:   getPayment().CreditCardType,
 	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
 	LATITUDE:           getAddress().Latitude,

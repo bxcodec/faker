@@ -46,6 +46,7 @@ type Networker interface {
 	UserName() string
 	Ipv4() string
 	Ipv6() string
+	Password() string
 }
 
 type Internet struct{}
@@ -94,4 +95,9 @@ func (internet Internet) Ipv6() string {
 		ip[i] = byte(r.Intn(256))
 	}
 	return net.IP(ip).To16().String()
+}
+
+// get hash password
+func (internet Internet) Password() string {
+	return randomString(50)
 }

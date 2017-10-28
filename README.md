@@ -45,6 +45,8 @@ Supported tag:
 * Url
 * UserName
 * IP Address (IPV4 IPV6 )
+* Password
+
  
 **Payment :**
 * Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
@@ -97,6 +99,7 @@ type SomeStruct struct {
  Email            string  `faker:"email"`
  IPV4             string  `faker:"ipv4"`
  IPV6             string  `faker:"ipv6"`
+ Password         string  `faker:"password"` 
  PhoneNumber      string  `faker:"phone_number"`
  MacAddress       string  `faker:"mac_address"`
  Url              string  `faker:"url"`
@@ -138,6 +141,7 @@ func main() {
         Email: QjTIcmn@lmErh.info,
         IPV4: 80.206.109.93,
         IPV6: 448f:a391:90c6:d165:1d1f:b536:45f7:f084,
+	    Password: FhOSWpnzXwxxnCTlZJcZeBTUeRaVidThUdntQryyjNiAFwbyCe,
         PhoneNumber: 865-321-1047,
         MacAddress: 46:77:6f:bb:d0:fc,
         Url: https://sFUBEIj.info/kYvcpYL.html,
