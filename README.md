@@ -81,6 +81,10 @@ Supported tag:
 * TimeZone
 * TimePeriod
 
+**Lorem :**
+* Word
+* Sentence
+* Sentences
 
 ```go
 
@@ -123,6 +127,9 @@ type SomeStruct struct {
  Century          string  `faker:"century"`
  TimeZone         string  `faker:"timezone"`
  TimePeriod       string  `faker:"time_period"`
+ Word             string  `faker:"word"`
+ Sentence         string  `faker:"sentence"`
+ Sentences        string  `faker:"sentences"`
 }
 
 func main() {
@@ -164,7 +171,11 @@ func main() {
         Timestamp: 1972-06-24 14:03:32,
         Century: XV,
         TimeZone: Navajo,
-        TimePeriod: AM,*/
+        TimePeriod: AM,
+	    Word: consectetur,
+        Sentence: Perferendis aut sit accusantium consequatur voluptatem .,
+        Sentences: Perferendis sit consequatur accusantium aut voluptatem .Aut voluptatem consequatur sit perferendis accusantium .Aut consequatur sit accusantium perferendis voluptatem .,
+	 */
 }
 
 ```
