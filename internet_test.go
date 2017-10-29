@@ -1,10 +1,9 @@
 package faker
 
 import (
+	"github.com/bxcodec/faker/support/slice"
 	"strings"
 	"testing"
-
-	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestEmail(t *testing.T) {
@@ -60,4 +59,10 @@ func TestIpv6(t *testing.T) {
 }
 func TestSetNetwork(t *testing.T) {
 	SetNetwork(Internet{})
+}
+
+func TestPassword(t *testing.T) {
+	if getNetworker().Password() == "" {
+		t.Error("Expected hash password")
+	}
 }

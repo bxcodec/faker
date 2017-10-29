@@ -62,12 +62,33 @@ type TaggedStruct struct {
 	Email            string  `faker:"email"`
 	IPV4             string  `faker:"ipv4"`
 	IPV6             string  `faker:"ipv6"`
+	Password         string  `faker:"password"`
 	PhoneNumber      string  `faker:"phone_number"`
 	MacAddress       string  `faker:"mac_address"`
 	Url              string  `faker:"url"`
 	UserName         string  `faker:"username"`
 	ToolFreeNumber   string  `faker:"tool_free_number"`
 	E164PhoneNumber  string  `faker:"e_164_phone_number"`
+	TitleMale        string  `faker:"title_male"`
+	TitleFemale      string  `faker:"title_female"`
+	FirstNameMale    string  `faker:"first_name_male"`
+	FirstNameFemale  string  `faker:"first_name_female"`
+	LastName         string  `faker:"last_name"`
+	Name             string  `faker:"name"`
+	UnixTime         int64   `faker:"unix_time"`
+	Date             string  `faker:"date"`
+	Time             string  `faker:"time"`
+	MonthName        string  `faker:"month_name"`
+	Year             string  `faker:"year"`
+	DayOfWeek        string  `faker:"day_of_week"`
+	DayOfMonth       string  `faker:"day_of_month"`
+	Timestamp        string  `faker:"timestamp"`
+	Century          string  `faker:"century"`
+	TimeZone         string  `faker:"timezone"`
+	TimePeriod       string  `faker:"time_period"`
+	Word             string  `faker:"word"`
+	Sentence         string  `faker:"sentence"`
+	Sentences        string  `faker:"sentences"`
 }
 
 func (t TaggedStruct) String() string {
@@ -79,13 +100,44 @@ func (t TaggedStruct) String() string {
 	Email: %s,
 	IPV4: %s,
 	IPV6: %s,
+	Password: %s,
 	PhoneNumber: %s,
 	MacAddress: %s,
 	Url: %s,
 	UserName: %s,
 	ToolFreeNumber: %s,
 	E164PhoneNumber: %s,
-}`, t.Latitude, t.Long, t.CreditCardNumber, t.CreditCardType, t.Email, t.IPV4, t.IPV6, t.PhoneNumber, t.MacAddress, t.Url, t.UserName, t.ToolFreeNumber, t.E164PhoneNumber)
+	TitleMale: %s,
+	TitleFemale: %s,
+	FirstNameMale: %s,
+	FirstNameFemale: %s,
+	LastName: %s,
+	Name: %s,
+	UnixTime: %d,
+	Date: %s,
+	Time: %s,
+	MonthName: %s,
+	Year: %s,
+	DayOfWeek: %s,
+	DayOfMonth: %s,
+	Timestamp: %s,
+	Century: %s,
+	TimeZone: %s,
+	TimePeriod: %s,
+	Word: %s,
+	Sentence: %s,
+	Sentences: %s,
+}`, t.Latitude, t.Long, t.CreditCardNumber,
+		t.CreditCardType, t.Email, t.IPV4,
+		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
+		t.Url, t.UserName, t.ToolFreeNumber,
+		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
+		t.FirstNameMale, t.FirstNameFemale, t.LastName,
+		t.Name, t.UnixTime, t.Date,
+		t.Time, t.MonthName, t.Year, t.DayOfWeek,
+		t.DayOfMonth, t.Timestamp, t.Century, t.TimeZone,
+		t.TimePeriod, t.Word, t.Sentence, t.Sentences,
+	)
 }
 
 type NotTaggedStruct struct {
@@ -147,11 +199,20 @@ func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 	}
 }
 
-func TestSetDataErrorDataParseTag(t *testing.T) {
+func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 	temp := &struct {
 		test string `faker:"test"`
 	}{}
-	if "String Tag unsupported" != setData(reflect.ValueOf(temp)).Error() {
+	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
+		t.Error("Exptected error Unsupported tag")
+	}
+}
+
+func TestSetDataErrorDataParseTagIntType(t *testing.T) {
+	temp := &struct {
+		test int `faker:"test"`
+	}{}
+	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
 		t.Error("Exptected error Unsupported tag")
 	}
 }

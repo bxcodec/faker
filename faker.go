@@ -27,6 +27,7 @@ const (
 	Url                = "url"
 	IPV4               = "ipv4"
 	IPV6               = "ipv6"
+	PASSWORD           = "password"
 	LATITUDE           = "lat"
 	LONGITUDE          = "long"
 	CREDIT_CARD_NUMBER = "cc_number"
@@ -34,6 +35,26 @@ const (
 	PHONE_NUMBER       = "phone_number"
 	TOLL_FREE_NUMBER   = "tool_free_number"
 	E164_PHONE_NUMBER  = "e_164_phone_number"
+	TITLE_MALE         = "title_male"
+	TITLE_FEMALE       = "title_female"
+	FIRST_NAME_MALE    = "first_name_male"
+	FIRST_NAME_FEMALE  = "first_name_female"
+	LAST_NAME          = "last_name"
+	NAME               = "name"
+	UNIX_TIME          = "unix_time"
+	DATE               = "date"
+	TIME               = "time"
+	MONTH_NAME         = "month_name"
+	YEAR               = "year"
+	DAY_OF_WEEK        = "day_of_week"
+	DAY_OF_MONTH       = "day_of_month"
+	TIMESTAMP          = "timestamp"
+	CENTURY            = "century"
+	TIMEZONE           = "timezone"
+	TIME_PERIOD        = "time_period"
+	WORD               = "word"
+	SENTENCE           = "sentence"
+	SENTENCES          = "sentences"
 )
 
 var mapperTag = map[string]interface{}{
@@ -44,6 +65,7 @@ var mapperTag = map[string]interface{}{
 	UserName:           getNetworker().UserName,
 	IPV4:               getNetworker().Ipv4,
 	IPV6:               getNetworker().Ipv6,
+	PASSWORD:           getNetworker().Password,
 	CREDIT_CARD_TYPE:   getPayment().CreditCardType,
 	CREDIT_CARD_NUMBER: getPayment().CreditCardNumber,
 	LATITUDE:           getAddress().Latitude,
@@ -51,6 +73,26 @@ var mapperTag = map[string]interface{}{
 	PHONE_NUMBER:       getPhoner().PhoneNumber,
 	TOLL_FREE_NUMBER:   getPhoner().TollFreePhoneNumber,
 	E164_PHONE_NUMBER:  getPhoner().E164PhoneNumber,
+	TITLE_MALE:         getPerson().TitleMale,
+	TITLE_FEMALE:       getPerson().TitleFeMale,
+	FIRST_NAME_MALE:    getPerson().FirstNameMale,
+	FIRST_NAME_FEMALE:  getPerson().FirstNameFemale,
+	LAST_NAME:          getPerson().LastName,
+	NAME:               getPerson().Name,
+	UNIX_TIME:          getDateTimer().UnixTime,
+	DATE:               getDateTimer().Date,
+	TIME:               getDateTimer().Time,
+	MONTH_NAME:         getDateTimer().MonthName,
+	YEAR:               getDateTimer().Year,
+	DAY_OF_WEEK:        getDateTimer().DayOfWeek,
+	DAY_OF_MONTH:       getDateTimer().DayOfMonth,
+	TIMESTAMP:          getDateTimer().Timestamp,
+	CENTURY:            getDateTimer().Century,
+	TIMEZONE:           getDateTimer().TimeZone,
+	TIME_PERIOD:        getDateTimer().TimePeriod,
+	WORD:               getLorem().Word,
+	SENTENCE:           getLorem().Sentence,
+	SENTENCES:          getLorem().Sentences,
 }
 
 // Error when get fake from ptr
@@ -63,7 +105,7 @@ var ErrUnsupportedKind = "Unsupported kind: %s"
 var ErrValueNotPtr = "Not a pointer value"
 
 // Error when tag not supported
-var ErrTagNotSupported = "String Tag unsupported"
+var ErrTagNotSupported = "Tag unsupported"
 
 // Error when passed more arguments
 var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
@@ -209,6 +251,8 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return userDefinedString(v, tag)
 	case reflect.Slice:
 		return setSliceData(v)
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
+		return userDefinedInt(v, tag)
 	}
 	return nil
 }
@@ -228,6 +272,14 @@ func userDefinedString(v reflect.Value, tag string) error {
 	}
 	val = mapperTag[tag].(func() string)()
 	v.SetString(val)
+	return nil
+}
+
+func userDefinedInt(v reflect.Value, tag string) error {
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
+	}
+	mapperTag[tag].(func(v reflect.Value) error)(v)
 	return nil
 }
 
@@ -273,7 +325,6 @@ func randomStringNumber(n int) string {
 / Get three parameters , only first mandatory and the rest are optional
 / --- If only set one parameter :  This means the minimum number of digits and the total number
 / --- If only set two parameters : First this is min digit and second max digit and the total number the difference between them
-/ --- If only three parameters: the third argument set Max count Digit
 */
 func RandomInt(parameters ...int) (p []int, err error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
