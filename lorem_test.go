@@ -1,7 +1,7 @@
 package faker
 
 import (
-	"github.com/agoalofalife/faker/support/slice"
+	"github.com/bxcodec/faker/support/slice"
 	"strings"
 	"testing"
 )
