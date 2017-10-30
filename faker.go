@@ -325,6 +325,7 @@ func randomStringNumber(n int) string {
 / Get three parameters , only first mandatory and the rest are optional
 / --- If only set one parameter :  This means the minimum number of digits and the total number
 / --- If only set two parameters : First this is min digit and second max digit and the total number the difference between them
+/ --- If only three parameters: the third argument set Max count Digit
 */
 func RandomInt(parameters ...int) (p []int, err error) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
