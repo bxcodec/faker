@@ -30,7 +30,7 @@ var pay Render
 var cacheCreditCard string
 
 // Constructor
-func getPayment() Render {
+func GetPayment() Render {
 	mu.Lock()
 	defer mu.Unlock()
 

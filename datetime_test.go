@@ -14,7 +14,7 @@ func TestSetDateTimer(t *testing.T) {
 }
 
 func TestUnixTimeValueValid(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	var ref = struct {
 		some int64
 	}{
@@ -27,7 +27,7 @@ func TestUnixTimeValueValid(t *testing.T) {
 	}
 }
 func TestUnixTimeValueNotValid(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	var ref = struct {
 		some int
 	}{
@@ -41,7 +41,7 @@ func TestUnixTimeValueNotValid(t *testing.T) {
 }
 
 func TestDate(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(BaseDate, d.Date())
 
 	if err != nil {
@@ -50,7 +50,7 @@ func TestDate(t *testing.T) {
 }
 
 func TestTime(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(Time, d.Time())
 
 	if err != nil {
@@ -59,7 +59,7 @@ func TestTime(t *testing.T) {
 }
 
 func TestMonthName(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(Month, d.MonthName())
 	if err != nil {
 		t.Error("function Month need return valid month")
@@ -67,7 +67,7 @@ func TestMonthName(t *testing.T) {
 }
 
 func TestYear(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(Year, d.Year())
 	if err != nil {
 		t.Error("function Year need return valid year")
@@ -75,7 +75,7 @@ func TestYear(t *testing.T) {
 }
 
 func TestDayOfWeek(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(Day, d.DayOfWeek())
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
@@ -83,7 +83,7 @@ func TestDayOfWeek(t *testing.T) {
 }
 
 func TestDayOfMonth(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(DayOfMonth, d.DayOfMonth())
 	if err != nil {
 		t.Error("function DayOfMonth need return valid digit")
@@ -91,7 +91,7 @@ func TestDayOfMonth(t *testing.T) {
 }
 
 func TestTimestamp(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(fmt.Sprintf("%s %s", BaseDate, Time), d.Timestamp())
 	if err != nil {
 		t.Error("function Timestamp need return valid timestamp format")
@@ -99,7 +99,7 @@ func TestTimestamp(t *testing.T) {
 }
 
 func TestCentury(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 
 	if !slice.Contains(century, d.Century()) {
 		t.Error("Expected century from functuon Century")
@@ -107,14 +107,14 @@ func TestCentury(t *testing.T) {
 }
 
 func TestTimeZone(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	if !slice.Contains(timezones, d.TimeZone()) {
 		t.Error("Expected timezone from variable timezones")
 	}
 }
 
 func TestTimePeriod(t *testing.T) {
-	d := getDateTimer()
+	d := GetDateTimer()
 	_, err := time.Parse(TimePeriod, d.TimePeriod())
 	if err != nil {
 		t.Error("function TimePeriod need return valid period")

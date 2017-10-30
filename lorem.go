@@ -55,7 +55,7 @@ func SetDataFaker(d DataFaker) {
 }
 
 // Constructor
-func getLorem() DataFaker {
+func GetLorem() DataFaker {
 	mu.Lock()
 	defer mu.Unlock()
 
