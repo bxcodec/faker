@@ -11,7 +11,7 @@ import (
 var phone Phoner
 
 // Constructor
-func getPhoner() Phoner {
+func GetPhoner() Phoner {
 	mu.Lock()
 	defer mu.Unlock()
 

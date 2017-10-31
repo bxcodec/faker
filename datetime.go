@@ -619,7 +619,7 @@ type DateTimer interface {
 
 var date DateTimer
 
-func getDateTimer() DateTimer {
+func GetDateTimer() DateTimer {
 	mu.Lock()
 	defer mu.Unlock()
 

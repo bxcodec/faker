@@ -100,7 +100,7 @@ var lastNames = []string{
 }
 var randNameFlag = rand.Intn(100)
 
-func getPerson() Dowser {
+func GetPerson() Dowser {
 	mu.Lock()
 	defer mu.Unlock()
 

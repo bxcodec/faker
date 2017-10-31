@@ -8,7 +8,7 @@ import (
 var address Addresser
 
 // Constructor
-func getAddress() Addresser {
+func GetAddress() Addresser {
 	mu.Lock()
 	defer mu.Unlock()
 

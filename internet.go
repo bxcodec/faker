@@ -23,7 +23,7 @@ var urlFormats = []string{
 var internet Networker
 
 // Constructor
-func getNetworker() Networker {
+func GetNetworker() Networker {
 	mu.Lock()
 	defer mu.Unlock()
 
