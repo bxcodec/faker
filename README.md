@@ -134,7 +134,7 @@ type SomeStruct struct {
 
 func main() {
 
-  a= SomeStruct{}
+  a := SomeStruct{}
   err:= faker.FakeData(&a)
   if err!= nil {
     fmt.Println(err)
