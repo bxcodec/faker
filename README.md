@@ -17,7 +17,8 @@ Faker  will generate you a fake data based on your Struct.
 * [Support](#support)
 * [Getting Started](#getting-started)
 * [Example](#example)
-* [Contribution](#contributions)
+* [Limitation](#limitation)
+* [Contribution](#contribution)
 
 
 ## Support
@@ -222,7 +223,7 @@ type BStruct struct {
 
 func main() {
 
-  a= SomeStruct{}
+  a := SomeStruct{}
   err:= faker.FakeData(&a)
   if err!= nil {
     fmt.Println(err)
@@ -257,5 +258,20 @@ Support Only For :
 * bool []bool
 * string []string
 * float32 float64 []float32 []float64
-* Nested Struct Field for Non POINTER
+* Nested Struct Field
 * time.Time []time.Time
+
+## Limitation
+Unfortunately this library has some limitation
+* Not support for private field. Just make sure your field's struct is public. If not, it will throw panic error.
+* Not support for `interface{}` data type. How we can generate if we don't know what is the data type? 
+* Not support for `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type`. Still, it's about interface. We can give you something if we don't know what really you want. 
+
+## Contribution
+To contrib on this project, you can make a PR or just an issue.
+
+### Maintainer
+[![Iman Tumorang](https://github.com/bxcodec.png)](https://github.com/bxcodec)  **Iman Tumorang** <br>
+[![Ilya](https://github.com/agoalofalife.png)](https://github.com/agoalofalife) **Ilya** <br>
+
+
