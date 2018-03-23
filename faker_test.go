@@ -186,7 +186,7 @@ func TestFakerData(t *testing.T) {
 
 }
 
-func TestUnsupertedMapStringInterface(t *testing.T) {
+func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
 	}
