@@ -113,128 +113,130 @@ var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
-	return setData(reflect.ValueOf(a))
-}
 
-func setSliceData(v reflect.Value) error {
-	r := rand.New(src)
-	v = reflect.Indirect(v)
+	reflectType := reflect.TypeOf(a)
 
-	var err error
-
-	switch v.Type().String() {
-	case `[]bool`:
-		val1 := r.Intn(2) > 0
-		val2 := r.Intn(2) > 0
-		val3 := r.Intn(2) > 0
-		v.Set(reflect.ValueOf([]bool{val1, val2, val3}))
-	case `[]int`:
-		v.Set(reflect.ValueOf([]int{
-			int(r.Intn(100)),
-			int(r.Intn(100)),
-			int(r.Intn(100)),
-		}))
-	case `[]int8`:
-		v.Set(reflect.ValueOf([]int8{
-			int8(r.Intn(100)),
-			int8(r.Intn(100)),
-			int8(r.Intn(100)),
-		}))
-	case `[]int16`:
-		v.Set(reflect.ValueOf([]int16{
-			int16(r.Intn(100)),
-			int16(r.Intn(100)),
-			int16(r.Intn(100)),
-		}))
-	case `[]int32`:
-		v.Set(reflect.ValueOf([]int32{
-			int32(r.Intn(100)),
-			int32(r.Intn(100)),
-			int32(r.Intn(100)),
-		}))
-	case `[]int64`:
-		v.Set(reflect.ValueOf([]int64{
-			int64(r.Intn(100)),
-			int64(r.Intn(100)),
-			int64(r.Intn(100)),
-		}))
-	case `[]float32`:
-		v.Set(reflect.ValueOf([]float32{r.Float32(), r.Float32(), r.Float32()}))
-	case `[]float64`:
-		v.Set(reflect.ValueOf([]float64{r.Float64(), r.Float64(), r.Float64()}))
-	case `[]string`:
-		v.Set(reflect.ValueOf([]string{randomString(5), randomString(7)}))
-	case `[]time.Time`:
-		ft := time.Unix(r.Int63(), 0)
-		ft2 := time.Unix(r.Int63(), 0)
-		v.Set(reflect.ValueOf([]time.Time{ft, ft2}))
-
-	default:
-		err = errors.New("Slice of " + v.Type().String() + " Not Supported Yet")
-	}
-	return err
-}
-
-func setData(v reflect.Value) (err error) {
-	r := rand.New(src)
-
-	if v.Kind() != reflect.Ptr {
+	if reflectType.Kind() != reflect.Ptr {
 		return errors.New(ErrValueNotPtr)
 	}
 
-	v = reflect.Indirect(v)
-	switch v.Kind() {
+	finalValue, err := getValue(reflectType.Elem())
+	if err != nil {
+		return err
+	}
+	rval := reflect.ValueOf(a)
+	rval.Elem().Set(finalValue)
+	return nil
+}
 
-	case reflect.Int:
-		v.Set(reflect.ValueOf(int(r.Intn(100))))
-	case reflect.Int8:
-		v.Set(reflect.ValueOf(int8(r.Intn(100))))
-	case reflect.Int16:
-		v.Set(reflect.ValueOf(int16(r.Intn(100))))
-	case reflect.Int32:
-		v.Set(reflect.ValueOf(int32(r.Intn(100))))
-	case reflect.Int64:
-		v.Set(reflect.ValueOf(int64(r.Intn(100))))
-	case reflect.Float32:
-		v.Set(reflect.ValueOf(r.Float32()))
-	case reflect.Float64:
-		v.Set(reflect.ValueOf(r.Float64()))
-	case reflect.String:
-		v.SetString(randomString(25))
-	case reflect.Bool:
-		val := r.Intn(2) > 0
-		v.SetBool(val)
-	case reflect.Slice:
-		return setSliceData(v)
+func getValue(t reflect.Type) (reflect.Value, error) {
+	r := rand.New(src)
+	k := t.Kind()
+
+	switch k {
+	case reflect.Ptr:
+
+		v := reflect.New(t.Elem())
+		val, err := getValue(t.Elem())
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		v.Elem().Set(val)
+		return v, nil
 	case reflect.Struct:
 
-		if v.Type().String() == "time.Time" {
+		switch t.String() {
+		case "time.Time":
 			ft := time.Unix(r.Int63(), 0)
-			v.Set(reflect.ValueOf(ft))
-		} else {
-
-			t := v.Type()
+			return reflect.ValueOf(ft), nil
+		default:
+			v := reflect.New(t).Elem()
 			for i := 0; i < v.NumField(); i++ {
 				tag := t.Field(i).Tag.Get(tagName)
-
-				if tag != "" {
-					err = setDataWithTag(v.Field(i).Addr(), tag)
+				if tag == "" {
+					val, err := getValue(v.Field(i).Type())
+					if err != nil {
+						return reflect.Value{}, err
+					}
+					v.Field(i).Set(val)
 				} else {
-					err = setData(v.Field(i).Addr())
+					err := setDataWithTag(v.Field(i).Addr(), tag)
+					if err != nil {
+						return reflect.Value{}, err
+					}
 				}
 
-				if err != nil {
-					return err
-				}
 			}
+			return v, nil
 		}
-	case reflect.Ptr:
-		return fmt.Errorf(ErrUnsupportedKindPtr, v.Kind().String(), v.Type().String())
+
+	case reflect.String:
+		res := randomString(25)
+		return reflect.ValueOf(res), nil
+	case reflect.Array, reflect.Slice:
+		len := r.Intn(100)
+		v := reflect.MakeSlice(t, len, len)
+		for i := 0; i < v.Len(); i++ {
+			val, err := getValue(t.Elem())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			v.Index(i).Set(val)
+		}
+		return v, nil
+	case reflect.Int:
+		return reflect.ValueOf(int(r.Intn(100))), nil
+	case reflect.Int8:
+		return reflect.ValueOf(int8(r.Intn(100))), nil
+	case reflect.Int16:
+		return reflect.ValueOf(int16(r.Intn(100))), nil
+	case reflect.Int32:
+		return reflect.ValueOf(int32(r.Intn(100))), nil
+	case reflect.Int64:
+		return reflect.ValueOf(int64(r.Intn(100))), nil
+	case reflect.Float32:
+		return reflect.ValueOf(r.Float32()), nil
+	case reflect.Float64:
+		return reflect.ValueOf(r.Float64()), nil
+	case reflect.Bool:
+		val := r.Intn(2) > 0
+		return reflect.ValueOf(val), nil
+
+	case reflect.Uint:
+		return reflect.ValueOf(uint(r.Intn(100))), nil
+
+	case reflect.Uint8:
+		return reflect.ValueOf(uint8(r.Intn(100))), nil
+
+	case reflect.Uint16:
+		return reflect.ValueOf(uint16(r.Intn(100))), nil
+
+	case reflect.Uint32:
+		return reflect.ValueOf(uint32(r.Intn(100))), nil
+
+	case reflect.Uint64:
+		return reflect.ValueOf(uint64(r.Intn(100))), nil
+
+	case reflect.Map:
+		v := reflect.MakeMap(t)
+		len := r.Intn(100)
+		for i := 0; i < len; i++ {
+			key, err := getValue(t.Key())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			val, err := getValue(t.Elem())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			v.SetMapIndex(key, val)
+		}
+		return v, nil
 	default:
-		return fmt.Errorf(ErrUnsupportedKind, v.Kind().String())
+		err := fmt.Errorf("no support for kind %+v", t)
+		return reflect.Value{}, err
 	}
 
-	return nil
 }
 
 func setDataWithTag(v reflect.Value, tag string) error {
@@ -249,8 +251,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return userDefinedFloat(v, tag)
 	case reflect.String:
 		return userDefinedString(v, tag)
-	case reflect.Slice:
-		return setSliceData(v)
+
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
 		return userDefinedInt(v, tag)
 	}

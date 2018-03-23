@@ -9,13 +9,20 @@ import (
 )
 
 type SomeStruct struct {
-	Inta             int
-	Int8             int8
-	Int16            int16
-	Int32            int32
-	Int64            int64
-	Float32          float32
-	Float64          float64
+	Inta    int
+	Int8    int8
+	Int16   int16
+	Int32   int32
+	Int64   int64
+	Float32 float32
+	Float64 float64
+
+	UInta  uint
+	UInt8  uint8
+	UInt16 uint16
+	UInt32 uint32
+	UInt64 uint64
+
 	Latitude         float32 `faker:"lat"`
 	LATITUDE         float64 `faker:"lat"`
 	Long             float32 `faker:"long"`
@@ -39,6 +46,10 @@ type SomeStruct struct {
 	Struct           AStruct
 	Time             time.Time
 	Stime            []time.Time
+
+	MapStringString        map[string]string
+	MapStringStruct        map[string]AStruct
+	MapStringStructPointer map[string]*AStruct
 }
 type AStruct struct {
 	Number        int64
@@ -153,67 +164,70 @@ type NotTaggedStruct struct {
 func TestFakerData(t *testing.T) {
 	var a SomeStruct
 	err := FakeData(&a)
-	if err == nil {
-		fmt.Println("SomeStruct:")
-		fmt.Printf("%+v\n", a)
+
+	if err != nil {
+		t.Error("Expected NoError")
 	}
+	fmt.Println("SomeStruct:")
+	fmt.Printf("%+v\n", a)
+
 	var b TaggedStruct
 	err = FakeData(&b)
-	if err == nil {
-		fmt.Println("TaggedStruct:")
-		fmt.Printf("%+v\n", b)
 
-	} else {
-		fmt.Println(" ER ", err)
+	if err != nil {
+		t.Error("Expected NoError, but Got Err: ", err)
 	}
+
+	fmt.Println("TaggedStruct:")
+	fmt.Printf("%+v\n", b)
 
 	// Example Result :
 	// {Int:8906957488773767119 Int8:6 Int16:14 Int32:391219825 Int64:2374447092794071106 String:poraKzAxVbWVkMkpcZCcWlYMd Bool:false SString:[MehdV aVotHsi] SInt:[528955241289647236 7620047312653801973 2774096449863851732] SInt8:[122 -92 -92] SInt16:[15679 -19444 -30246] SInt32:[1146660378 946021799 852909987] SInt64:[6079203475736033758 6913211867841842836 3269201978513619428] SFloat32:[0.019562425 0.12729558 0.36450312] SFloat64:[0.7825838989890364 0.9732903338838912 0.8316541489234004] SBool:[true false true] Struct:{Number:7693944638490551161 Height:6513508020379591917}}
 
 }
 
-func TestSetSliceDataNotFoundType(t *testing.T) {
-	if "Slice of string Not Supported Yet" != setSliceData(reflect.ValueOf("")).Error() {
-		t.Error("Expected error from func setSliceData")
+func TestUnsuportedMapStringInterface(t *testing.T) {
+	type Sample struct {
+		Map map[string]interface{}
+	}
+	sample := new(Sample)
+	if err := FakeData(sample); err == nil {
+		t.Error("Expected Got Error. But got nil")
 	}
 }
 
 func TestSetDataIfArgumentNotPtr(t *testing.T) {
 	temp := struct{}{}
-	if "Not a pointer value" != setData(reflect.ValueOf(temp)).Error() {
+	if "Not a pointer value" != FakeData(temp).Error() {
 		t.Error("Expected in arguments not ptr")
-	}
-}
-
-func TestSetDataIfArgumentPtr(t *testing.T) {
-	temp := &struct{}{}
-	if "Unsupported kind: ptr Change Without using * (pointer) in Field of *struct {}" != setData(reflect.ValueOf(&temp)).Error() {
-		t.Error("Exptected error Unsupported kind ptr")
 	}
 }
 
 func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 	temp := func() {}
-	if "Unsupported kind: func" != setData(reflect.ValueOf(&temp)).Error() {
-		t.Error("Exptected error Unsupported kind")
+
+	if err := FakeData(temp); err == nil {
+		t.Error("Exptected error but got nil")
 	}
 }
 
 func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 	temp := &struct {
-		test string `faker:"test"`
+		Test string `faker:"test"`
 	}{}
-	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
-		t.Error("Exptected error Unsupported tag")
+	fmt.Printf("%+v ", temp)
+	if err := FakeData(temp); err == nil {
+		t.Error("Exptected error Unsupported tag, but got nil")
 	}
 }
 
 func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	temp := &struct {
-		test int `faker:"test"`
+		Test int `faker:"test"`
 	}{}
-	if ErrTagNotSupported != setData(reflect.ValueOf(temp)).Error() {
-		t.Error("Exptected error Unsupported tag")
+
+	if err := FakeData(temp); err == nil {
+		t.Error("Exptected error Unsupported tag, but got nil")
 	}
 }
 
@@ -289,4 +303,31 @@ func TestRandomIntOnlyError(t *testing.T) {
 	if err == nil && err.Error() == fmt.Errorf(ErrMoreArguments, len(arguments)).Error() {
 		t.Error("Expected error from function RandomInt")
 	}
+}
+
+type PointerStructA struct {
+	SomeStruct *SomeStruct
+}
+type PointerStructB struct {
+	PointA PointerStructA
+}
+
+type PointerC struct {
+	TaggedStruct *TaggedStruct
+}
+
+func TestStructPointer(t *testing.T) {
+	a := new(PointerStructB)
+	err := FakeData(a)
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a.PointA.SomeStruct)
+
+	tagged := new(PointerC)
+	err = FakeData(tagged)
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+	fmt.Printf(" tagged value: %+v , TaggedStruct Value: %+v  ", a, a.PointA.SomeStruct)
 }
