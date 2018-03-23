@@ -110,6 +110,8 @@ var ErrTagNotSupported = "Tag unsupported"
 // Error when passed more arguments
 var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 
+var ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
@@ -120,11 +122,17 @@ func FakeData(a interface{}) error {
 		return errors.New(ErrValueNotPtr)
 	}
 
+	if reflect.ValueOf(a).IsNil() {
+		return fmt.Errorf(ErrNotSupportedPointer, reflectType.Elem().String())
+	}
+
+	rval := reflect.ValueOf(a)
+
 	finalValue, err := getValue(reflectType.Elem())
 	if err != nil {
 		return err
 	}
-	rval := reflect.ValueOf(a)
+
 	rval.Elem().Set(finalValue)
 	return nil
 }

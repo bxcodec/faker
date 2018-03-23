@@ -322,7 +322,7 @@ func TestStructPointer(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a.PointA.SomeStruct)
+	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
 
 	tagged := new(PointerC)
 	err = FakeData(tagged)
