@@ -271,7 +271,7 @@ Unfortunately this library has some limitation
 To contrib on this project, you can make a PR or just an issue.
 
 ### Maintainer
-[![Iman Tumorang](https://github.com/bxcodec.png =230x230)](https://github.com/bxcodec)  **Iman Tumorang** <br>
-[![Ilya](https://github.com/agoalofalife.png =230x230)](https://github.com/agoalofalife) **Ilya** <br>
+<a href="https://github.com/bxcodec"  <img src="https://github.com/bxcodec.png" alt="Iman Tumorang" style="width: 230px;"/> **Iman Tumorang** </a> <br> 
+<a href="https://github.com/agoalofalife"  <img src="https://github.com/agoalofalife.png" alt="Ilya" style="width: 230px;"/> **Ilya** </a> <br> 
 
 
