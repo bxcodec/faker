@@ -155,7 +155,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 
 		switch t.String() {
 		case "time.Time":
-			ft := time.Unix(r.Int63(), 0)
+			ft := time.Now().Add(time.Duration(r.Int63()))
 			return reflect.ValueOf(ft), nil
 		default:
 			v := reflect.New(t).Elem()
