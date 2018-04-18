@@ -55,10 +55,9 @@ func (internet Internet) Email() string {
 	return randomString(7) + "@" + randomString(5) + "." + randomElementFromSliceString(tld)
 }
 func (internet Internet) MacAddress() string {
-	r := rand.New(src)
 	ip := make([]byte, 6)
 	for i := 0; i < 6; i++ {
-		ip[i] = byte(r.Intn(256))
+		ip[i] = byte(rand.Intn(256))
 	}
 
 	return net.HardwareAddr(ip).String()
@@ -79,20 +78,18 @@ func (internet Internet) UserName() string {
 	return randomString(7)
 }
 func (internet Internet) Ipv4() string {
-	r := rand.New(src)
 	size := 4
 	ip := make([]byte, size)
 	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
+		ip[i] = byte(rand.Intn(256))
 	}
 	return net.IP(ip).To4().String()
 }
 func (internet Internet) Ipv6() string {
-	r := rand.New(src)
 	size := 16
 	ip := make([]byte, size)
 	for i := 0; i < size; i++ {
-		ip[i] = byte(r.Intn(256))
+		ip[i] = byte(rand.Intn(256))
 	}
 	return net.IP(ip).To16().String()
 }

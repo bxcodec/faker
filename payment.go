@@ -54,7 +54,6 @@ type Payment struct{}
 
 func (p Payment) CreditCardType() string {
 	n := len(creditCards)
-	r := rand.New(src)
 	if cacheCreditCard != "" {
 		return cacheCreditCard
 	}
@@ -63,17 +62,16 @@ func (p Payment) CreditCardType() string {
 	for _, cc := range creditCards {
 		ccTypes = append(ccTypes, cc.ccType)
 	}
-	cacheCreditCard = ccTypes[r.Intn(n)]
+	cacheCreditCard = ccTypes[rand.Intn(n)]
 	return cacheCreditCard
 }
 
 // CreditCardNum generated credit card number according to the card number rules
 func (p Payment) CreditCardNumber() string {
-	r := rand.New(src)
 	ccType := strings.ToLower(p.CreditCardType())
 	cacheCreditCard = ccType
 	card := creditCards[ccType]
-	prefix := strconv.Itoa(card.prefixes[r.Intn(len(card.prefixes))])
+	prefix := strconv.Itoa(card.prefixes[rand.Intn(len(card.prefixes))])
 
 	num := prefix
 	digit := randomStringNumber(card.length - len(prefix))
