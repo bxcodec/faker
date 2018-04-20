@@ -31,9 +31,8 @@ type Addresser interface {
 type Address struct{}
 
 func (i Address) Latitude(v reflect.Value) error {
-	r := rand.New(src)
 	kind := v.Kind()
-	val := (r.Float32() * 180) - 90
+	val := (rand.Float32() * 180) - 90
 	if kind == reflect.Float32 {
 		v.Set(reflect.ValueOf(val))
 		return nil
@@ -44,9 +43,8 @@ func (i Address) Latitude(v reflect.Value) error {
 }
 
 func (i Address) Longitude(v reflect.Value) error {
-	r := rand.New(src)
 	kind := v.Kind()
-	val := (r.Float32() * 360) - 180
+	val := (rand.Float32() * 360) - 180
 
 	if kind == reflect.Float32 {
 		v.Set(reflect.ValueOf(val))

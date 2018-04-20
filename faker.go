@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-var src = rand.NewSource(time.Now().UnixNano())
 var mu = &sync.Mutex{}
 
 const (
@@ -112,6 +111,10 @@ var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 
 var ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
@@ -138,7 +141,6 @@ func FakeData(a interface{}) error {
 }
 
 func getValue(t reflect.Type) (reflect.Value, error) {
-	r := rand.New(src)
 	k := t.Kind()
 
 	switch k {
@@ -155,7 +157,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 
 		switch t.String() {
 		case "time.Time":
-			ft := time.Now().Add(time.Duration(r.Int63()))
+			ft := time.Now().Add(time.Duration(rand.Int63()))
 			return reflect.ValueOf(ft), nil
 		default:
 			v := reflect.New(t).Elem()
@@ -182,7 +184,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		res := randomString(25)
 		return reflect.ValueOf(res), nil
 	case reflect.Array, reflect.Slice:
-		len := r.Intn(100)
+		len := rand.Intn(100)
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
 			val, err := getValue(t.Elem())
@@ -193,41 +195,41 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		return v, nil
 	case reflect.Int:
-		return reflect.ValueOf(int(r.Intn(100))), nil
+		return reflect.ValueOf(int(rand.Intn(100))), nil
 	case reflect.Int8:
-		return reflect.ValueOf(int8(r.Intn(100))), nil
+		return reflect.ValueOf(int8(rand.Intn(100))), nil
 	case reflect.Int16:
-		return reflect.ValueOf(int16(r.Intn(100))), nil
+		return reflect.ValueOf(int16(rand.Intn(100))), nil
 	case reflect.Int32:
-		return reflect.ValueOf(int32(r.Intn(100))), nil
+		return reflect.ValueOf(int32(rand.Intn(100))), nil
 	case reflect.Int64:
-		return reflect.ValueOf(int64(r.Intn(100))), nil
+		return reflect.ValueOf(int64(rand.Intn(100))), nil
 	case reflect.Float32:
-		return reflect.ValueOf(r.Float32()), nil
+		return reflect.ValueOf(rand.Float32()), nil
 	case reflect.Float64:
-		return reflect.ValueOf(r.Float64()), nil
+		return reflect.ValueOf(rand.Float64()), nil
 	case reflect.Bool:
-		val := r.Intn(2) > 0
+		val := rand.Intn(2) > 0
 		return reflect.ValueOf(val), nil
 
 	case reflect.Uint:
-		return reflect.ValueOf(uint(r.Intn(100))), nil
+		return reflect.ValueOf(uint(rand.Intn(100))), nil
 
 	case reflect.Uint8:
-		return reflect.ValueOf(uint8(r.Intn(100))), nil
+		return reflect.ValueOf(uint8(rand.Intn(100))), nil
 
 	case reflect.Uint16:
-		return reflect.ValueOf(uint16(r.Intn(100))), nil
+		return reflect.ValueOf(uint16(rand.Intn(100))), nil
 
 	case reflect.Uint32:
-		return reflect.ValueOf(uint32(r.Intn(100))), nil
+		return reflect.ValueOf(uint32(rand.Intn(100))), nil
 
 	case reflect.Uint64:
-		return reflect.ValueOf(uint64(r.Intn(100))), nil
+		return reflect.ValueOf(uint64(rand.Intn(100))), nil
 
 	case reflect.Map:
 		v := reflect.MakeMap(t)
-		len := r.Intn(100)
+		len := rand.Intn(100)
 		for i := 0; i < len; i++ {
 			key, err := getValue(t.Key())
 			if err != nil {
@@ -294,9 +296,9 @@ func userDefinedInt(v reflect.Value, tag string) error {
 
 func randomString(n int) string {
 	b := make([]byte, n)
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
 		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
+			cache, remain = rand.Int63(), letterIdxMax
 		}
 		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
 			b[i] = letterBytes[idx]
@@ -315,9 +317,9 @@ func randomElementFromSliceString(s []string) string {
 }
 func randomStringNumber(n int) string {
 	b := make([]byte, n)
-	for i, cache, remain := n-1, src.Int63(), letterIdxMax; i >= 0; {
+	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
 		if remain == 0 {
-			cache, remain = src.Int63(), letterIdxMax
+			cache, remain = rand.Int63(), letterIdxMax
 		}
 		if idx := int(cache & letterIdxMask); idx < len(numberBytes) {
 			b[i] = numberBytes[idx]
