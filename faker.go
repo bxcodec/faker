@@ -111,6 +111,10 @@ var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 
 var ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 
+func init() {
+	rand.Seed(time.Now().UnixNano())
+}
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
