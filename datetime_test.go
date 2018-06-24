@@ -2,11 +2,13 @@ package faker
 
 import (
 	"fmt"
-	"github.com/bxcodec/faker/support/slice"
 	"log"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/bxcodec/faker/support/slice"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -80,6 +82,17 @@ func TestDayOfWeek(t *testing.T) {
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
 	}
+}
+
+func TestDayOfWeekReturnsDifferentValues(t *testing.T) {
+	dayMap := make(map[string]struct{})
+	iterations := 5 // sufficiently large to assure we don't randomly get the same value again
+	for i := 0; i < iterations; i++ {
+		day := GetDateTimer().DayOfWeek()
+		//t.Log(day)
+		dayMap[day] = struct{}{}
+	}
+	assert.True(t, len(dayMap) > 1)
 }
 
 func TestDayOfMonth(t *testing.T) {

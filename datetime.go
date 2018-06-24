@@ -593,12 +593,14 @@ var timezones = []string{
 	"Asia/Yekaterinburg",
 }
 
+// These example values must use the reference time "Mon Jan 2 15:04:05 MST 2006"
+// as described at https://gobyexample.com/time-formatting-parsing
 const (
 	BaseDate   = "2006-01-02"
 	Time       = "15:04:05"
 	Month      = "January"
 	Year       = "2006"
-	Day        = "Sunday"
+	Day        = "Monday"
 	DayOfMonth = "_2"
 	TimePeriod = "PM"
 )
