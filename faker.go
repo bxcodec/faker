@@ -168,6 +168,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 					if err != nil {
 						return reflect.Value{}, err
 					}
+					val = val.Convert(v.Field(i).Type())
 					v.Field(i).Set(val)
 				} else {
 					err := setDataWithTag(v.Field(i).Addr(), tag)
