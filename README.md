@@ -266,6 +266,7 @@ Unfortunately this library has some limitation
 * Not support for private field. Just make sure your field's struct is public. If not, it will throw panic error.
 * Not support for `interface{}` data type. How we can generate if we don't know what is the data type? 
 * Not support for `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type`. Still, it's about interface. We can't give you something if we don't know what really you want. 
+* Not fully support for custom type, but a few custom type already supported, still investigating how to do this in the correct ways. For now, if you use `faker`, it's safer not to use any custom type to avoid panic. 
 
 ## Contribution
 To contrib on this project, you can make a PR or just an issue.
