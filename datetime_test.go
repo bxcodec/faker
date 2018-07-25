@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/bxcodec/faker/support/slice"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -89,10 +88,18 @@ func TestDayOfWeekReturnsDifferentValues(t *testing.T) {
 	iterations := 5 // sufficiently large to assure we don't randomly get the same value again
 	for i := 0; i < iterations; i++ {
 		day := GetDateTimer().DayOfWeek()
-		//t.Log(day)
+		if _, ok := dayMap[day]; ok {
+			i--
+			continue
+		}
 		dayMap[day] = struct{}{}
+		t.Log(day) // Will print random and different day 5 times.
 	}
-	assert.True(t, len(dayMap) > 1)
+
+	if len(dayMap) < 1 {
+		t.Error("function need return at least one day item")
+	}
+
 }
 
 func TestDayOfMonth(t *testing.T) {

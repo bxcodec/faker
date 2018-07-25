@@ -331,3 +331,24 @@ func TestStructPointer(t *testing.T) {
 	}
 	fmt.Printf(" tagged value: %+v , TaggedStruct Value: %+v  ", a, a.PointA.SomeStruct)
 }
+
+type CustomString string
+type CustomInt int
+type CustomMap map[string]string
+type CustomPointerStruct PointerStructB
+type CustomTypeStruct struct {
+	CustomString        CustomString
+	CustomInt           CustomInt
+	CustomMap           CustomMap
+	CustomPointerStruct CustomPointerStruct
+}
+
+func TestCustomType(t *testing.T) {
+	a := new(CustomTypeStruct)
+	err := FakeData(a)
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
+
+}
