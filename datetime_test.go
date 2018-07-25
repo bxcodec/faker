@@ -97,7 +97,7 @@ func TestDayOfWeekReturnsDifferentValues(t *testing.T) {
 	}
 
 	if len(dayMap) < 1 {
-		t.Error("function need return at least on day")
+		t.Error("function need return at least one day item")
 	}
 
 }
