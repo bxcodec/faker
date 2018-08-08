@@ -8,6 +8,7 @@ import (
 type Dowser interface {
 	TitleMale() string
 	TitleFeMale() string
+	FirstName() string
 	FirstNameMale() string
 	FirstNameFemale() string
 	LastName() string
@@ -75,6 +76,9 @@ var firstNamesFemale = []string{
 	"Yadira", "Yasmeen", "Yasmin", "Yasmine", "Yazmin", "Yesenia", "Yessenia", "Yolanda", "Yoshiko", "Yvette", "Yvonne",
 	"Zaria", "Zelda", "Zella", "Zelma", "Zena", "Zetta", "Zita", "Zoe", "Zoey", "Zoie", "Zoila", "Zola", "Zora", "Zula",
 }
+
+var firstNames = append(firstNamesMale, firstNamesFemale...)
+
 var lastNames = []string{
 	"Abbott", "Abernathy", "Abshire", "Adams", "Altenwerth", "Anderson", "Ankunding", "Armstrong", "Auer", "Aufderhar",
 	"Bahringer", "Bailey", "Balistreri", "Barrows", "Bartell", "Bartoletti", "Barton", "Bashirian", "Batz", "Bauch", "Baumbach", "Bayer", "Beahan", "Beatty", "Bechtelar", "Becker", "Bednar", "Beer", "Beier", "Berge", "Bergnaum", "Bergstrom", "Bernhard", "Bernier", "Bins", "Blanda", "Blick", "Block", "Bode", "Boehm", "Bogan", "Bogisich", "Borer", "Bosco", "Botsford", "Boyer", "Boyle", "Bradtke", "Brakus", "Braun", "Breitenberg", "Brekke", "Brown", "Bruen", "Buckridge",
@@ -124,6 +128,10 @@ func (p Person) TitleMale() string {
 
 func (p Person) TitleFeMale() string {
 	return randomElementFromSliceString(titlesFemale)
+}
+
+func (p Person) FirstName() string {
+	return randomElementFromSliceString(firstNames)
 }
 
 func (p Person) FirstNameMale() string {

@@ -36,6 +36,7 @@ const (
 	E164_PHONE_NUMBER  = "e_164_phone_number"
 	TITLE_MALE         = "title_male"
 	TITLE_FEMALE       = "title_female"
+	FIRST_NAME         = "first_name"
 	FIRST_NAME_MALE    = "first_name_male"
 	FIRST_NAME_FEMALE  = "first_name_female"
 	LAST_NAME          = "last_name"
@@ -74,6 +75,7 @@ var mapperTag = map[string]interface{}{
 	E164_PHONE_NUMBER:  GetPhoner().E164PhoneNumber,
 	TITLE_MALE:         GetPerson().TitleMale,
 	TITLE_FEMALE:       GetPerson().TitleFeMale,
+	FIRST_NAME:         GetPerson().FirstName,
 	FIRST_NAME_MALE:    GetPerson().FirstNameMale,
 	FIRST_NAME_FEMALE:  GetPerson().FirstNameFemale,
 	LAST_NAME:          GetPerson().LastName,
