@@ -368,5 +368,5 @@ func TestUnexportedFieldStruct(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
+	fmt.Printf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
 }
