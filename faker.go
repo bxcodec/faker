@@ -164,6 +164,9 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		default:
 			v := reflect.New(t).Elem()
 			for i := 0; i < v.NumField(); i++ {
+				if !v.Field(i).CanSet() {
+					continue // to avoid panic to set on unexported field in struct
+				}
 				tag := t.Field(i).Tag.Get(tagName)
 				if tag == "" {
 					val, err := getValue(v.Field(i).Type())
