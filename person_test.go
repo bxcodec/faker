@@ -1,8 +1,9 @@
 package faker
 
 import (
-	"github.com/bxcodec/faker/support/slice"
 	"testing"
+
+	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestSetDowser(t *testing.T) {
@@ -34,6 +35,13 @@ func TestFirstNameFemale(t *testing.T) {
 	p := GetPerson()
 	if !slice.Contains(firstNamesFemale, p.FirstNameFemale()) {
 		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
+	}
+}
+
+func TestFirstName(t *testing.T) {
+	p := GetPerson()
+	if !slice.Contains(firstNames, p.FirstName()) {
+		t.Error("Expected value from either firstNamesMale or firstNamesFemale in function FirstName")
 	}
 }
 

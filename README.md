@@ -48,7 +48,7 @@ Supported tag:
 * IP Address (IPV4 IPV6 )
 * Password
 
- 
+
 **Payment :**
 * Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
 * Credit Card Number
@@ -64,6 +64,7 @@ Supported tag:
 **Person :**
 * Title male
 * Title female
+* FirstName
 * FirstName male
 * FirstName female
 * LastName
@@ -104,7 +105,7 @@ type SomeStruct struct {
  Email            string  `faker:"email"`
  IPV4             string  `faker:"ipv4"`
  IPV6             string  `faker:"ipv6"`
- Password         string  `faker:"password"` 
+ Password         string  `faker:"password"`
  PhoneNumber      string  `faker:"phone_number"`
  MacAddress       string  `faker:"mac_address"`
  Url              string  `faker:"url"`
@@ -113,6 +114,7 @@ type SomeStruct struct {
  E164PhoneNumber  string  `faker:"e_164_phone_number"`
  TitleMale        string  `faker:"title_male"`
  TitleFemale      string  `faker:"title_female"`
+ FirstName        string  `faker:"first_name"`
  FirstNameMale    string  `faker:"first_name_male"`
  FirstNameFemale  string  `faker:"first_name_female"`
  LastName         string  `faker:"last_name"`
@@ -158,6 +160,7 @@ func main() {
         E164PhoneNumber: +765101283947,
         TitleMale: Prof.,
         TitleFemale: Dr.,
+        FirstName: Benny,
         FirstNameMale: Charley,
         FirstNameFemale: Freeda,
         LastName: Runte,
@@ -254,7 +257,7 @@ BenchmarkFakerDataNOTTagged-4             500000              3049 ns/op        
 The Struct Field must PUBLIC.<br>
 Support Only For :
 * int  int8  int16  int32  int64
-* []int  []int8  []int16  []int32  []int64  
+* []int  []int8  []int16  []int32  []int64
 * bool []bool
 * string []string
 * float32 float64 []float32 []float64
@@ -264,15 +267,15 @@ Support Only For :
 ## Limitation
 Unfortunately this library has some limitation
 * Not support for private field. Just make sure your field's struct is public. If not, it will throw panic error.
-* Not support for `interface{}` data type. How we can generate if we don't know what is the data type? 
-* Not support for `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type`. Still, it's about interface. We can't give you something if we don't know what really you want. 
-* Not fully support for custom type, but a few custom type already supported, still investigating how to do this in the correct ways. For now, if you use `faker`, it's safer not to use any custom type to avoid panic. 
+* Not support for `interface{}` data type. How we can generate if we don't know what is the data type?
+* Not support for `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type`. Still, it's about interface. We can't give you something if we don't know what really you want.
+* Not fully support for custom type, but a few custom type already supported, still investigating how to do this in the correct ways. For now, if you use `faker`, it's safer not to use any custom type to avoid panic.
 
 ## Contribution
 To contrib on this project, you can make a PR or just an issue.
 
 ### Maintainer
-- <a href="https://github.com/bxcodec">  **Iman Tumorang** </a> <br> 
-- <a href="https://github.com/agoalofalife">  **Ilya** </a> <br> 
+- <a href="https://github.com/bxcodec">  **Iman Tumorang** </a> <br>
+- <a href="https://github.com/agoalofalife">  **Ilya** </a> <br>
 
 
