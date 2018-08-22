@@ -370,3 +370,23 @@ func TestUnexportedFieldStruct(t *testing.T) {
 	}
 	fmt.Printf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
 }
+
+func TestSkipField(t *testing.T) {
+	// This test is to ensure that the faker won't fill field with tag skip
+
+	a := struct {
+		ID              int
+		ShouldBeSkipped int `faker:"skip"`
+	}{}
+
+	err := FakeData(&a)
+
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+
+	if a.ShouldBeSkipped != 0 {
+		t.Error("Expected that field will be skipped")
+	}
+
+}
