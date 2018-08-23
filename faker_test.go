@@ -376,7 +376,7 @@ func TestSkipField(t *testing.T) {
 
 	a := struct {
 		ID              int
-		ShouldBeSkipped int `faker:"skip"`
+		ShouldBeSkipped int `faker:"-"`
 	}{}
 
 	err := FakeData(&a)

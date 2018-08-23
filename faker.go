@@ -55,6 +55,7 @@ const (
 	WORD               = "word"
 	SENTENCE           = "sentence"
 	SENTENCES          = "sentences"
+	SKIP               = "-"
 )
 
 var mapperTag = map[string]interface{}{
@@ -177,7 +178,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 					}
 					val = val.Convert(v.Field(i).Type())
 					v.Field(i).Set(val)
-				case "skip":
+				case SKIP:
 					continue
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tag)
