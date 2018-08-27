@@ -55,6 +55,7 @@ const (
 	WORD               = "word"
 	SENTENCE           = "sentence"
 	SENTENCES          = "sentences"
+	SKIP               = "-"
 )
 
 var mapperTag = map[string]interface{}{
@@ -168,14 +169,18 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 					continue // to avoid panic to set on unexported field in struct
 				}
 				tag := t.Field(i).Tag.Get(tagName)
-				if tag == "" {
+
+				switch tag {
+				case "":
 					val, err := getValue(v.Field(i).Type())
 					if err != nil {
 						return reflect.Value{}, err
 					}
 					val = val.Convert(v.Field(i).Type())
 					v.Field(i).Set(val)
-				} else {
+				case SKIP:
+					continue
+				default:
 					err := setDataWithTag(v.Field(i).Addr(), tag)
 					if err != nil {
 						return reflect.Value{}, err
