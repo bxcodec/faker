@@ -109,6 +109,9 @@ var ErrValueNotPtr = "Not a pointer value"
 // Error when tag not supported
 var ErrTagNotSupported = "Tag unsupported"
 
+// ErrTagAlreadyExists - error when tag exists and call AddProvider
+var ErrTagAlreadyExists = "Tag exists"
+
 // Error when passed more arguments
 var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
 
@@ -140,6 +143,17 @@ func FakeData(a interface{}) error {
 	}
 
 	rval.Elem().Set(finalValue)
+	return nil
+}
+
+// AddProvider extend faker with tag to generate fake data with specified custom algoritm
+func AddProvider(tag string, provider interface{}) error {
+	if _, ok := mapperTag[tag]; ok {
+		return errors.New(ErrTagAlreadyExists)
+	}
+
+	mapperTag[tag] = provider
+
 	return nil
 }
 
