@@ -323,7 +323,6 @@ func randomString(n int) string {
 }
 
 func randomElementFromSliceString(s []string) string {
-	rand.Seed(time.Now().Unix())
 	return s[rand.Int()%len(s)]
 }
 func randomStringNumber(n int) string {
