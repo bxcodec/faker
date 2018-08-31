@@ -349,18 +349,16 @@ func randomStringNumber(n int) string {
 / --- If only three parameters: the third argument set Max count Digit
 */
 func RandomInt(parameters ...int) (p []int, err error) {
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-
 	switch len(parameters) {
 	case 1:
 		minCount := parameters[0]
-		p = r.Perm(minCount)
+		p = rand.Perm(minCount)
 		for i := range p {
 			p[i] += minCount
 		}
 	case 2:
 		minDigit, maxDigit := parameters[0], parameters[1]
-		p = r.Perm(maxDigit - minDigit + 1)
+		p = rand.Perm(maxDigit - minDigit + 1)
 
 		for i := range p {
 			p[i] += minDigit
