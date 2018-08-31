@@ -43,7 +43,7 @@ Supported tag:
 * Email
 * Mac address
 * Domain name
-* Url
+* URL
 * UserName
 * IP Address (IPV4 IPV6 )
 * Password
@@ -108,7 +108,7 @@ type SomeStruct struct {
  Password         string  `faker:"password"`
  PhoneNumber      string  `faker:"phone_number"`
  MacAddress       string  `faker:"mac_address"`
- Url              string  `faker:"url"`
+ URL              string  `faker:"url"`
  UserName         string  `faker:"username"`
  ToolFreeNumber   string  `faker:"tool_free_number"`
  E164PhoneNumber  string  `faker:"e_164_phone_number"`
@@ -137,7 +137,7 @@ type SomeStruct struct {
 
 func main() {
 
-  a= SomeStruct{}
+  a := SomeStruct{}
   err:= faker.FakeData(&a)
   if err!= nil {
     fmt.Println(err)
@@ -154,7 +154,7 @@ func main() {
 	    Password: FhOSWpnzXwxxnCTlZJcZeBTUeRaVidThUdntQryyjNiAFwbyCe,
         PhoneNumber: 865-321-1047,
         MacAddress: 46:77:6f:bb:d0:fc,
-        Url: https://sFUBEIj.info/kYvcpYL.html,
+        URL: https://sFUBEIj.info/kYvcpYL.html,
         UserName: VwrVhzZ,
         ToolFreeNumber: (777) 372-148965,
         E164PhoneNumber: +765101283947,
