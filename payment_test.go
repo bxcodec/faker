@@ -16,6 +16,6 @@ func TestCreditCardNumber(t *testing.T) {
 	GetPayment().CreditCardNumber()
 }
 
-func TestSetPayment(t *testing.T)  {
+func TestSetPayment(t *testing.T) {
 	SetPayment(Payment{})
 }

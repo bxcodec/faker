@@ -76,7 +76,7 @@ type TaggedStruct struct {
 	Password         string  `faker:"password"`
 	PhoneNumber      string  `faker:"phone_number"`
 	MacAddress       string  `faker:"mac_address"`
-	Url              string  `faker:"url"`
+	URL              string  `faker:"url"`
 	UserName         string  `faker:"username"`
 	ToolFreeNumber   string  `faker:"tool_free_number"`
 	E164PhoneNumber  string  `faker:"e_164_phone_number"`
@@ -100,7 +100,7 @@ type TaggedStruct struct {
 	TimePeriod       string  `faker:"time_period"`
 	Word             string  `faker:"word"`
 	Sentence         string  `faker:"sentence"`
-	Sentences        string  `faker:"sentences"`
+	Paragraph        string  `faker:"paragraph"`
 }
 
 func (t TaggedStruct) String() string {
@@ -115,7 +115,7 @@ func (t TaggedStruct) String() string {
 	Password: %s,
 	PhoneNumber: %s,
 	MacAddress: %s,
-	Url: %s,
+	URL: %s,
 	UserName: %s,
 	ToolFreeNumber: %s,
 	E164PhoneNumber: %s,
@@ -139,17 +139,17 @@ func (t TaggedStruct) String() string {
 	TimePeriod: %s,
 	Word: %s,
 	Sentence: %s,
-	Sentences: %s,
+	Paragraph: %s,
 }`, t.Latitude, t.Long, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
-		t.Url, t.UserName, t.ToolFreeNumber,
+		t.URL, t.UserName, t.ToolFreeNumber,
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
 		t.FirstName, t.FirstNameMale, t.FirstNameFemale, t.LastName,
 		t.Name, t.UnixTime, t.Date,
 		t.Time, t.MonthName, t.Year, t.DayOfWeek,
 		t.DayOfMonth, t.Timestamp, t.Century, t.TimeZone,
-		t.TimePeriod, t.Word, t.Sentence, t.Sentences,
+		t.TimePeriod, t.Word, t.Sentence, t.Paragraph,
 	)
 }
 
@@ -388,6 +388,7 @@ func TestSkipField(t *testing.T) {
 	if a.ShouldBeSkipped != 0 {
 		t.Error("Expected that field will be skipped")
 	}
+
 }
 
 func TestExtend(t *testing.T) {

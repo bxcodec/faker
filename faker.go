@@ -13,109 +13,108 @@ import (
 
 var mu = &sync.Mutex{}
 
+// Supported tags
 const (
-	letterIdxBits      = 6                    // 6 bits to represent a letter index
-	letterIdxMask      = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	tagName            = "faker"
-	Email              = "email"
-	MacAddress         = "mac_address"
-	DomainName         = "domain_name"
-	UserName           = "username"
-	Url                = "url"
-	IPV4               = "ipv4"
-	IPV6               = "ipv6"
-	PASSWORD           = "password"
-	LATITUDE           = "lat"
-	LONGITUDE          = "long"
-	CREDIT_CARD_NUMBER = "cc_number"
-	CREDIT_CARD_TYPE   = "cc_type"
-	PHONE_NUMBER       = "phone_number"
-	TOLL_FREE_NUMBER   = "tool_free_number"
-	E164_PHONE_NUMBER  = "e_164_phone_number"
-	TITLE_MALE         = "title_male"
-	TITLE_FEMALE       = "title_female"
-	FIRST_NAME         = "first_name"
-	FIRST_NAME_MALE    = "first_name_male"
-	FIRST_NAME_FEMALE  = "first_name_female"
-	LAST_NAME          = "last_name"
-	NAME               = "name"
-	UNIX_TIME          = "unix_time"
-	DATE               = "date"
-	TIME               = "time"
-	MONTH_NAME         = "month_name"
-	YEAR               = "year"
-	DAY_OF_WEEK        = "day_of_week"
-	DAY_OF_MONTH       = "day_of_month"
-	TIMESTAMP          = "timestamp"
-	CENTURY            = "century"
-	TIMEZONE           = "timezone"
-	TIME_PERIOD        = "time_period"
-	WORD               = "word"
-	SENTENCE           = "sentence"
-	SENTENCES          = "sentences"
-	SKIP               = "-"
+	letterIdxBits    = 6                    // 6 bits to represent a letter index
+	letterIdxMask    = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax     = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterBytes      = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	tagName          = "faker"
+	Email            = "email"
+	MacAddress       = "mac_address"
+	DomainName       = "domain_name"
+	UserName         = "username"
+	URL              = "url"
+	IPV4             = "ipv4"
+	IPV6             = "ipv6"
+	PASSWORD         = "password"
+	LATITUDE         = "lat"
+	LONGITUDE        = "long"
+	CreditCardNumber = "cc_number"
+	CreditCardType   = "cc_type"
+	PhoneNumber      = "phone_number"
+	TollFreeNumber   = "tool_free_number"
+	E164PhoneNumber  = "e_164_phone_number"
+	TitleMale        = "title_male"
+	TitleFemale      = "title_female"
+	FirstName        = "first_name"
+	FirstNameMale    = "first_name_male"
+	FirstNameFemale  = "first_name_female"
+	LastName         = "last_name"
+	NAME             = "name"
+	UnixTime         = "unix_time"
+	DATE             = "date"
+	TIME             = "time"
+	MonthName        = "month_name"
+	YEAR             = "year"
+	DayOfWeek        = "day_of_week"
+	DayOfMonthTag    = "day_of_month"
+	TIMESTAMP        = "timestamp"
+	CENTURY          = "century"
+	TIMEZONE         = "timezone"
+	TimePeriodTag    = "time_period"
+	WORD             = "word"
+	SENTENCE         = "sentence"
+	PARAGRAPH        = "paragraph"
+	SKIP             = "-"
 )
 
 var mapperTag = map[string]interface{}{
-	Email:              GetNetworker().Email,
-	MacAddress:         GetNetworker().MacAddress,
-	DomainName:         GetNetworker().DomainName,
-	Url:                GetNetworker().Url,
-	UserName:           GetNetworker().UserName,
-	IPV4:               GetNetworker().Ipv4,
-	IPV6:               GetNetworker().Ipv6,
-	PASSWORD:           GetNetworker().Password,
-	CREDIT_CARD_TYPE:   GetPayment().CreditCardType,
-	CREDIT_CARD_NUMBER: GetPayment().CreditCardNumber,
-	LATITUDE:           GetAddress().Latitude,
-	LONGITUDE:          GetAddress().Longitude,
-	PHONE_NUMBER:       GetPhoner().PhoneNumber,
-	TOLL_FREE_NUMBER:   GetPhoner().TollFreePhoneNumber,
-	E164_PHONE_NUMBER:  GetPhoner().E164PhoneNumber,
-	TITLE_MALE:         GetPerson().TitleMale,
-	TITLE_FEMALE:       GetPerson().TitleFeMale,
-	FIRST_NAME:         GetPerson().FirstName,
-	FIRST_NAME_MALE:    GetPerson().FirstNameMale,
-	FIRST_NAME_FEMALE:  GetPerson().FirstNameFemale,
-	LAST_NAME:          GetPerson().LastName,
-	NAME:               GetPerson().Name,
-	UNIX_TIME:          GetDateTimer().UnixTime,
-	DATE:               GetDateTimer().Date,
-	TIME:               GetDateTimer().Time,
-	MONTH_NAME:         GetDateTimer().MonthName,
-	YEAR:               GetDateTimer().Year,
-	DAY_OF_WEEK:        GetDateTimer().DayOfWeek,
-	DAY_OF_MONTH:       GetDateTimer().DayOfMonth,
-	TIMESTAMP:          GetDateTimer().Timestamp,
-	CENTURY:            GetDateTimer().Century,
-	TIMEZONE:           GetDateTimer().TimeZone,
-	TIME_PERIOD:        GetDateTimer().TimePeriod,
-	WORD:               GetLorem().Word,
-	SENTENCE:           GetLorem().Sentence,
-	SENTENCES:          GetLorem().Sentences,
+	Email:            GetNetworker().Email,
+	MacAddress:       GetNetworker().MacAddress,
+	DomainName:       GetNetworker().DomainName,
+	URL:              GetNetworker().URL,
+	UserName:         GetNetworker().UserName,
+	IPV4:             GetNetworker().IPv4,
+	IPV6:             GetNetworker().IPv6,
+	PASSWORD:         GetNetworker().Password,
+	CreditCardType:   GetPayment().CreditCardType,
+	CreditCardNumber: GetPayment().CreditCardNumber,
+	LATITUDE:         GetAddress().Latitude,
+	LONGITUDE:        GetAddress().Longitude,
+	PhoneNumber:      GetPhoner().PhoneNumber,
+	TollFreeNumber:   GetPhoner().TollFreePhoneNumber,
+	E164PhoneNumber:  GetPhoner().E164PhoneNumber,
+	TitleMale:        GetPerson().TitleMale,
+	TitleFemale:      GetPerson().TitleFeMale,
+	FirstName:        GetPerson().FirstName,
+	FirstNameMale:    GetPerson().FirstNameMale,
+	FirstNameFemale:  GetPerson().FirstNameFemale,
+	LastName:         GetPerson().LastName,
+	NAME:             GetPerson().Name,
+	UnixTime:         GetDateTimer().UnixTime,
+	DATE:             GetDateTimer().Date,
+	TIME:             GetDateTimer().Time,
+	MonthName:        GetDateTimer().MonthName,
+	YEAR:             GetDateTimer().Year,
+	DayOfWeek:        GetDateTimer().DayOfWeek,
+	DayOfMonthTag:    GetDateTimer().DayOfMonth,
+	TIMESTAMP:        GetDateTimer().Timestamp,
+	CENTURY:          GetDateTimer().Century,
+	TIMEZONE:         GetDateTimer().TimeZone,
+	TimePeriodTag:    GetDateTimer().TimePeriod,
+	WORD:             GetLorem().Word,
+	SENTENCE:         GetLorem().Sentence,
+	PARAGRAPH:        GetLorem().Paragraph,
 }
 
-// Error when get fake from ptr
-var ErrUnsupportedKindPtr = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
-
-// Error when pass unsupported kind
-var ErrUnsupportedKind = "Unsupported kind: %s"
-
-// Error when value  is not pointer
-var ErrValueNotPtr = "Not a pointer value"
-
-// Error when tag not supported
-var ErrTagNotSupported = "Tag unsupported"
-
-// ErrTagAlreadyExists - error when tag exists and call AddProvider
-var ErrTagAlreadyExists = "Tag exists"
-
-// Error when passed more arguments
-var ErrMoreArguments = "Passed more arguments than is possible : (%d)"
-
-var ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
+// Generic Error Messages for tags
+// 		ErrUnsupportedKindPtr: Error when get fake from ptr
+// 		ErrUnsupportedKind: Error on passing unsupported kind
+// 		ErrValueNotPtr: Error when value is not pointer
+// 		ErrTagNotSupported: Error when tag is not supported
+//		ErrTagAlreadyExists: Error when tag exists and call AddProvider
+// 		ErrMoreArguments: Error on passing more arguments
+// 		ErrNotSupportedPointer: Error when passing unsupported pointer
+var (
+	ErrUnsupportedKindPtr  = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
+	ErrUnsupportedKind     = "Unsupported kind: %s"
+	ErrValueNotPtr         = "Not a pointer value"
+	ErrTagNotSupported     = "Tag unsupported"
+	ErrTagAlreadyExists    = "Tag exists"
+	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
+	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
+)
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -356,12 +355,10 @@ func randomStringNumber(n int) string {
 	return string(b)
 }
 
-/**
-/ Get three parameters , only first mandatory and the rest are optional
-/ --- If only set one parameter :  This means the minimum number of digits and the total number
-/ --- If only set two parameters : First this is min digit and second max digit and the total number the difference between them
-/ --- If only three parameters: the third argument set Max count Digit
-*/
+// RandomInt Get three parameters , only first mandatory and the rest are optional
+// 		If only set one parameter :  This means the minimum number of digits and the total number
+// 		If only set two parameters : First this is min digit and second max digit and the total number the difference between them
+// 		If only three parameters: the third argument set Max count Digit
 func RandomInt(parameters ...int) (p []int, err error) {
 	switch len(parameters) {
 	case 1:

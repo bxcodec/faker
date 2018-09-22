@@ -10,6 +10,7 @@ const (
 	numberBytes = "0123456789"
 )
 
+// creditCard struct
 type creditCard struct {
 	ccType   string
 	length   int
@@ -25,11 +26,9 @@ var creditCards = map[string]creditCard{
 
 var pay Render
 
-// CreditCardType returns one of the following credit values:
-// VISA, MasterCard, American Express and Discover
 var cacheCreditCard string
 
-// Constructor
+// GetPayment returns a new Render interface of Payment struct
 func GetPayment() Render {
 	mu.Lock()
 	defer mu.Unlock()
@@ -40,18 +39,22 @@ func GetPayment() Render {
 	return pay
 }
 
-// this set custom Network
+// SetPayment set custom Network
 func SetPayment(p Render) {
 	pay = p
 }
 
+// Render contains Whole Random Credit Card Generators with their types
 type Render interface {
 	CreditCardType() string
 	CreditCardNumber() string
 }
 
+// Payment struct
 type Payment struct{}
 
+// CreditCardType returns one of the following credit values:
+// VISA, MasterCard, American Express and Discover
 func (p Payment) CreditCardType() string {
 	n := len(creditCards)
 	if cacheCreditCard != "" {
@@ -66,7 +69,7 @@ func (p Payment) CreditCardType() string {
 	return cacheCreditCard
 }
 
-// CreditCardNum generated credit card number according to the card number rules
+// CreditCardNumber generated credit card number according to the card number rules
 func (p Payment) CreditCardNumber() string {
 	ccType := strings.ToLower(p.CreditCardType())
 	cacheCreditCard = ccType
@@ -79,5 +82,3 @@ func (p Payment) CreditCardNumber() string {
 	num += digit
 	return num
 }
-
-

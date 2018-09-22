@@ -1,9 +1,10 @@
 package faker
 
 import (
-	"github.com/bxcodec/faker/support/slice"
 	"strings"
 	"testing"
+
+	"github.com/bxcodec/faker/support/slice"
 )
 
 func TestDataFaker(t *testing.T) {
@@ -23,9 +24,9 @@ func TestSentence(t *testing.T) {
 	}
 }
 
-func TestSentences(t *testing.T) {
-	s := GetLorem().Sentences()
+func TestParagraph(t *testing.T) {
+	s := GetLorem().Paragraph()
 	if s == "" || !strings.HasSuffix(s, ".") {
-		t.Error("Expected sentences")
+		t.Error("Expected paragraph")
 	}
 }
