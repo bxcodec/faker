@@ -71,7 +71,7 @@ func (p Price) Amount(v reflect.Value) error {
 	kind := v.Kind()
 	val := precision(rand.Float64()*math.Pow10(rand.Intn(8)), rand.Intn(2)+1)
 	if kind == reflect.Float32 {
-		v.Set(reflect.ValueOf(float64(val)))
+		v.Set(reflect.ValueOf(float32(val)))
 		return nil
 	}
 	v.Set(reflect.ValueOf(val))

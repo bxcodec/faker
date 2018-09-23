@@ -105,7 +105,7 @@ type TaggedStruct struct {
 	Sentence           string  `faker:"sentence"`
 	Paragraph          string  `faker:"paragraph"`
 	Currency           string  `faker:"currency"`
-	Amount             float64 `faker:"amount"`
+	Amount             float32 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
 }
 
