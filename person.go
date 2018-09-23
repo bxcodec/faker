@@ -5,7 +5,7 @@ import (
 	"math/rand"
 )
 
-// Dowser provides interfaces to provide random logical Names with their initials
+// Dowser provides interfaces to generate random logical Names with their initials
 type Dowser interface {
 	TitleMale() string
 	TitleFeMale() string

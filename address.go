@@ -18,7 +18,7 @@ func GetAddress() Addresser {
 	return address
 }
 
-// SetAddress set custom Address
+// SetAddress sets custom Address
 func SetAddress(net Addresser) {
 	address = net
 }

@@ -23,29 +23,32 @@ type SomeStruct struct {
 	UInt32 uint32
 	UInt64 uint64
 
-	Latitude         float32 `faker:"lat"`
-	LATITUDE         float64 `faker:"lat"`
-	Long             float32 `faker:"long"`
-	LONG             float64 `faker:"long"`
-	String           string
-	CreditCardType   string `faker:"cc_type"`
-	CreditCardNumber string `faker:"cc_number"`
-	Email            string `faker:"email"`
-	IPV4             string `faker:"ipv4"`
-	IPV6             string `faker:"ipv6"`
-	Bool             bool
-	SString          []string
-	SInt             []int
-	SInt8            []int8
-	SInt16           []int16
-	SInt32           []int32
-	SInt64           []int64
-	SFloat32         []float32
-	SFloat64         []float64
-	SBool            []bool
-	Struct           AStruct
-	Time             time.Time
-	Stime            []time.Time
+	Latitude           float32 `faker:"lat"`
+	LATITUDE           float64 `faker:"lat"`
+	Long               float32 `faker:"long"`
+	LONG               float64 `faker:"long"`
+	String             string
+	CreditCardType     string `faker:"cc_type"`
+	CreditCardNumber   string `faker:"cc_number"`
+	Email              string `faker:"email"`
+	IPV4               string `faker:"ipv4"`
+	IPV6               string `faker:"ipv6"`
+	Bool               bool
+	SString            []string
+	SInt               []int
+	SInt8              []int8
+	SInt16             []int16
+	SInt32             []int32
+	SInt64             []int64
+	SFloat32           []float32
+	SFloat64           []float64
+	SBool              []bool
+	Struct             AStruct
+	Time               time.Time
+	Stime              []time.Time
+	Currency           string  `faker:"currency"`
+	Amount             float64 `faker:"amount"`
+	AmountWithCurrency string  `faker:"amount_with_currency"`
 
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
@@ -66,41 +69,44 @@ type CStruct struct {
 }
 
 type TaggedStruct struct {
-	Latitude         float32 `faker:"lat"`
-	Long             float32 `faker:"long"`
-	CreditCardNumber string  `faker:"cc_number"`
-	CreditCardType   string  `faker:"cc_type"`
-	Email            string  `faker:"email"`
-	IPV4             string  `faker:"ipv4"`
-	IPV6             string  `faker:"ipv6"`
-	Password         string  `faker:"password"`
-	PhoneNumber      string  `faker:"phone_number"`
-	MacAddress       string  `faker:"mac_address"`
-	URL              string  `faker:"url"`
-	UserName         string  `faker:"username"`
-	ToolFreeNumber   string  `faker:"tool_free_number"`
-	E164PhoneNumber  string  `faker:"e_164_phone_number"`
-	TitleMale        string  `faker:"title_male"`
-	TitleFemale      string  `faker:"title_female"`
-	FirstName        string  `faker:"first_name"`
-	FirstNameMale    string  `faker:"first_name_male"`
-	FirstNameFemale  string  `faker:"first_name_female"`
-	LastName         string  `faker:"last_name"`
-	Name             string  `faker:"name"`
-	UnixTime         int64   `faker:"unix_time"`
-	Date             string  `faker:"date"`
-	Time             string  `faker:"time"`
-	MonthName        string  `faker:"month_name"`
-	Year             string  `faker:"year"`
-	DayOfWeek        string  `faker:"day_of_week"`
-	DayOfMonth       string  `faker:"day_of_month"`
-	Timestamp        string  `faker:"timestamp"`
-	Century          string  `faker:"century"`
-	TimeZone         string  `faker:"timezone"`
-	TimePeriod       string  `faker:"time_period"`
-	Word             string  `faker:"word"`
-	Sentence         string  `faker:"sentence"`
-	Paragraph        string  `faker:"paragraph"`
+	Latitude           float32 `faker:"lat"`
+	Longitude          float32 `faker:"long"`
+	CreditCardNumber   string  `faker:"cc_number"`
+	CreditCardType     string  `faker:"cc_type"`
+	Email              string  `faker:"email"`
+	IPV4               string  `faker:"ipv4"`
+	IPV6               string  `faker:"ipv6"`
+	Password           string  `faker:"password"`
+	PhoneNumber        string  `faker:"phone_number"`
+	MacAddress         string  `faker:"mac_address"`
+	URL                string  `faker:"url"`
+	UserName           string  `faker:"username"`
+	ToolFreeNumber     string  `faker:"tool_free_number"`
+	E164PhoneNumber    string  `faker:"e_164_phone_number"`
+	TitleMale          string  `faker:"title_male"`
+	TitleFemale        string  `faker:"title_female"`
+	FirstName          string  `faker:"first_name"`
+	FirstNameMale      string  `faker:"first_name_male"`
+	FirstNameFemale    string  `faker:"first_name_female"`
+	LastName           string  `faker:"last_name"`
+	Name               string  `faker:"name"`
+	UnixTime           int64   `faker:"unix_time"`
+	Date               string  `faker:"date"`
+	Time               string  `faker:"time"`
+	MonthName          string  `faker:"month_name"`
+	Year               string  `faker:"year"`
+	DayOfWeek          string  `faker:"day_of_week"`
+	DayOfMonth         string  `faker:"day_of_month"`
+	Timestamp          string  `faker:"timestamp"`
+	Century            string  `faker:"century"`
+	TimeZone           string  `faker:"timezone"`
+	TimePeriod         string  `faker:"time_period"`
+	Word               string  `faker:"word"`
+	Sentence           string  `faker:"sentence"`
+	Paragraph          string  `faker:"paragraph"`
+	Currency           string  `faker:"currency"`
+	Amount             float64 `faker:"amount"`
+	AmountWithCurrency string  `faker:"amount_with_currency"`
 }
 
 func (t TaggedStruct) String() string {
@@ -140,7 +146,10 @@ func (t TaggedStruct) String() string {
 	Word: %s,
 	Sentence: %s,
 	Paragraph: %s,
-}`, t.Latitude, t.Long, t.CreditCardNumber,
+	Currency: %s,
+	Amount: %f,
+	AmountWithCurrency: %s,
+}`, t.Latitude, t.Longitude, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
 		t.URL, t.UserName, t.ToolFreeNumber,
@@ -150,6 +159,7 @@ func (t TaggedStruct) String() string {
 		t.Time, t.MonthName, t.Year, t.DayOfWeek,
 		t.DayOfMonth, t.Timestamp, t.Century, t.TimeZone,
 		t.TimePeriod, t.Word, t.Sentence, t.Paragraph,
+		t.Currency, t.Amount, t.AmountWithCurrency,
 	)
 }
 

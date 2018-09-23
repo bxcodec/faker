@@ -88,6 +88,11 @@ Supported tag:
 * Sentence
 * Paragraph
 
+**Price :**
+* Currency
+* Amount
+* Amount with Currency
+
 ```go
 
 package main
@@ -100,41 +105,44 @@ import (
 
 // SomeStruct ...
 type SomeStruct struct {
-	Latitude         float32 `faker:"lat"`
-	Longitude        float32 `faker:"long"`
-	CreditCardType   string  `faker:"cc_type"`
-	CreditCardNumber string  `faker:"cc_number"`
-	Email            string  `faker:"email"`
-	IPV4             string  `faker:"ipv4"`
-	IPV6             string  `faker:"ipv6"`
-	Password         string  `faker:"password"`
-	PhoneNumber      string  `faker:"phone_number"`
-	MacAddress       string  `faker:"mac_address"`
-	URL              string  `faker:"url"`
-	UserName         string  `faker:"username"`
-	ToolFreeNumber   string  `faker:"tool_free_number"`
-	E164PhoneNumber  string  `faker:"e_164_phone_number"`
-	TitleMale        string  `faker:"title_male"`
-	TitleFemale      string  `faker:"title_female"`
-	FirstName        string  `faker:"first_name"`
-	FirstNameMale    string  `faker:"first_name_male"`
-	FirstNameFemale  string  `faker:"first_name_female"`
-	LastName         string  `faker:"last_name"`
-	Name             string  `faker:"name"`
-	UnixTime         int64   `faker:"unix_time"`
-	Date             string  `faker:"date"`
-	Time             string  `faker:"time"`
-	MonthName        string  `faker:"month_name"`
-	Year             string  `faker:"year"`
-	DayOfWeek        string  `faker:"day_of_week"`
-	DayOfMonth       string  `faker:"day_of_month"`
-	Timestamp        string  `faker:"timestamp"`
-	Century          string  `faker:"century"`
-	TimeZone         string  `faker:"timezone"`
-	TimePeriod       string  `faker:"time_period"`
-	Word             string  `faker:"word"`
-	Sentence         string  `faker:"sentence"`
-	Paragraph        string  `faker:"paragraph"`
+	Latitude           float32 `faker:"lat"`
+	Longitude          float32 `faker:"long"`
+	CreditCardNumber   string  `faker:"cc_number"`
+	CreditCardType     string  `faker:"cc_type"`
+	Email              string  `faker:"email"`
+	IPV4               string  `faker:"ipv4"`
+	IPV6               string  `faker:"ipv6"`
+	Password           string  `faker:"password"`
+	PhoneNumber        string  `faker:"phone_number"`
+	MacAddress         string  `faker:"mac_address"`
+	URL                string  `faker:"url"`
+	UserName           string  `faker:"username"`
+	ToolFreeNumber     string  `faker:"tool_free_number"`
+	E164PhoneNumber    string  `faker:"e_164_phone_number"`
+	TitleMale          string  `faker:"title_male"`
+	TitleFemale        string  `faker:"title_female"`
+	FirstName          string  `faker:"first_name"`
+	FirstNameMale      string  `faker:"first_name_male"`
+	FirstNameFemale    string  `faker:"first_name_female"`
+	LastName           string  `faker:"last_name"`
+	Name               string  `faker:"name"`
+	UnixTime           int64   `faker:"unix_time"`
+	Date               string  `faker:"date"`
+	Time               string  `faker:"time"`
+	MonthName          string  `faker:"month_name"`
+	Year               string  `faker:"year"`
+	DayOfWeek          string  `faker:"day_of_week"`
+	DayOfMonth         string  `faker:"day_of_month"`
+	Timestamp          string  `faker:"timestamp"`
+	Century            string  `faker:"century"`
+	TimeZone           string  `faker:"timezone"`
+	TimePeriod         string  `faker:"time_period"`
+	Word               string  `faker:"word"`
+	Sentence           string  `faker:"sentence"`
+	Paragraph          string  `faker:"paragraph"`
+	Currency           string  `faker:"currency"`
+	Amount             float64 `faker:"amount"`
+	AmountWithCurrency string  `faker:"amount_with_currency"`
 }
 
 func main() {
@@ -183,6 +191,9 @@ func main() {
 			Word: nesciunt
 			Sentence: Consequatur perferendis aut sit voluptatem accusantium.
 			Paragraph: Aut consequatur sit perferendis accusantium voluptatem. Accusantium perferendis consequatur voluptatem sit aut. Aut sit accusantium consequatur voluptatem perferendis. Perferendis voluptatem aut accusantium consequatur sit.
+			Currency: IRR,
+			Amount: 88.990000,
+			AmountWithCurrency: XBB 49257.100000,
 		}
 	*/
 }

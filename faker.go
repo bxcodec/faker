@@ -15,87 +15,93 @@ var mu = &sync.Mutex{}
 
 // Supported tags
 const (
-	letterIdxBits    = 6                    // 6 bits to represent a letter index
-	letterIdxMask    = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax     = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-	letterBytes      = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	tagName          = "faker"
-	Email            = "email"
-	MacAddress       = "mac_address"
-	DomainName       = "domain_name"
-	UserName         = "username"
-	URL              = "url"
-	IPV4             = "ipv4"
-	IPV6             = "ipv6"
-	PASSWORD         = "password"
-	LATITUDE         = "lat"
-	LONGITUDE        = "long"
-	CreditCardNumber = "cc_number"
-	CreditCardType   = "cc_type"
-	PhoneNumber      = "phone_number"
-	TollFreeNumber   = "tool_free_number"
-	E164PhoneNumber  = "e_164_phone_number"
-	TitleMale        = "title_male"
-	TitleFemale      = "title_female"
-	FirstName        = "first_name"
-	FirstNameMale    = "first_name_male"
-	FirstNameFemale  = "first_name_female"
-	LastName         = "last_name"
-	NAME             = "name"
-	UnixTime         = "unix_time"
-	DATE             = "date"
-	TIME             = "time"
-	MonthName        = "month_name"
-	YEAR             = "year"
-	DayOfWeek        = "day_of_week"
-	DayOfMonthTag    = "day_of_month"
-	TIMESTAMP        = "timestamp"
-	CENTURY          = "century"
-	TIMEZONE         = "timezone"
-	TimePeriodTag    = "time_period"
-	WORD             = "word"
-	SENTENCE         = "sentence"
-	PARAGRAPH        = "paragraph"
-	SKIP             = "-"
+	letterIdxBits      = 6                    // 6 bits to represent a letter index
+	letterIdxMask      = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	tagName            = "faker"
+	Email              = "email"
+	MacAddress         = "mac_address"
+	DomainName         = "domain_name"
+	UserName           = "username"
+	URL                = "url"
+	IPV4               = "ipv4"
+	IPV6               = "ipv6"
+	PASSWORD           = "password"
+	LATITUDE           = "lat"
+	LONGITUDE          = "long"
+	CreditCardNumber   = "cc_number"
+	CreditCardType     = "cc_type"
+	PhoneNumber        = "phone_number"
+	TollFreeNumber     = "tool_free_number"
+	E164PhoneNumber    = "e_164_phone_number"
+	TitleMale          = "title_male"
+	TitleFemale        = "title_female"
+	FirstName          = "first_name"
+	FirstNameMale      = "first_name_male"
+	FirstNameFemale    = "first_name_female"
+	LastName           = "last_name"
+	NAME               = "name"
+	UnixTime           = "unix_time"
+	DATE               = "date"
+	TIME               = "time"
+	MonthName          = "month_name"
+	YEAR               = "year"
+	DayOfWeek          = "day_of_week"
+	DayOfMonthTag      = "day_of_month"
+	TIMESTAMP          = "timestamp"
+	CENTURY            = "century"
+	TIMEZONE           = "timezone"
+	TimePeriodTag      = "time_period"
+	WORD               = "word"
+	SENTENCE           = "sentence"
+	PARAGRAPH          = "paragraph"
+	Currency           = "currency"
+	Amount             = "amount"
+	AmountWithCurrency = "amount_with_currency"
+	SKIP               = "-"
 )
 
 var mapperTag = map[string]interface{}{
-	Email:            GetNetworker().Email,
-	MacAddress:       GetNetworker().MacAddress,
-	DomainName:       GetNetworker().DomainName,
-	URL:              GetNetworker().URL,
-	UserName:         GetNetworker().UserName,
-	IPV4:             GetNetworker().IPv4,
-	IPV6:             GetNetworker().IPv6,
-	PASSWORD:         GetNetworker().Password,
-	CreditCardType:   GetPayment().CreditCardType,
-	CreditCardNumber: GetPayment().CreditCardNumber,
-	LATITUDE:         GetAddress().Latitude,
-	LONGITUDE:        GetAddress().Longitude,
-	PhoneNumber:      GetPhoner().PhoneNumber,
-	TollFreeNumber:   GetPhoner().TollFreePhoneNumber,
-	E164PhoneNumber:  GetPhoner().E164PhoneNumber,
-	TitleMale:        GetPerson().TitleMale,
-	TitleFemale:      GetPerson().TitleFeMale,
-	FirstName:        GetPerson().FirstName,
-	FirstNameMale:    GetPerson().FirstNameMale,
-	FirstNameFemale:  GetPerson().FirstNameFemale,
-	LastName:         GetPerson().LastName,
-	NAME:             GetPerson().Name,
-	UnixTime:         GetDateTimer().UnixTime,
-	DATE:             GetDateTimer().Date,
-	TIME:             GetDateTimer().Time,
-	MonthName:        GetDateTimer().MonthName,
-	YEAR:             GetDateTimer().Year,
-	DayOfWeek:        GetDateTimer().DayOfWeek,
-	DayOfMonthTag:    GetDateTimer().DayOfMonth,
-	TIMESTAMP:        GetDateTimer().Timestamp,
-	CENTURY:          GetDateTimer().Century,
-	TIMEZONE:         GetDateTimer().TimeZone,
-	TimePeriodTag:    GetDateTimer().TimePeriod,
-	WORD:             GetLorem().Word,
-	SENTENCE:         GetLorem().Sentence,
-	PARAGRAPH:        GetLorem().Paragraph,
+	Email:              GetNetworker().Email,
+	MacAddress:         GetNetworker().MacAddress,
+	DomainName:         GetNetworker().DomainName,
+	URL:                GetNetworker().URL,
+	UserName:           GetNetworker().UserName,
+	IPV4:               GetNetworker().IPv4,
+	IPV6:               GetNetworker().IPv6,
+	PASSWORD:           GetNetworker().Password,
+	CreditCardType:     GetPayment().CreditCardType,
+	CreditCardNumber:   GetPayment().CreditCardNumber,
+	LATITUDE:           GetAddress().Latitude,
+	LONGITUDE:          GetAddress().Longitude,
+	PhoneNumber:        GetPhoner().PhoneNumber,
+	TollFreeNumber:     GetPhoner().TollFreePhoneNumber,
+	E164PhoneNumber:    GetPhoner().E164PhoneNumber,
+	TitleMale:          GetPerson().TitleMale,
+	TitleFemale:        GetPerson().TitleFeMale,
+	FirstName:          GetPerson().FirstName,
+	FirstNameMale:      GetPerson().FirstNameMale,
+	FirstNameFemale:    GetPerson().FirstNameFemale,
+	LastName:           GetPerson().LastName,
+	NAME:               GetPerson().Name,
+	UnixTime:           GetDateTimer().UnixTime,
+	DATE:               GetDateTimer().Date,
+	TIME:               GetDateTimer().Time,
+	MonthName:          GetDateTimer().MonthName,
+	YEAR:               GetDateTimer().Year,
+	DayOfWeek:          GetDateTimer().DayOfWeek,
+	DayOfMonthTag:      GetDateTimer().DayOfMonth,
+	TIMESTAMP:          GetDateTimer().Timestamp,
+	CENTURY:            GetDateTimer().Century,
+	TIMEZONE:           GetDateTimer().TimeZone,
+	TimePeriodTag:      GetDateTimer().TimePeriod,
+	WORD:               GetLorem().Word,
+	SENTENCE:           GetLorem().Sentence,
+	PARAGRAPH:          GetLorem().Paragraph,
+	Currency:           GetPrice().Currency,
+	Amount:             GetPrice().Amount,
+	AmountWithCurrency: GetPrice().AmountWithCurrency,
 }
 
 // Generic Error Messages for tags
