@@ -4,7 +4,7 @@ import (
 	"strconv"
 )
 
-// Check item in slice string type
+// Contains Check item in slice string type
 func Contains(slice []string, item string) bool {
 	set := make(map[string]struct{}, len(slice))
 	for _, s := range slice {
@@ -15,8 +15,8 @@ func Contains(slice []string, item string) bool {
 	return ok
 }
 
-// Convert slice int to slice string
-func SliceIntToString(intSl []int) (str []string) {
+// IntToString Convert slice int to slice string
+func IntToString(intSl []int) (str []string) {
 	for i := range intSl {
 		number := intSl[i]
 		text := strconv.Itoa(number)

@@ -43,14 +43,14 @@ Supported tag:
 * Email
 * Mac address
 * Domain name
-* Url
+* URL
 * UserName
-* IP Address (IPV4 IPV6 )
+* IP Address (IPv4, IPv6 )
 * Password
 
 
 **Payment :**
-* Credit Card Type (VISA, MASTERCARD , AMERICAN EXPRESS ,DISCOVER)
+* Credit Card Type (VISA, MASTERCARD, AMERICAN EXPRESS, DISCOVER)
 * Credit Card Number
 
 **Address :**
@@ -86,7 +86,12 @@ Supported tag:
 **Lorem :**
 * Word
 * Sentence
-* Sentences
+* Paragraph
+
+**Price :**
+* Currency
+* Amount
+* Amount with Currency
 
 ```go
 
@@ -94,92 +99,103 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bxcodec/faker"
 )
 
+// SomeStruct ...
 type SomeStruct struct {
- Latitude         float32 `faker:"lat"`
- Long             float32 `faker:"long"`
- CreditCardType   string  `faker:"cc_type"`
- CreditCardNumber string  `faker:"cc_number"`
- Email            string  `faker:"email"`
- IPV4             string  `faker:"ipv4"`
- IPV6             string  `faker:"ipv6"`
- Password         string  `faker:"password"`
- PhoneNumber      string  `faker:"phone_number"`
- MacAddress       string  `faker:"mac_address"`
- Url              string  `faker:"url"`
- UserName         string  `faker:"username"`
- ToolFreeNumber   string  `faker:"tool_free_number"`
- E164PhoneNumber  string  `faker:"e_164_phone_number"`
- TitleMale        string  `faker:"title_male"`
- TitleFemale      string  `faker:"title_female"`
- FirstName        string  `faker:"first_name"`
- FirstNameMale    string  `faker:"first_name_male"`
- FirstNameFemale  string  `faker:"first_name_female"`
- LastName         string  `faker:"last_name"`
- Name             string  `faker:"name"`
- UnixTime         int64   `faker:"unix_time"`
- Date             string  `faker:"date"`
- Time             string  `faker:"time"`
- MonthName        string  `faker:"month_name"`
- Year             string  `faker:"year"`
- DayOfWeek        string  `faker:"day_of_week"`
- DayOfMonth       string  `faker:"day_of_month"`
- Timestamp        string  `faker:"timestamp"`
- Century          string  `faker:"century"`
- TimeZone         string  `faker:"timezone"`
- TimePeriod       string  `faker:"time_period"`
- Word             string  `faker:"word"`
- Sentence         string  `faker:"sentence"`
- Sentences        string  `faker:"sentences"`
+	Latitude           float32 `faker:"lat"`
+	Longitude          float32 `faker:"long"`
+	CreditCardNumber   string  `faker:"cc_number"`
+	CreditCardType     string  `faker:"cc_type"`
+	Email              string  `faker:"email"`
+	IPV4               string  `faker:"ipv4"`
+	IPV6               string  `faker:"ipv6"`
+	Password           string  `faker:"password"`
+	PhoneNumber        string  `faker:"phone_number"`
+	MacAddress         string  `faker:"mac_address"`
+	URL                string  `faker:"url"`
+	UserName           string  `faker:"username"`
+	ToolFreeNumber     string  `faker:"tool_free_number"`
+	E164PhoneNumber    string  `faker:"e_164_phone_number"`
+	TitleMale          string  `faker:"title_male"`
+	TitleFemale        string  `faker:"title_female"`
+	FirstName          string  `faker:"first_name"`
+	FirstNameMale      string  `faker:"first_name_male"`
+	FirstNameFemale    string  `faker:"first_name_female"`
+	LastName           string  `faker:"last_name"`
+	Name               string  `faker:"name"`
+	UnixTime           int64   `faker:"unix_time"`
+	Date               string  `faker:"date"`
+	Time               string  `faker:"time"`
+	MonthName          string  `faker:"month_name"`
+	Year               string  `faker:"year"`
+	DayOfWeek          string  `faker:"day_of_week"`
+	DayOfMonth         string  `faker:"day_of_month"`
+	Timestamp          string  `faker:"timestamp"`
+	Century            string  `faker:"century"`
+	TimeZone           string  `faker:"timezone"`
+	TimePeriod         string  `faker:"time_period"`
+	Word               string  `faker:"word"`
+	Sentence           string  `faker:"sentence"`
+	Paragraph          string  `faker:"paragraph"`
+	Currency           string  `faker:"currency"`
+	Amount             float64 `faker:"amount"`
+	AmountWithCurrency string  `faker:"amount_with_currency"`
 }
 
 func main() {
 
-  a= SomeStruct{}
-  err:= faker.FakeData(&a)
-  if err!= nil {
-    fmt.Println(err)
-  }
-  fmt.Printf("%+v", a)
-	//Will Print  :
-	 /* Latitude: -74.209991,
-        Long: -4.394531,
-        CreditCardNumber: 376243757700558,
-        CreditCardType: american express,
-        Email: QjTIcmn@lmErh.info,
-        IPV4: 80.206.109.93,
-        IPV6: 448f:a391:90c6:d165:1d1f:b536:45f7:f084,
-	    Password: FhOSWpnzXwxxnCTlZJcZeBTUeRaVidThUdntQryyjNiAFwbyCe,
-        PhoneNumber: 865-321-1047,
-        MacAddress: 46:77:6f:bb:d0:fc,
-        Url: https://sFUBEIj.info/kYvcpYL.html,
-        UserName: VwrVhzZ,
-        ToolFreeNumber: (777) 372-148965,
-        E164PhoneNumber: +765101283947,
-        TitleMale: Prof.,
-        TitleFemale: Dr.,
-        FirstName: Benny,
-        FirstNameMale: Charley,
-        FirstNameFemale: Freeda,
-        LastName: Runte,
-        Name: Dr. Freeda Runte,
-        UnixTime: 679631083,
-        Date: 2010-06-12,
-        Time: 11:33:24,
-        MonthName: January,
-        Year: 1982,
-        DayOfWeek: Sunday,
-        DayOfMonth: 26,
-        Timestamp: 1972-06-24 14:03:32,
-        Century: XV,
-        TimeZone: Navajo,
-        TimePeriod: AM,
-	    Word: consectetur,
-        Sentence: Perferendis aut sit accusantium consequatur voluptatem .,
-        Sentences: Perferendis sit consequatur accusantium aut voluptatem .Aut voluptatem consequatur sit perferendis accusantium .Aut consequatur sit accusantium perferendis voluptatem .,
-	 */
+	a := SomeStruct{}
+	err := faker.FakeData(&a)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("%+v", a)
+	/*
+		Output  :
+		{
+			Latitude: 81.12195
+			Longitude: -84.38158
+			CreditCardType: American Express
+			CreditCardNumber: 373641309057568
+			Email: mJBJtbv@OSAaT.ru
+			IPV4: 99.23.42.63
+			IPV6: 975c:fb2c:2133:fbdd:beda:282e:1e0a:ec7d
+			Password: dfJdyHGuVkHBgnHLQQgpINApynzexnRpgIKBpiIjpTPOmNyMFb
+			PhoneNumber: 792-153-4861
+			MacAddress: cd:65:e1:d4:76:c6
+			URL: https://www.oEuqqAY.org/QgqfOhd
+			UserName: lVxELHS
+			ToolFreeNumber: (777) 831-964572
+			E164PhoneNumber: +724891571063
+			TitleMale: Mr.
+			TitleFemale: Queen
+			FirstName: Whitney
+			FirstNameMale: Kenny
+			FirstNameFemale: Jana
+			LastName: Rohan
+			Name: Miss Casandra Kiehn
+			UnixTime: 1197930901
+			Date: 1982-02-27
+			Time: 03:10:25
+			MonthName: February
+			Year: 1996
+			DayOfWeek: Sunday
+			DayOfMonth: 20
+			Timestamp: 1973-06-21 14:50:46
+			Century: IV
+			TimeZone: Canada/Eastern
+			TimePeriod: AM
+			Word: nesciunt
+			Sentence: Consequatur perferendis aut sit voluptatem accusantium.
+			Paragraph: Aut consequatur sit perferendis accusantium voluptatem. Accusantium perferendis consequatur voluptatem sit aut. Aut sit accusantium consequatur voluptatem perferendis. Perferendis voluptatem aut accusantium consequatur sit.
+			Currency: IRR,
+			Amount: 88.990000,
+			AmountWithCurrency: XBB 49257.100000,
+		}
+	*/
 }
 
 ```
@@ -192,6 +208,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/bxcodec/faker"
 )
 
@@ -226,18 +243,42 @@ type BStruct struct {
 
 func main() {
 
-  a := SomeStruct{}
-  err:= faker.FakeData(&a)
-  if err!= nil {
-    fmt.Println(err)
-  }
-  fmt.Printf("%+v", a)
+	a := SomeStruct{}
+	err := faker.FakeData(&a)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Printf("%+v", a)
+	/*
+		Output:
+		{
+		    Int:5231564546548329
+		    Int8:52
+		    Int16:8
+		    Int32:2046951236
+		    Int64:1486554863682234423
+		    String:ELIQhSfhHmWxyzRPOTNblEQsp
+		    Bool:false
+		    SString:[bzYwplRGUAXPwatnpVMWSYjep zmeuJVGHHgmIsuyWmLJnDmbTI FqtejCwoDyMBWatoykIzorCJZ]
+		    SInt:[11661230973193 626062851427 12674621422454 5566279673347]
+		    SInt8:[12 2 58 22 11 66 5 88]
+		    SInt16:[29295225 8411281 69902706328]
+		    SInt32:[60525685140 2733640366211 278043484637 5167734561481]
+		    SInt64:[81684520429188374184 9917955420365482658170 996818723778286568 163646873275501565]
+		    SFloat32:[0.556428 0.7692596 0.6779895 0.29171365 0.95445055]
+		    SFloat64:[0.44829454895586585 0.5495675898536803 0.6584538253883265]
+		    SBool:[true false true false true true false]
+		    Struct:{
+		        Number:1
+		        Height:26
+		        AnotherStruct:{
+		            Image:RmmaaHkAkrWHldVbBNuQSKlRb
+		        }
+		    }
+		}
+	*/
 }
-```
-Output :
 
-```bash
-{Int:7088293148785081331 Int8:7 Int16:14 Int32:1777976883 Int64:2467854463682814928 String:XMhCTmwvVqEUryIKnpWrQmBdb Bool:true SString:[iiCGZ GESVVaP] SInt:[2391903971675293806 5270400206229440165 7315288441301820955] SInt8:[124 104 84] SInt16:[-9403 -23327 -19174] SInt32:[1714966339 1617248797 1233525792] SInt64:[6505581000035730776 989945489581839946 7467254172609770414] SFloat32:[0.6761954 0.13427323 0.35608092] SFloat64:[0.49714054026277343 0.29188223737765046 0.7800285978504301] SBool:[true true true] Struct:{Number:8662858647992239649 Height:2466984558238338402 AnotherStruct:{Image:kNIwoxPiVcOqQxBUyyAuDAKom}}}
 ```
 
 ![Example to use Faker](https://cdn-images-1.medium.com/max/800/1*AkMbxngg7zfvtWiuvFb4Mg.gif)

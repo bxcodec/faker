@@ -7,7 +7,7 @@ import (
 
 var address Addresser
 
-// Constructor
+// GetAddress returns a new Addresser interface of Address
 func GetAddress() Addresser {
 	mu.Lock()
 	defer mu.Unlock()
@@ -18,18 +18,21 @@ func GetAddress() Addresser {
 	return address
 }
 
-// this set custom Address
+// SetAddress sets custom Address
 func SetAddress(net Addresser) {
 	address = net
 }
 
+// Addresser is logical layer for Address
 type Addresser interface {
 	Latitude(v reflect.Value) error
 	Longitude(v reflect.Value) error
 }
 
+// Address struct
 type Address struct{}
 
+// Latitude sets latitude of the address
 func (i Address) Latitude(v reflect.Value) error {
 	kind := v.Kind()
 	val := (rand.Float32() * 180) - 90
@@ -42,6 +45,7 @@ func (i Address) Latitude(v reflect.Value) error {
 	return nil
 }
 
+// Longitude sets longitude of the address
 func (i Address) Longitude(v reflect.Value) error {
 	kind := v.Kind()
 	val := (rand.Float32() * 360) - 180

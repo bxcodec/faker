@@ -2,11 +2,13 @@ package faker
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
 )
 
 var lorem DataFaker
-var wordList = []string{"alias", "consequatur", "aut", "perferendis", "sit", "voluptatem",
+var wordList = []string{
+	"alias", "consequatur", "aut", "perferendis", "sit", "voluptatem",
 	"accusantium", "doloremque", "aperiam", "eaque", "ipsa", "quae", "ab",
 	"illo", "inventore", "veritatis", "et", "quasi", "architecto",
 	"beatae", "vitae", "dicta", "sunt", "explicabo", "aspernatur", "aut",
@@ -42,19 +44,22 @@ var wordList = []string{"alias", "consequatur", "aut", "perferendis", "sit", "vo
 	"voluptates", "repudiandae", "sint", "et", "molestiae", "non",
 	"recusandae", "itaque", "earum", "rerum", "hic", "tenetur", "a",
 	"sapiente", "delectus", "ut", "aut", "reiciendis", "voluptatibus",
-	"maiores", "doloribus", "asperiores", "repellat"}
+	"maiores", "doloribus", "asperiores", "repellat",
+}
 
+// DataFaker generates randomized Words, Sentences and Paragraphs
 type DataFaker interface {
 	Word() string
 	Sentence() string
-	Sentences() string
+	Paragraph() string
 }
 
+// SetDataFaker sets Custom data in lorem
 func SetDataFaker(d DataFaker) {
 	lorem = d
 }
 
-// Constructor
+// GetLorem returns a new DataFaker interface of Lorem struct
 func GetLorem() DataFaker {
 	mu.Lock()
 	defer mu.Unlock()
@@ -65,27 +70,40 @@ func GetLorem() DataFaker {
 	return lorem
 }
 
+// Lorem struct
 type Lorem struct {
 }
 
+// Word returns a word from the wordList const
 func (l Lorem) Word() string {
 	return randomElementFromSliceString(wordList)
 }
+
+// Sentence returns a sentence using the wordList const
 func (l Lorem) Sentence() (sentence string) {
 	r, _ := RandomInt(1, 6)
+	size := len(r)
 	for key, val := range r {
 		if key == 0 {
-			sentence += strings.Title(wordList[val] + " ")
+			sentence += strings.Title(wordList[val])
 		} else {
-			sentence += wordList[val] + " "
+			sentence += wordList[val]
+		}
+		if key != size-1 {
+			sentence += " "
 		}
 	}
 	return fmt.Sprintf("%s.", sentence)
 }
 
-func (l Lorem) Sentences() (sentences string) {
-	for i := 0; i < 3; i++ {
-		sentences += l.Sentence()
+// Paragraph returns a series of sentences as a paragraph using the wordList const
+func (l Lorem) Paragraph() (paragraph string) {
+	size := rand.Intn(10) + 1
+	for i := 0; i < size; i++ {
+		paragraph += l.Sentence()
+		if i != size-1 {
+			paragraph += " "
+		}
 	}
-	return sentences
+	return paragraph
 }

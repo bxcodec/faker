@@ -5,6 +5,7 @@ import (
 	"math/rand"
 )
 
+// Dowser provides interfaces to generate random logical Names with their initials
 type Dowser interface {
 	TitleMale() string
 	TitleFeMale() string
@@ -17,10 +18,10 @@ type Dowser interface {
 
 var person Dowser
 var titlesMale = []string{
-	"Mr.", "Dr.", "Prof.",
+	"Mr.", "Dr.", "Prof.", "Lord", "King", "Prince",
 }
 var titlesFemale = []string{
-	"Mrs.", "Ms.", "Miss", "Dr.", "Prof.",
+	"Mrs.", "Ms.", "Miss", "Dr.", "Prof.", "Lady", "Queen", "Princess",
 }
 var firstNamesMale = []string{
 	"Aaron", "Abdiel", "Abdul", "Abdullah", "Abe", "Abel", "Abelardo", "Abner", "Abraham", "Adalberto", "Adam", "Adan", "Adelbert", "Adolf", "Adolfo", "Adolph", "Adolphus", "Adonis", "Adrain", "Adrian", "Adriel", "Adrien", "Afton", "Agustin", "Ahmad", "Ahmed", "Aidan", "Aiden", "Akeem", "Al", "Alan", "Albert", "Alberto", "Albin", "Alden", "Alec", "Alejandrin", "Alek", "Alessandro", "Alex", "Alexander", "Alexandre", "Alexandro", "Alexie", "Alexis", "Alexys", "Alexzander", "Alf", "Alfonso", "Alfonzo", "Alford", "Alfred", "Alfredo", "Ali", "Allan", "Allen", "Alphonso", "Alvah", "Alvis", "Amani", "Amari", "Ambrose", "Americo", "Amir", "Amos", "Amparo", "Anastacio", "Anderson", "Andre", "Andres", "Andrew", "Andy", "Angel", "Angelo", "Angus", "Anibal", "Ansel", "Ansley", "Anthony", "Antone", "Antonio", "Antwan", "Antwon", "Arch", "Archibald", "Arden", "Arely", "Ari", "Aric", "Ariel", "Arjun", "Arlo", "Armand", "Armando", "Armani", "Arnaldo", "Arne", "Arno", "Arnold", "Arnoldo", "Arnulfo", "Aron", "Art", "Arthur", "Arturo", "Arvel", "Arvid", "Ashton", "August", "Augustus", "Aurelio", "Austen", "Austin", "Austyn", "Avery", "Axel", "Ayden",
@@ -47,6 +48,7 @@ var firstNamesMale = []string{
 	"Valentin", "Van", "Vance", "Vaughn", "Vern", "Verner", "Vernon", "Vicente", "Victor", "Vidal", "Vince", "Vincent", "Vincenzo", "Vinnie", "Virgil", "Vito", "Vladimir",
 	"Wade", "Waino", "Waldo", "Walker", "Wallace", "Walter", "Walton", "Ward", "Warren", "Watson", "Waylon", "Wayne", "Webster", "Weldon", "Wellington", "Wendell", "Werner", "Westley", "Weston", "Wilber", "Wilbert", "Wilburn", "Wiley", "Wilford", "Wilfred", "Wilfredo", "Wilfrid", "Wilhelm", "Will", "Willard", "William", "Willis", "Willy", "Wilmer", "Wilson", "Wilton", "Winfield", "Winston", "Woodrow", "Wyatt", "Wyman",
 	"Xavier", "Xzavier", "Xander",
+	"Yadav", "Yogesh", "Yaatiesh", "Yaamir",
 	"Zachariah", "Zachary", "Zachery", "Zack", "Zackary", "Zackery", "Zakary", "Zander", "Zane", "Zechariah", "Zion",
 }
 var firstNamesFemale = []string{
@@ -73,6 +75,7 @@ var firstNamesFemale = []string{
 	"Una", "Ursula",
 	"Vada", "Valentina", "Valentine", "Valerie", "Vallie", "Vanessa", "Veda", "Velda", "Vella", "Velma", "Velva", "Vena", "Verda", "Verdie", "Vergie", "Verla", "Verlie", "Verna", "Vernice", "Vernie", "Verona", "Veronica", "Vesta", "Vicenta", "Vickie", "Vicky", "Victoria", "Vida", "Vilma", "Vincenza", "Viola", "Violet", "Violette", "Virgie", "Virginia", "Virginie", "Vita", "Viva", "Vivian", "Viviane", "Vivianne", "Vivien", "Vivienne",
 	"Wanda", "Wava", "Wendy", "Whitney", "Wilhelmine", "Willa", "Willie", "Willow", "Wilma", "Winifred", "Winnifred", "Winona",
+	"Xiu-Mei", "Xio",
 	"Yadira", "Yasmeen", "Yasmin", "Yasmine", "Yazmin", "Yesenia", "Yessenia", "Yolanda", "Yoshiko", "Yvette", "Yvonne",
 	"Zaria", "Zelda", "Zella", "Zelma", "Zena", "Zetta", "Zita", "Zoe", "Zoey", "Zoie", "Zoila", "Zola", "Zora", "Zula",
 }
@@ -104,6 +107,7 @@ var lastNames = []string{
 }
 var randNameFlag = rand.Intn(100)
 
+// GetPerson returns a new Dowser interface of Person struct
 func GetPerson() Dowser {
 	mu.Lock()
 	defer mu.Unlock()
@@ -114,42 +118,49 @@ func GetPerson() Dowser {
 	return person
 }
 
-// this set custom Address
+// SetDowser sets custom Dowsers of Person names
 func SetDowser(d Dowser) {
 	person = d
 }
 
+// Person struct
 type Person struct {
 }
 
+// TitleMale generates random titles for males
 func (p Person) TitleMale() string {
 	return randomElementFromSliceString(titlesMale)
 }
 
+// TitleFeMale generates random titles for females
 func (p Person) TitleFeMale() string {
 	return randomElementFromSliceString(titlesFemale)
 }
 
+// FirstName retuns first names
 func (p Person) FirstName() string {
 	return randomElementFromSliceString(firstNames)
 }
 
+// FirstNameMale retuns first names for males
 func (p Person) FirstNameMale() string {
 	return randomElementFromSliceString(firstNamesMale)
 }
 
+// FirstNameFemale retuns first names for females
 func (p Person) FirstNameFemale() string {
 	return randomElementFromSliceString(firstNamesFemale)
 }
 
+// LastName returns last name
 func (p Person) LastName() string {
 	return randomElementFromSliceString(lastNames)
 }
 
+// Name returns a random name
 func (p Person) Name() string {
 	if randNameFlag > 50 {
 		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesFemale), randomElementFromSliceString(firstNamesFemale), randomElementFromSliceString(lastNames))
-	} else {
-		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
 	}
+	return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
 }

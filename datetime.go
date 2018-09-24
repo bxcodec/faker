@@ -605,6 +605,7 @@ const (
 	TimePeriod = "PM"
 )
 
+// A DateTimer contains random Time generators, returning time string in certain particular format
 type DateTimer interface {
 	UnixTime(v reflect.Value) error
 	Date() string
@@ -621,6 +622,7 @@ type DateTimer interface {
 
 var date DateTimer
 
+// GetDateTimer returns a new DateTimer interface of DateTime
 func GetDateTimer() DateTimer {
 	mu.Lock()
 	defer mu.Unlock()
@@ -631,14 +633,16 @@ func GetDateTimer() DateTimer {
 	return date
 }
 
+// SetDateTimer sets custom date time
 func SetDateTimer(d DateTimer) {
 	date = d
 }
 
+// DateTime struct
 type DateTime struct {
 }
 
-// get unix time
+// UnixTime get unix time
 func (d DateTime) UnixTime(v reflect.Value) error {
 	kind := v.Kind()
 
@@ -650,47 +654,57 @@ func (d DateTime) UnixTime(v reflect.Value) error {
 	return nil
 }
 
-// format example BaseDate const
+// Date formats DateTime using example BaseDate const
 func (d DateTime) Date() string {
 	return time.Unix(RandomUnixTime(), 0).Format(BaseDate)
 }
 
+// Time formats DateTime using example Time const
 func (d DateTime) Time() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Time)
 }
 
+// MonthName formats DateTime using example Month const
 func (d DateTime) MonthName() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Month)
 }
 
+// Year formats DateTime using example Year const
 func (d DateTime) Year() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Year)
 }
 
+// DayOfWeek formats DateTime using example Day const
 func (d DateTime) DayOfWeek() string {
 	return time.Unix(RandomUnixTime(), 0).Format(Day)
 }
+
+// DayOfMonth formats DateTime using example DayOfMonth const
 func (d DateTime) DayOfMonth() string {
 	return time.Unix(RandomUnixTime(), 0).Format(DayOfMonth)
 }
 
+// Timestamp formats DateTime using example Timestamp const
 func (d DateTime) Timestamp() string {
 	return time.Unix(RandomUnixTime(), 0).Format(fmt.Sprintf("%s %s", BaseDate, Time))
 }
 
+// Century returns a random century
 func (d DateTime) Century() string {
 	return randomElementFromSliceString(century)
 }
 
+// TimeZone returns a random timezone
 func (d DateTime) TimeZone() string {
 	return randomElementFromSliceString(timezones)
 }
 
+// TimePeriod formats DateTime using example TimePeriod const
 func (d DateTime) TimePeriod() string {
 	return time.Unix(RandomUnixTime(), 0).Format(TimePeriod)
 }
 
-// helper function
+// RandomUnixTime is a helper function returning random Unix time
 func RandomUnixTime() int64 {
 	return rand.Int63n(time.Now().Unix())
 }

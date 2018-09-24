@@ -1,0 +1,22 @@
+Comments added | Code Documented according to GoLang Wiki: https://github.com/golang/go/wiki/CodeReviewComments 
+
+helpers.go
+    SliceIntToString -> IntToString
+faker.go
+    tags string name changed 
+    DAY_OF_MONTH -> DayOfMonthTag
+    TIME_PERIOD -> TimePeriodTag
+internet.go
+    https(secure) urlFormats added
+    Url -> Url
+    Ipv4 -> Ipv4
+    Ipv6 -> Ipv6
+lorem.go
+    Sentences -> Paragraph
+    Sentence now, directly ends with a full stop, not a space followed by full stop.
+    A randomized Paragraph is generated having lines <= 10
+person.go
+    New Titles added
+    Male names starting with 'Y' and Female names starting with 'X' are added
+price.go
+    Prices are often used with Currency Codes and hence, one can use the price tags to have mock prices

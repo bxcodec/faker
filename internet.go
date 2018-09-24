@@ -10,19 +10,21 @@ import (
 var tld = []string{"com", "biz", "info", "net", "org", "ru"}
 var urlFormats = []string{
 	"http://www.%s/",
+	"https://www.%s/",
 	"http://%s/",
-	"http://www.%s/%s",
+	"https://%s/",
 	"http://www.%s/%s",
 	"https://www.%s/%s",
 	"http://%s/%s",
-	"http://%s/%s",
+	"https://%s/%s",
 	"http://%s/%s.html",
 	"https://%s/%s.html",
 	"http://%s/%s.php",
+	"https://%s/%s.php",
 }
 var internet Networker
 
-// Constructor
+// GetNetworker returns a new Networker interface of Internet
 func GetNetworker() Networker {
 	mu.Lock()
 	defer mu.Unlock()
@@ -33,51 +35,62 @@ func GetNetworker() Networker {
 	return internet
 }
 
-// this set custom Network
+// SetNetwork sets custom Network
 func SetNetwork(net Networker) {
 	internet = net
 }
 
+// Networker is logical layer for Internet
 type Networker interface {
 	Email() string
 	MacAddress() string
 	DomainName() string
-	Url() string
+	URL() string
 	UserName() string
-	Ipv4() string
-	Ipv6() string
+	IPv4() string
+	IPv6() string
 	Password() string
 }
 
+// Internet struct
 type Internet struct{}
 
+// Email generates random email id
 func (internet Internet) Email() string {
 	return randomString(7) + "@" + randomString(5) + "." + randomElementFromSliceString(tld)
 }
+
+// MacAddress generates random MacAddress
 func (internet Internet) MacAddress() string {
 	ip := make([]byte, 6)
 	for i := 0; i < 6; i++ {
 		ip[i] = byte(rand.Intn(256))
 	}
-
 	return net.HardwareAddr(ip).String()
 }
+
+// DomainName generates random domain name
 func (internet Internet) DomainName() string {
 	return randomString(7) + "." + randomElementFromSliceString(tld)
 }
-func (internet Internet) Url() string {
+
+// URL generates random URL standardised in urlFormats const
+func (internet Internet) URL() string {
 	format := randomElementFromSliceString(urlFormats)
 	countVerbs := strings.Count(format, "%s")
 	if countVerbs == 1 {
 		return fmt.Sprintf(format, internet.DomainName())
-	} else {
-		return fmt.Sprintf(format, internet.DomainName(), internet.UserName())
 	}
+	return fmt.Sprintf(format, internet.DomainName(), internet.UserName())
 }
+
+// UserName generates random username
 func (internet Internet) UserName() string {
 	return randomString(7)
 }
-func (internet Internet) Ipv4() string {
+
+// IPv4 generates random IPv4 address
+func (internet Internet) IPv4() string {
 	size := 4
 	ip := make([]byte, size)
 	for i := 0; i < size; i++ {
@@ -85,7 +98,9 @@ func (internet Internet) Ipv4() string {
 	}
 	return net.IP(ip).To4().String()
 }
-func (internet Internet) Ipv6() string {
+
+// IPv6 generates random IPv6 address
+func (internet Internet) IPv6() string {
 	size := 16
 	ip := make([]byte, size)
 	for i := 0; i < size; i++ {
@@ -94,7 +109,7 @@ func (internet Internet) Ipv6() string {
 	return net.IP(ip).To16().String()
 }
 
-// get hash password
+// Password returns a hashed password
 func (internet Internet) Password() string {
 	return randomString(50)
 }
