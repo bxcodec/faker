@@ -94,7 +94,7 @@ Supported tag:
 * Amount with Currency
 
 **Skip :**
-* -
+* \-
 
 ```go
 
