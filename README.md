@@ -93,6 +93,9 @@ Supported tag:
 * Amount
 * Amount with Currency
 
+**Skip :**
+* -
+
 ```go
 
 package main
