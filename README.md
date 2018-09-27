@@ -146,7 +146,7 @@ type SomeStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float64 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
-	Skip		   string `faker:"-"`
+	Skip		   string  `faker:"-"`
 }
 
 func main() {
