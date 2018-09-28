@@ -93,6 +93,9 @@ Supported tag:
 * Amount
 * Amount with Currency
 
+**Skip :**
+* \-
+
 ```go
 
 package main
@@ -143,6 +146,7 @@ type SomeStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float64 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
+	Skip		   string  `faker:"-"`
 }
 
 func main() {
@@ -194,6 +198,7 @@ func main() {
 			Currency: IRR,
 			Amount: 88.990000,
 			AmountWithCurrency: XBB 49257.100000,
+			Skip:
 		}
 	*/
 }
