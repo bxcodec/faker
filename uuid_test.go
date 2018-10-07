@@ -21,7 +21,7 @@ type MockUUID struct {
 }*/
 
 func TestDigit(t *testing.T) {
-	p := GetUUID()
+	p := GetIdentifier()
 	mock := MockUUID{}
 	val := reflect.ValueOf(&mock.UUID)
 	err := p.Digit(val.Elem())
@@ -34,7 +34,7 @@ func TestDigit(t *testing.T) {
 }
 
 func TestHyphenated(t *testing.T) {
-	p := GetUUID()
+	p := GetIdentifier()
 	mock := MockUUID{}
 	val := reflect.ValueOf(&mock.UUIDHyphenated)
 	err := p.Hyphenated(val.Elem())

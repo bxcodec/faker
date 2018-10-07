@@ -104,8 +104,8 @@ var mapperTag = map[string]interface{}{
 	Currency:           GetPrice().Currency,
 	Amount:             GetPrice().Amount,
 	AmountWithCurrency: GetPrice().AmountWithCurrency,
-	UUIDDigit:          GetUUID().Digit,
-	UUIDHyphenated:     GetUUID().Hyphenated,
+	UUIDDigit:          GetIdentifier().Digit,
+	UUIDHyphenated:     GetIdentifier().Hyphenated,
 }
 
 // Generic Error Messages for tags

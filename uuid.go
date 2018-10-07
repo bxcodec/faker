@@ -7,22 +7,22 @@ import (
 	"reflect"
 )
 
-var uuid Identifier
+var identifier Identifier
 
-// GetUUID returns a new Uuid interface of Uuid
-func GetUUID() Identifier {
+// GetIdentifier returns a new Identifier
+func GetIdentifier() Identifier {
 	mu.Lock()
 	defer mu.Unlock()
 
-	if uuid == nil {
-		uuid = &UUID{}
+	if identifier == nil {
+		identifier = &UUID{}
 	}
-	return uuid
+	return identifier
 }
 
-// SetUUID sets custom UUID
-func SetUUID(identifier UUID) {
-	uuid = identifier
+// SetIdentifier sets
+func SetIdentifier(id Identifier) {
+	identifier = id
 }
 
 // Identifier ...
@@ -34,6 +34,7 @@ type Identifier interface {
 // UUID struct
 type UUID struct{}
 
+// createUUID returns a 16 byte slice with random values
 func createUUID() ([]byte, error) {
 	b := make([]byte, 16)
 	_, err := io.ReadFull(rand.Reader, b)
@@ -47,7 +48,7 @@ func createUUID() ([]byte, error) {
 	return b, nil
 }
 
-// Hyphenated returns a 36 bytes UUID with hyphens
+// Hyphenated returns a 36 byte hyphenated UUID
 func (i UUID) Hyphenated(v reflect.Value) error {
 	b, err := createUUID()
 	if err != nil {
@@ -58,7 +59,7 @@ func (i UUID) Hyphenated(v reflect.Value) error {
 	return nil
 }
 
-// Digit returns a 32 bytes UUID with chars
+// Digit returns a 32 bytes UUID
 func (i UUID) Digit(v reflect.Value) error {
 	b, err := createUUID()
 	if err != nil {
