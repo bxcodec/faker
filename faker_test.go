@@ -166,7 +166,7 @@ func (t TaggedStruct) String() string {
 		t.DayOfMonth, t.Timestamp, t.Century, t.TimeZone,
 		t.TimePeriod, t.Word, t.Sentence, t.Paragraph,
 		t.Currency, t.Amount, t.AmountWithCurrency,
-		t.ID, t.HyphenatedID,
+		t.HyphenatedID, t.ID,
 	)
 }
 
