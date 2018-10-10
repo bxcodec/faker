@@ -24,3 +24,10 @@ func TestHyphenated(t *testing.T) {
 	}
 
 }
+
+func TestGetIdentifier(t *testing.T) {
+	identifier := GetIdentifier()
+	if identifier == nil {
+		t.Fatalf("TestGetIdentifier failed because identifier was nil")
+	}
+}
