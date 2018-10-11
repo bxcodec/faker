@@ -20,6 +20,8 @@ const (
 	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName            = "faker"
+	ID                 = "uuid_digit"
+	HyphenatedID       = "uuid_hyphenated"
 	Email              = "email"
 	MacAddress         = "mac_address"
 	DomainName         = "domain_name"
@@ -102,6 +104,8 @@ var mapperTag = map[string]interface{}{
 	Currency:           GetPrice().Currency,
 	Amount:             GetPrice().Amount,
 	AmountWithCurrency: GetPrice().AmountWithCurrency,
+	ID:                 GetIdentifier().Digit,
+	HyphenatedID:       GetIdentifier().Hyphenated,
 }
 
 // Generic Error Messages for tags

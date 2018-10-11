@@ -93,6 +93,10 @@ Supported tag:
 * Amount
 * Amount with Currency
 
+**UUID :**
+* UUID Digit (32 bytes)
+* UUID Hyphenated (36 bytes)
+
 **Skip :**
 * \-
 
@@ -146,6 +150,8 @@ type SomeStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float64 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
+	UUIDHypenated	   string  `faker:"uuid_hyphenated"`
+	UUID	           string  `faker:"uuid_digit"`
 	Skip		   string  `faker:"-"`
 }
 
@@ -198,6 +204,8 @@ func main() {
 			Currency: IRR,
 			Amount: 88.990000,
 			AmountWithCurrency: XBB 49257.100000,
+			UUIDHypenated: 8f8e4463-9560-4a38-9b0c-ef24481e4e27,
+			UUID: 90ea6479fd0e4940af741f0a87596b73,
 			Skip:
 		}
 	*/

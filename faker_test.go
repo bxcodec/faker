@@ -49,6 +49,8 @@ type SomeStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float64 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
+	ID                 string  `faker:"uuid_digit"`
+	HyphenatedID       string  `faker:"uuid_hyphenated"`
 
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
@@ -107,6 +109,8 @@ type TaggedStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float32 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
+	ID                 string  `faker:"uuid_digit"`
+	HyphenatedID       string  `faker:"uuid_hyphenated"`
 }
 
 func (t TaggedStruct) String() string {
@@ -149,6 +153,8 @@ func (t TaggedStruct) String() string {
 	Currency: %s,
 	Amount: %f,
 	AmountWithCurrency: %s,
+	HyphenatedID: %s,
+	ID: %s,
 }`, t.Latitude, t.Longitude, t.CreditCardNumber,
 		t.CreditCardType, t.Email, t.IPV4,
 		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
@@ -160,6 +166,7 @@ func (t TaggedStruct) String() string {
 		t.DayOfMonth, t.Timestamp, t.Century, t.TimeZone,
 		t.TimePeriod, t.Word, t.Sentence, t.Paragraph,
 		t.Currency, t.Amount, t.AmountWithCurrency,
+		t.HyphenatedID, t.ID,
 	)
 }
 
