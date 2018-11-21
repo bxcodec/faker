@@ -113,7 +113,7 @@ var mapperTag = map[string]interface{}{
 // 		ErrUnsupportedKind: Error on passing unsupported kind
 // 		ErrValueNotPtr: Error when value is not pointer
 // 		ErrTagNotSupported: Error when tag is not supported
-//		ErrTagAlreadyExists: Error when tag exists and call AddProvider
+// 		ErrTagAlreadyExists: Error when tag exists and call AddProvider
 // 		ErrMoreArguments: Error on passing more arguments
 // 		ErrNotSupportedPointer: Error when passing unsupported pointer
 var (
@@ -151,7 +151,7 @@ func FakeData(a interface{}) error {
 		return err
 	}
 
-	rval.Elem().Set(finalValue)
+	rval.Elem().Set(finalValue.Convert(reflectType.Elem()))
 	return nil
 }
 
@@ -171,13 +171,12 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 
 	switch k {
 	case reflect.Ptr:
-
 		v := reflect.New(t.Elem())
 		val, err := getValue(t.Elem())
 		if err != nil {
 			return reflect.Value{}, err
 		}
-		v.Elem().Set(val)
+		v.Elem().Set(val.Convert(t.Elem()))
 		return v, nil
 	case reflect.Struct:
 
