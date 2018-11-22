@@ -388,6 +388,32 @@ func TestUnexportedFieldStruct(t *testing.T) {
 	fmt.Printf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
 }
 
+func TestPointerToCustomScalar(t *testing.T) {
+	// This test is to ensure that the faker won't panic if trying to fake data on struct that has field
+	a := new(CustomInt)
+	err := FakeData(a)
+
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+	fmt.Printf(" A value: %+v , Custom scalar Value: %+v  ", a, a)
+}
+
+type PointerCustomIntStruct struct {
+	V *CustomInt
+}
+
+func TestPointerToCustomIntStruct(t *testing.T) {
+	// This test is to ensure that the faker won't panic if trying to fake data on struct that has field
+	a := new(PointerCustomIntStruct)
+	err := FakeData(a)
+
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+	fmt.Printf(" A value: %+v , PointerCustomIntStruct scalar Value: %+v  ", a, a)
+}
+
 func TestSkipField(t *testing.T) {
 	// This test is to ensure that the faker won't fill field with tag skip
 
