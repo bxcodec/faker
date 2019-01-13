@@ -27,7 +27,7 @@ type SomeStruct struct {
 	LATITUDE           float64 `faker:"lat"`
 	Long               float32 `faker:"long"`
 	LONG               float64 `faker:"long"`
-	String             string
+	StringValue        string
 	CreditCardType     string `faker:"cc_type"`
 	CreditCardNumber   string `faker:"cc_number"`
 	Email              string `faker:"email"`
@@ -56,6 +56,67 @@ type SomeStruct struct {
 	MapStringStruct        map[string]AStruct
 	MapStringStructPointer map[string]*AStruct
 }
+
+func (s SomeStruct) String() string {
+	return fmt.Sprintf(`{
+	Inta: %v
+	Int8: %v
+	Int16: %v
+	Int32: %v
+	Int64: %v
+	Float32: %v
+	Float64: %v
+
+	UInta: %v
+	UInt8: %v
+	UInt16: %v
+	UInt32: %v
+	UInt64: %v
+
+	Latitude: %v
+	LATITUDE: %v
+	Long: %v
+	LONG: %v
+	StringValue: %v
+	CreditCardType: %v
+	CreditCardNumber: %v
+	Email: %v
+	IPV4: %v
+	IPV6: %v
+	Bool: %v
+	SString: %v
+	SInt: %v
+	SInt8: %v
+	SInt16: %v
+	SInt32: %v
+	SInt64: %v
+	SFloat32: %v
+	SFloat64:%v
+	SBool: %v
+	Struct: %v
+	Time: %v 
+	Stime: %v
+	Currency: %v
+	Amount: %v
+	AmountWithCurrency: %v
+	ID: %v
+	HyphenatedID: %v
+
+	MapStringString: %v
+	MapStringStruct: %v 
+	MapStringStructPointer: %v
+	}`, s.Inta, s.Int8, s.Int16, s.Int32,
+		s.Int64, s.Float32, s.Float64, s.UInta,
+		s.UInt8, s.UInt16, s.UInt32, s.UInt64,
+		s.Latitude, s.LATITUDE, s.Long, s.LONG,
+		s.StringValue, s.CreditCardType, s.CreditCardNumber,
+		s.Email, s.IPV4, s.IPV6, s.Bool, s.SString, s.SInt,
+		s.SInt8, s.SInt16, s.SInt32, s.SInt64, s.SFloat32, s.SFloat64,
+		s.SBool, s.Struct, s.Time, s.Stime, s.Currency, s.Amount,
+		s.AmountWithCurrency, s.ID, s.HyphenatedID, s.MapStringString,
+		s.MapStringStruct, s.MapStringStructPointer)
+}
+
 type AStruct struct {
 	Number        int64
 	Height        int64
@@ -252,30 +313,8 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 
 func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
 	temp := struct{}{}
-	if "Not a pointer value" != setDataWithTag(reflect.ValueOf(temp), "").Error() {
+	if setDataWithTag(reflect.ValueOf(temp), "").Error() != "Not a pointer value" {
 		t.Error("Expected in arguments not ptr")
-	}
-}
-
-func TestSetDataWithTagIfFirstArgumentSlice(t *testing.T) {
-	temp := []int{}
-	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
-		t.Error("Not expected errors if first argument slice type")
-	}
-}
-
-func TestSetDataWithTagIfFirstArgumentNotFound(t *testing.T) {
-	temp := struct{}{}
-	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
-		t.Error("First argument is struct type, expected return nil")
-	}
-}
-
-func TestUserDefinedFloatNotFoundTag(t *testing.T) {
-	temp := struct{}{}
-
-	if userDefinedFloat(reflect.ValueOf(&temp), "") == nil {
-		t.Error("Not expected errors")
 	}
 }
 
@@ -434,36 +473,75 @@ func TestSkipField(t *testing.T) {
 
 }
 
+type Student struct {
+	Name   string
+	School School `faker:"custom-school"`
+}
+type School struct {
+	Location string
+}
+
 func TestExtend(t *testing.T) {
 	// This test is to ensure that faker can be extended new providers
 
-	a := struct {
-		ID string `faker:"test"`
-	}{}
+	t.Run("test-string", func(t *testing.T) {
+		a := struct {
+			ID string `faker:"test"`
+		}{}
 
-	err := AddProvider("test", func() string {
-		return "test"
+		err := AddProvider("test", func(v reflect.Value) (interface{}, error) {
+			return "test", nil
+		})
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if a.ID != "test" {
+			t.Error("ID should be equal test value")
+		}
 	})
 
-	if err != nil {
-		t.Error("Expected Not Error, But Got: ", err)
-	}
+	t.Run("test-struct", func(t *testing.T) {
+		a := &Student{}
+		err := AddProvider("custom-school", func(v reflect.Value) (interface{}, error) {
 
-	err = FakeData(&a)
+			sch := School{
+				Location: "North Kindom",
+			}
 
-	if err != nil {
-		t.Error("Expected Not Error, But Got: ", err)
-	}
+			return sch, nil
+		})
 
-	if a.ID != "test" {
-		t.Error("ID should be equal test value")
-	}
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if a.School.Location != "North Kindom" {
+			t.Error("ID should be equal test value")
+		}
+	})
+
 }
 
 func TestTagAlreadyExists(t *testing.T) {
 	// This test is to ensure that existing tag cannot be rewritten
 
-	err := AddProvider(Email, func() {})
+	err := AddProvider(Email, func(v reflect.Value) (interface{}, error) {
+		return nil, nil
+	})
 
 	if err == nil || err.Error() != ErrTagAlreadyExists {
 		t.Error("Expected ErrTagAlreadyExists Error,  But Got: ", err)

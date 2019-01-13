@@ -1,6 +1,8 @@
 package faker
 
 import (
+	"fmt"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -12,20 +14,33 @@ func TestDataFaker(t *testing.T) {
 }
 
 func TestWord(t *testing.T) {
-	if !slice.Contains(wordList, GetLorem().Word()) {
+	word, err := GetLorem().Word(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	if !slice.Contains(wordList, word.(string)) {
 		t.Error("Expected word from slice wordList")
 	}
 }
 
 func TestSentence(t *testing.T) {
-	s := GetLorem().Sentence()
+	res, err := GetLorem().Sentence(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	s := res.(string)
 	if s == "" || !strings.HasSuffix(s, ".") {
 		t.Error("Expected sentence")
 	}
 }
 
 func TestParagraph(t *testing.T) {
-	s := GetLorem().Paragraph()
+	res, err := GetLorem().Paragraph(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	s := res.(string)
+	fmt.Println(s)
 	if s == "" || !strings.HasSuffix(s, ".") {
 		t.Error("Expected paragraph")
 	}

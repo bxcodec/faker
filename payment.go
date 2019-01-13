@@ -2,8 +2,8 @@ package faker
 
 import (
 	"math/rand"
+	"reflect"
 	"strconv"
-	"strings"
 )
 
 const (
@@ -22,6 +22,10 @@ var creditCards = map[string]creditCard{
 	"mastercard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
 	"american express": {"American Express", 15, []int{34, 37}},
 	"discover":         {"Discover", 16, []int{6011}},
+	"VISA":             {"VISA", 16, []int{4539, 4556, 4916, 4532, 4929, 40240071, 4485, 4716, 4}},
+	"MasterCard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
+	"American Express": {"American Express", 15, []int{34, 37}},
+	"Discover":         {"Discover", 16, []int{6011}},
 }
 
 var pay Render
@@ -46,16 +50,14 @@ func SetPayment(p Render) {
 
 // Render contains Whole Random Credit Card Generators with their types
 type Render interface {
-	CreditCardType() string
-	CreditCardNumber() string
+	CreditCardType(v reflect.Value) (interface{}, error)
+	CreditCardNumber(v reflect.Value) (interface{}, error)
 }
 
 // Payment struct
 type Payment struct{}
 
-// CreditCardType returns one of the following credit values:
-// VISA, MasterCard, American Express and Discover
-func (p Payment) CreditCardType() string {
+func (p Payment) cctype() string {
 	n := len(creditCards)
 	if cacheCreditCard != "" {
 		return cacheCreditCard
@@ -69,9 +71,14 @@ func (p Payment) CreditCardType() string {
 	return cacheCreditCard
 }
 
-// CreditCardNumber generated credit card number according to the card number rules
-func (p Payment) CreditCardNumber() string {
-	ccType := strings.ToLower(p.CreditCardType())
+// CreditCardType returns one of the following credit values:
+// VISA, MasterCard, American Express and Discover
+func (p Payment) CreditCardType(v reflect.Value) (interface{}, error) {
+	return p.cctype(), nil
+}
+
+func (p Payment) ccnumber() string {
+	ccType := p.cctype()
 	cacheCreditCard = ccType
 	card := creditCards[ccType]
 	prefix := strconv.Itoa(card.prefixes[rand.Intn(len(card.prefixes))])
@@ -81,4 +88,9 @@ func (p Payment) CreditCardNumber() string {
 
 	num += digit
 	return num
+}
+
+// CreditCardNumber generated credit card number according to the card number rules
+func (p Payment) CreditCardNumber(v reflect.Value) (interface{}, error) {
+	return p.ccnumber(), nil
 }

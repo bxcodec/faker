@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"io"
+	"reflect"
 )
 
 var identifier Identifier
@@ -21,8 +22,8 @@ func GetIdentifier() Identifier {
 
 // Identifier ...
 type Identifier interface {
-	Digit() string
-	Hyphenated() string
+	Digit(v reflect.Value) (interface{}, error)
+	Hyphenated(v reflect.Value) (interface{}, error)
 }
 
 // UUID struct
@@ -39,16 +40,25 @@ func createUUID() []byte {
 	return b
 }
 
-// Hyphenated returns a 36 byte hyphenated UUID
-func (i UUID) Hyphenated() string {
+func (u UUID) hyphenated() string {
 	b := createUUID()
 	uuid := fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 	return uuid
 }
 
-// Digit returns a 32 bytes UUID
-func (i UUID) Digit() string {
+// Hyphenated returns a 36 byte hyphenated UUID
+func (i UUID) Hyphenated(v reflect.Value) (interface{}, error) {
+	return i.hyphenated(), nil
+}
+
+func (u UUID) digit() string {
 	b := createUUID()
 	uuid := fmt.Sprintf("%x", b)
 	return uuid
+}
+
+// Digit returns a 32 bytes UUID
+func (i UUID) Digit(v reflect.Value) (interface{}, error) {
+
+	return i.digit(), nil
 }
