@@ -3,17 +3,18 @@ package faker
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 )
 
 // Dowser provides interfaces to generate random logical Names with their initials
 type Dowser interface {
-	TitleMale() string
-	TitleFeMale() string
-	FirstName() string
-	FirstNameMale() string
-	FirstNameFemale() string
-	LastName() string
-	Name() string
+	TitleMale(v reflect.Value) (interface{}, error)
+	TitleFeMale(v reflect.Value) (interface{}, error)
+	FirstName(v reflect.Value) (interface{}, error)
+	FirstNameMale(v reflect.Value) (interface{}, error)
+	FirstNameFemale(v reflect.Value) (interface{}, error)
+	LastName(v reflect.Value) (interface{}, error)
+	Name(v reflect.Value) (interface{}, error)
 }
 
 var person Dowser
@@ -127,40 +128,68 @@ func SetDowser(d Dowser) {
 type Person struct {
 }
 
-// TitleMale generates random titles for males
-func (p Person) TitleMale() string {
+func (p Person) titlemale() string {
 	return randomElementFromSliceString(titlesMale)
 }
 
-// TitleFeMale generates random titles for females
-func (p Person) TitleFeMale() string {
+// TitleMale generates random titles for males
+func (p Person) TitleMale(v reflect.Value) (interface{}, error) {
+	return p.titlemale(), nil
+}
+
+func (p Person) titleFemale() string {
 	return randomElementFromSliceString(titlesFemale)
 }
 
-// FirstName retuns first names
-func (p Person) FirstName() string {
+// TitleFeMale generates random titles for females
+func (p Person) TitleFeMale(v reflect.Value) (interface{}, error) {
+	return p.titleFemale(), nil
+}
+
+func (p Person) firstname() string {
 	return randomElementFromSliceString(firstNames)
 }
 
-// FirstNameMale retuns first names for males
-func (p Person) FirstNameMale() string {
+// FirstName retuns first names
+func (p Person) FirstName(v reflect.Value) (interface{}, error) {
+	return p.firstname(), nil
+}
+
+func (p Person) firstnamemale() string {
 	return randomElementFromSliceString(firstNamesMale)
 }
 
-// FirstNameFemale retuns first names for females
-func (p Person) FirstNameFemale() string {
+// FirstNameMale retuns first names for males
+func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
+	return p.firstnamemale(), nil
+}
+
+func (p Person) firstnamefemale() string {
 	return randomElementFromSliceString(firstNamesFemale)
 }
 
-// LastName returns last name
-func (p Person) LastName() string {
+// FirstNameFemale retuns first names for females
+func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
+	return p.firstnamefemale(), nil
+}
+
+func (p Person) lastname() string {
 	return randomElementFromSliceString(lastNames)
 }
 
-// Name returns a random name
-func (p Person) Name() string {
+// LastName returns last name
+func (p Person) LastName(v reflect.Value) (interface{}, error) {
+	return p.lastname(), nil
+}
+
+func (p Person) name() string {
 	if randNameFlag > 50 {
 		return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesFemale), randomElementFromSliceString(firstNamesFemale), randomElementFromSliceString(lastNames))
 	}
 	return fmt.Sprintf("%s %s %s", randomElementFromSliceString(titlesMale), randomElementFromSliceString(firstNamesMale), randomElementFromSliceString(lastNames))
+}
+
+// Name returns a random name
+func (p Person) Name(v reflect.Value) (interface{}, error) {
+	return p.name(), nil
 }

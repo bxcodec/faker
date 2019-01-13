@@ -3,6 +3,7 @@ package faker
 import (
 	"fmt"
 	"math/rand"
+	"reflect"
 	"strings"
 )
 
@@ -49,9 +50,9 @@ var wordList = []string{
 
 // DataFaker generates randomized Words, Sentences and Paragraphs
 type DataFaker interface {
-	Word() string
-	Sentence() string
-	Paragraph() string
+	Word(v reflect.Value) (interface{}, error)
+	Sentence(v reflect.Value) (interface{}, error)
+	Paragraph(v reflect.Value) (interface{}, error)
 }
 
 // SetDataFaker sets Custom data in lorem
@@ -74,13 +75,17 @@ func GetLorem() DataFaker {
 type Lorem struct {
 }
 
-// Word returns a word from the wordList const
-func (l Lorem) Word() string {
+func (l Lorem) word() string {
 	return randomElementFromSliceString(wordList)
 }
 
-// Sentence returns a sentence using the wordList const
-func (l Lorem) Sentence() (sentence string) {
+// Word returns a word from the wordList const
+func (l Lorem) Word(v reflect.Value) (interface{}, error) {
+	return l.word(), nil
+}
+
+func (l Lorem) sentence() string {
+	sentence := ""
 	r, _ := RandomInt(1, 6)
 	size := len(r)
 	for key, val := range r {
@@ -93,17 +98,28 @@ func (l Lorem) Sentence() (sentence string) {
 			sentence += " "
 		}
 	}
-	return fmt.Sprintf("%s.", sentence)
+	return sentence
 }
 
-// Paragraph returns a series of sentences as a paragraph using the wordList const
-func (l Lorem) Paragraph() (paragraph string) {
+// Sentence returns a sentence using the wordList const
+func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
+	sentence := l.sentence()
+	return fmt.Sprintf("%s.", sentence), nil
+}
+
+func (l Lorem) paragraph() string {
+	paragraph := ""
 	size := rand.Intn(10) + 1
 	for i := 0; i < size; i++ {
-		paragraph += l.Sentence()
+		paragraph += l.sentence()
 		if i != size-1 {
 			paragraph += " "
 		}
 	}
 	return paragraph
+}
+
+// Paragraph returns a series of sentences as a paragraph using the wordList const
+func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
+	return l.paragraph(), nil
 }

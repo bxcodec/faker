@@ -33,9 +33,9 @@ var currencies = []string{
 
 // Money provides an interface to generate a custom price with or without a random currency code
 type Money interface {
-	Currency() string
-	Amount(v reflect.Value) error
-	AmountWithCurrency() string
+	Currency(v reflect.Value) (interface{}, error)
+	Amount(v reflect.Value) (interface{}, error)
+	AmountWithCurrency(v reflect.Value) (interface{}, error)
 }
 
 // Price struct
@@ -60,28 +60,40 @@ func SetPrice(p Money) {
 	pri = p
 }
 
-// Currency returns a random currency from currencies
-func (p Price) Currency() string {
+func (p Price) currency() string {
 	return randomElementFromSliceString(currencies)
+}
+
+// Currency returns a random currency from currencies
+func (p Price) Currency(v reflect.Value) (interface{}, error) {
+	return p.currency(), nil
+}
+
+func (p Price) amount() float64 {
+	return precision(rand.Float64()*math.Pow10(rand.Intn(8)), rand.Intn(2)+1)
 }
 
 // Amount returns a random floating price amount
 // with a random precision of [1,2] up to (10**8 - 1)
-func (p Price) Amount(v reflect.Value) error {
+func (p Price) Amount(v reflect.Value) (interface{}, error) {
 	kind := v.Kind()
-	val := precision(rand.Float64()*math.Pow10(rand.Intn(8)), rand.Intn(2)+1)
+	val := p.amount()
 	if kind == reflect.Float32 {
 		v.Set(reflect.ValueOf(float32(val)))
-		return nil
+		return float32(val), nil
 	}
 	v.Set(reflect.ValueOf(val))
-	return nil
+	return val, nil
+}
+
+func (p Price) amountwithcurrency() string {
+	val := p.amount()
+	return fmt.Sprintf("%s %f", p.currency(), val)
 }
 
 // AmountWithCurrency combines both price and currency together
-func (p Price) AmountWithCurrency() string {
-	val := precision(rand.Float64()*math.Pow10(rand.Intn(8)), rand.Intn(2)+1)
-	return fmt.Sprintf("%s %f", p.Currency(), val)
+func (p Price) AmountWithCurrency(v reflect.Value) (interface{}, error) {
+	return p.amountwithcurrency(), nil
 }
 
 // precision | a helper function to set precision of price

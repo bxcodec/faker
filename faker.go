@@ -64,7 +64,10 @@ const (
 	SKIP               = "-"
 )
 
-var mapperTag = map[string]interface{}{
+// TaggedFunction ...
+type TaggedFunction func(v reflect.Value) (interface{}, error)
+
+var mapperTag = map[string]TaggedFunction{
 	Email:              GetNetworker().Email,
 	MacAddress:         GetNetworker().MacAddress,
 	DomainName:         GetNetworker().DomainName,
@@ -156,7 +159,7 @@ func FakeData(a interface{}) error {
 }
 
 // AddProvider extend faker with tag to generate fake data with specified custom algoritm
-func AddProvider(tag string, provider interface{}) error {
+func AddProvider(tag string, provider TaggedFunction) error {
 	if _, ok := mapperTag[tag]; ok {
 		return errors.New(ErrTagAlreadyExists)
 	}
@@ -203,10 +206,18 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 				case SKIP:
 					continue
 				default:
-					err := setDataWithTag(v.Field(i).Addr(), tag)
+					val, err := setDataWithTag(v.Field(i).Addr(), tag)
 					if err != nil {
+						if err.Error() == ErrTagNotSupported {
+							continue
+						}
 						return reflect.Value{}, err
 					}
+					if (val == reflect.Value{}) {
+						continue
+					}
+					val = val.Convert(v.Field(i).Type())
+					v.Field(i).Set(val)
 				}
 
 			}
@@ -282,10 +293,10 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 
 }
 
-func setDataWithTag(v reflect.Value, tag string) error {
+func setDataWithTag(v reflect.Value, tag string) (reflect.Value, error) {
 
 	if v.Kind() != reflect.Ptr {
-		return errors.New(ErrValueNotPtr)
+		return reflect.Value{}, errors.New(ErrValueNotPtr)
 	}
 
 	v = reflect.Indirect(v)
@@ -297,34 +308,56 @@ func setDataWithTag(v reflect.Value, tag string) error {
 
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
 		return userDefinedInt(v, tag)
+	default:
+		if _, exist := mapperTag[tag]; !exist {
+			return reflect.Value{}, errors.New(ErrTagNotSupported)
+		}
+		res, err := mapperTag[tag](v)
+		if err != nil {
+			return reflect.Value{}, err
+		}
+		v.Set(reflect.ValueOf(res))
 	}
-	return nil
+	return reflect.Value{}, nil
 }
 
-func userDefinedFloat(v reflect.Value, tag string) error {
+func userDefinedFloat(v reflect.Value, tag string) (reflect.Value, error) {
 	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
+		return reflect.Value{}, errors.New(ErrTagNotSupported)
 	}
-	mapperTag[tag].(func(v reflect.Value) error)(v)
-	return nil
+	res, err := mapperTag[tag](v)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+	v.Set(reflect.ValueOf(res))
+	return reflect.ValueOf(res), nil
 }
 
-func userDefinedString(v reflect.Value, tag string) error {
+func userDefinedString(v reflect.Value, tag string) (reflect.Value, error) {
 	val := ""
 	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
+		return reflect.Value{}, errors.New(ErrTagNotSupported)
 	}
-	val = mapperTag[tag].(func() string)()
+	item, err := mapperTag[tag](v)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+	val, _ = item.(string)
 	v.SetString(val)
-	return nil
+	return reflect.ValueOf(val), nil
 }
 
-func userDefinedInt(v reflect.Value, tag string) error {
+func userDefinedInt(v reflect.Value, tag string) (reflect.Value, error) {
 	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
+		return reflect.Value{}, errors.New(ErrTagNotSupported)
 	}
-	mapperTag[tag].(func(v reflect.Value) error)(v)
-	return nil
+	val, err := mapperTag[tag](v)
+	if err != nil {
+		return reflect.Value{}, err
+	}
+
+	v.Set(reflect.ValueOf(val))
+	return reflect.ValueOf(val), nil
 }
 
 func randomString(n int) string {
