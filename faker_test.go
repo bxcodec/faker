@@ -318,28 +318,6 @@ func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
 	}
 }
 
-func TestSetDataWithTagIfFirstArgumentSlice(t *testing.T) {
-	temp := []int{}
-	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
-		t.Error("Not expected errors if first argument slice type")
-	}
-}
-
-func TestSetDataWithTagIfFirstArgumentNotFound(t *testing.T) {
-	temp := struct{}{}
-	if setDataWithTag(reflect.ValueOf(&temp), "") != nil {
-		t.Error("First argument is struct type, expected return nil")
-	}
-}
-
-func TestUserDefinedFloatNotFoundTag(t *testing.T) {
-	temp := struct{}{}
-
-	if userDefinedFloat(reflect.ValueOf(&temp), "") == nil {
-		t.Error("Not expected errors")
-	}
-}
-
 func BenchmarkFakerDataNOTTagged(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		a := NotTaggedStruct{}
