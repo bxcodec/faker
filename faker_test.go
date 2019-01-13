@@ -473,30 +473,67 @@ func TestSkipField(t *testing.T) {
 
 }
 
+type Student struct {
+	Name   string
+	School School `faker:"custom-school"`
+}
+type School struct {
+	Location string
+}
+
 func TestExtend(t *testing.T) {
 	// This test is to ensure that faker can be extended new providers
 
-	a := struct {
-		ID string `faker:"test"`
-	}{}
+	t.Run("test-string", func(t *testing.T) {
+		a := struct {
+			ID string `faker:"test"`
+		}{}
 
-	err := AddProvider("test", func(v reflect.Value) (interface{}, error) {
-		return "test", nil
+		err := AddProvider("test", func(v reflect.Value) (interface{}, error) {
+			return "test", nil
+		})
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if a.ID != "test" {
+			t.Error("ID should be equal test value")
+		}
 	})
 
-	if err != nil {
-		t.Error("Expected Not Error, But Got: ", err)
-	}
+	t.Run("test-struct", func(t *testing.T) {
+		a := &Student{}
+		err := AddProvider("custom-school", func(v reflect.Value) (interface{}, error) {
 
-	err = FakeData(&a)
+			sch := School{
+				Location: "North Kindom",
+			}
 
-	if err != nil {
-		t.Error("Expected Not Error, But Got: ", err)
-	}
+			return sch, nil
+		})
 
-	if a.ID != "test" {
-		t.Error("ID should be equal test value")
-	}
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if a.School.Location != "North Kindom" {
+			t.Error("ID should be equal test value")
+		}
+	})
+
 }
 
 func TestTagAlreadyExists(t *testing.T) {

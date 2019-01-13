@@ -208,9 +208,6 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tag)
 					if err != nil {
-						// if err.Error() == ErrTagNotSupported {
-						// 	continue
-						// }
 						return reflect.Value{}, err
 					}
 				}
