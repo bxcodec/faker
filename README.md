@@ -34,9 +34,9 @@ See documentation in [Godoc](https://godoc.org/github.com/bxcodec/faker)
 ```shell
 go get -u github.com/bxcodec/faker
 ```
-## Example
+# Example
 
-### With Tag
+## With Tag
 Supported tag:
 
 **Internet :**
@@ -213,7 +213,7 @@ func main() {
 
 ```
 
-### Custom Generator Provider
+## Custom Generator Provider
 You can also add your own generator function to your own defined tags. See example below
 ```go
 type Gondoruwo struct {
@@ -257,7 +257,7 @@ Results:
 {ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
 ```
 
-### Without Tag
+## Without Tag
 You also can use faker to generate your structs data randomly without any tag. And it will fill the data based on its data-type.
 
 ```go
