@@ -98,13 +98,13 @@ func (l Lorem) sentence() string {
 			sentence += " "
 		}
 	}
-	return sentence
+	return fmt.Sprintf("%s.", sentence)
 }
 
 // Sentence returns a sentence using the wordList const
 func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 	sentence := l.sentence()
-	return fmt.Sprintf("%s.", sentence), nil
+	return sentence, nil
 }
 
 func (l Lorem) paragraph() string {

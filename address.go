@@ -42,11 +42,11 @@ func (i Address) Latitude(v reflect.Value) (interface{}, error) {
 	val := i.latitute()
 	if kind == reflect.Float32 {
 		v.Set(reflect.ValueOf(val))
-		return val, nil
+		return float32(val), nil
 	}
 	v.Set(reflect.ValueOf(float64(val)))
 
-	return val, nil
+	return float64(val), nil
 }
 
 func (i Address) longitude() float32 {
@@ -59,8 +59,8 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 	val := i.longitude()
 	if kind == reflect.Float32 {
 		v.Set(reflect.ValueOf(val))
-		return val, nil
+		return float32(val), nil
 	}
 	v.Set(reflect.ValueOf(float64(val)))
-	return val, nil
+	return float64(val), nil
 }
