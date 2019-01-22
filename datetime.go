@@ -652,10 +652,9 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 	var val int64
 	if kind == reflect.Int64 {
 		val = d.unixtime()
-	} else {
-		val = 0
+
 	}
-	v.SetInt(val)
+
 	return val, nil
 }
 

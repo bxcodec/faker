@@ -351,12 +351,12 @@ func setDataWithTag(v reflect.Value, tag string) error {
 			return nil
 		}
 
-		res, err := mapperTag[tag](v)
+		t := v.Type()
+		newv := reflect.New(t.Elem())
+		res, err := mapperTag[tag](newv.Elem())
 		if err != nil {
 			return err
 		}
-		t := v.Type()
-		newv := reflect.New(t.Elem())
 		rval := reflect.ValueOf(res)
 		newv.Elem().Set(rval)
 		v.Set(newv)

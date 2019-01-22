@@ -547,3 +547,38 @@ func TestTagAlreadyExists(t *testing.T) {
 		t.Error("Expected ErrTagAlreadyExists Error,  But Got: ", err)
 	}
 }
+
+func TestTagWithPointer(t *testing.T) {
+	type TestStruct struct {
+		FirstName  *string  `json:"first_name,omitempty" faker:"first_name_male"`
+		Email      *string  `json:"email,omitempty" faker:"email"`
+		Latitude   *float64 `faker:"lat"`
+		Latitude32 *float32 `faker:"lat"`
+		UnixTime   *int64   `faker:"unix_time"`
+	}
+
+	var sample TestStruct
+	err := FakeData(&sample)
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+
+	//Assert
+	if sample.FirstName == nil || *sample.FirstName == "" {
+		t.Error("Expected filled but got emtpy")
+	}
+	if sample.Email == nil || *sample.Email == "" {
+		t.Error("Expected filled but got emtpy")
+	}
+	if sample.Latitude == nil || *sample.Latitude == 0 {
+		t.Error("Expected filled but got emtpy")
+	}
+	if sample.Latitude32 == nil || *sample.Latitude32 == 0 {
+		t.Error("Expected filled but got emtpy")
+	}
+
+	if sample.UnixTime == nil || *sample.UnixTime == 0 {
+		t.Error("Expected filled but got emtpy")
+	}
+
+}
