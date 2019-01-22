@@ -108,7 +108,8 @@ var defaultTag = map[string]string{
 	HyphenatedID:       HyphenatedID,
 }
 
-// TaggedFunction ...
+// TaggedFunction used as the standard layout function for tag providers in struct.
+// This type also can be used for custom provider.
 type TaggedFunction func(v reflect.Value) (interface{}, error)
 
 var mapperTag = map[string]TaggedFunction{
@@ -203,6 +204,48 @@ func FakeData(a interface{}) error {
 }
 
 // AddProvider extend faker with tag to generate fake data with specified custom algoritm
+// Example:
+// 		type Gondoruwo struct {
+// 			Name       string
+// 			Locatadata int
+// 		}
+//
+// 		type Sample struct {
+// 			ID                 int64     `faker:"customIdFaker"`
+// 			Gondoruwo          Gondoruwo `faker:"gondoruwo"`
+// 			Danger             string    `faker:"danger"`
+// 		}
+//
+// 		func CustomGenerator() {
+// 			// explicit
+// 			faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
+// 			 	return int64(43), nil
+// 			})
+// 			// functional
+// 			faker.AddProvider("danger", func() faker.TaggedFunction {
+// 				return func(v reflect.Value) (interface{}, error) {
+// 					return "danger-ranger", nil
+// 				}
+// 			}())
+// 			faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
+// 				obj := Gondoruwo{
+// 					Name:       "Power",
+// 					Locatadata: 324,
+// 				}
+// 				return obj, nil
+// 			})
+// 		}
+//
+// 		func main() {
+// 			CustomGenerator()
+// 			var sample Sample
+// 			faker.FakeData(&sample)
+// 			fmt.Printf("%+v", sample)
+// 		}
+//
+// Will print
+// 		{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
+// But when using a custom provider make sure to return the same type as the field
 func AddProvider(tag string, provider TaggedFunction) error {
 	if _, ok := mapperTag[tag]; ok {
 		return errors.New(ErrTagAlreadyExists)
