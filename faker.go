@@ -245,7 +245,7 @@ func FakeData(a interface{}) error {
 //
 // Will print
 // 		{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
-// But when using a custom provider make sure to return the same type as the field
+// Notes: when using a custom provider make sure to return the same type as the field
 func AddProvider(tag string, provider TaggedFunction) error {
 	if _, ok := mapperTag[tag]; ok {
 		return errors.New(ErrTagAlreadyExists)
