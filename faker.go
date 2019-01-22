@@ -64,6 +64,50 @@ const (
 	SKIP               = "-"
 )
 
+var defaultTag = map[string]string{
+	Email:              Email,
+	MacAddress:         MacAddress,
+	DomainName:         DomainName,
+	URL:                URL,
+	UserName:           UserName,
+	IPV4:               IPV4,
+	IPV6:               IPV6,
+	PASSWORD:           PASSWORD,
+	CreditCardType:     CreditCardType,
+	CreditCardNumber:   CreditCardNumber,
+	LATITUDE:           LATITUDE,
+	LONGITUDE:          LONGITUDE,
+	PhoneNumber:        PhoneNumber,
+	TollFreeNumber:     TollFreeNumber,
+	E164PhoneNumber:    E164PhoneNumber,
+	TitleMale:          TitleMale,
+	TitleFemale:        TitleFemale,
+	FirstName:          FirstName,
+	FirstNameMale:      FirstNameMale,
+	FirstNameFemale:    FirstNameFemale,
+	LastName:           LastName,
+	NAME:               NAME,
+	UnixTime:           UnixTime,
+	DATE:               DATE,
+	TIME:               Time,
+	MonthName:          MonthName,
+	YEAR:               Year,
+	DayOfWeek:          DayOfWeek,
+	DayOfMonthTag:      DayOfMonth,
+	TIMESTAMP:          TIMESTAMP,
+	CENTURY:            CENTURY,
+	TIMEZONE:           TIMEZONE,
+	TimePeriodTag:      TimePeriod,
+	WORD:               WORD,
+	SENTENCE:           SENTENCE,
+	PARAGRAPH:          PARAGRAPH,
+	Currency:           Currency,
+	Amount:             Amount,
+	AmountWithCurrency: AmountWithCurrency,
+	ID:                 ID,
+	HyphenatedID:       HyphenatedID,
+}
+
 // TaggedFunction ...
 type TaggedFunction func(v reflect.Value) (interface{}, error)
 
@@ -207,6 +251,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 					continue
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tag)
+					// err := setDataWithTag(t.Field(i).Type, tag)
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -291,8 +336,32 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return errors.New(ErrValueNotPtr)
 	}
 
+	if _, exist := mapperTag[tag]; !exist {
+		return errors.New(ErrTagNotSupported)
+	}
+
 	v = reflect.Indirect(v)
 	switch v.Kind() {
+	case reflect.Ptr:
+		if _, def := defaultTag[tag]; !def {
+			res, err := mapperTag[tag](v)
+			if err != nil {
+				return err
+			}
+			v.Set(reflect.ValueOf(res))
+			return nil
+		}
+
+		res, err := mapperTag[tag](v)
+		if err != nil {
+			return err
+		}
+		t := v.Type()
+		newv := reflect.New(t.Elem())
+		rval := reflect.ValueOf(res)
+		newv.Elem().Set(rval)
+		v.Set(newv)
+		return nil
 	case reflect.Float32, reflect.Float64:
 		return userDefinedFloat(v, tag)
 	case reflect.String:
@@ -301,15 +370,11 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
 		return userDefinedInt(v, tag)
 	default:
-		if _, exist := mapperTag[tag]; !exist {
-			return errors.New(ErrTagNotSupported)
-		}
 		res, err := mapperTag[tag](v)
 		if err != nil {
 			return err
 		}
 		v.Set(reflect.ValueOf(res))
-
 	}
 	return nil
 }
