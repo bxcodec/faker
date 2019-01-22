@@ -549,13 +549,19 @@ func TestTagAlreadyExists(t *testing.T) {
 }
 
 func TestTagWithPointer(t *testing.T) {
+
 	type TestStruct struct {
 		FirstName  *string  `json:"first_name,omitempty" faker:"first_name_male"`
 		Email      *string  `json:"email,omitempty" faker:"email"`
 		Latitude   *float64 `faker:"lat"`
 		Latitude32 *float32 `faker:"lat"`
 		UnixTime   *int64   `faker:"unix_time"`
+		School     *School  `faker:"school"`
 	}
+	// With custom provider
+	AddProvider("school", func(v reflect.Value) (interface{}, error) {
+		return &School{Location: "Jakarta"}, nil
+	})
 
 	var sample TestStruct
 	err := FakeData(&sample)
@@ -581,4 +587,7 @@ func TestTagWithPointer(t *testing.T) {
 		t.Error("Expected filled but got emtpy")
 	}
 
+	if sample.School == nil || sample.School.Location == "" {
+		t.Error("Expected filled but got emtpy")
+	}
 }
