@@ -655,7 +655,7 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 	} else {
 		val = 0
 	}
-	v.SetInt(val)
+
 	return val, nil
 }
 
