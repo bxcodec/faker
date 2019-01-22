@@ -2,7 +2,6 @@ package faker
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 	"testing"
 	"time"
@@ -25,19 +24,6 @@ func TestUnixTimeValueValid(t *testing.T) {
 
 	if time.Now().Unix() <= ref.some {
 		t.Error("UnixTime should return time <= now")
-	}
-}
-func TestUnixTimeValueNotValid(t *testing.T) {
-	d := GetDateTimer()
-	var ref = struct {
-		some int
-	}{
-		some: 1212,
-	}
-	d.UnixTime(reflect.ValueOf(&ref.some).Elem())
-	log.Println(ref.some)
-	if ref.some != 0 {
-		t.Errorf("UnixTime should return 0, get : %v", ref.some)
 	}
 }
 
