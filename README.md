@@ -368,13 +368,13 @@ Support Only For :
 
 ## Limitation
 Unfortunately this library has some limitation
-* Not support for private field. Just make sure your field's struct is public. If not, it will throw panic error. You can avoid panic using tag skip `faker:"-"` in the private field.
-* Not support for `interface{}` data type. How we can generate if we don't know what is the data type?
-* Not support for `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type`. Still, it's about interface. We can't give you something if we don't know what really you want.
-* Not fully support for custom type, but a few custom type already supported, still investigating how to do this in the correct ways. For now, if you use `faker`, it's safer not to use any custom type to avoid panic.
+* It does not support private fields. Make sure your structs fields you intend to generate fake data for are public, it would otherwise trigger a panic. You can however omit fields using a tag skip `faker:"-"` on your private fields.
+* It does not support the `interface{}` data type. How could we generate anything without knowing its data type?
+* It does not support the `map[interface{}]interface{}, map[any_type]interface{}, map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
+* Custom types are not fully supported. However some custom types are already supported: we are still investigating how to do this the correct way. For now, if you use `faker`, it's safer not to use any custom types in order to avoid panics.
 
 ## Contribution
-To contrib on this project, you can make a PR or just an issue.
+To contrib to this project, you can open a PR or an issue.
 
 ### Maintainer
 - <a href="https://github.com/bxcodec">  **Iman Tumorang** </a> <br>
