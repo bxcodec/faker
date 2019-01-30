@@ -35,7 +35,7 @@ const (
 	CreditCardNumber   = "cc_number"
 	CreditCardType     = "cc_type"
 	PhoneNumber        = "phone_number"
-	TollFreeNumber     = "tool_free_number"
+	TollFreeNumber     = "toll_free_number"
 	E164PhoneNumber    = "e_164_phone_number"
 	TitleMale          = "title_male"
 	TitleFemale        = "title_female"

@@ -144,7 +144,7 @@ type TaggedStruct struct {
 	MacAddress         string  `faker:"mac_address"`
 	URL                string  `faker:"url"`
 	UserName           string  `faker:"username"`
-	ToolFreeNumber     string  `faker:"tool_free_number"`
+	TollFreeNumber     string  `faker:"toll_free_number"`
 	E164PhoneNumber    string  `faker:"e_164_phone_number"`
 	TitleMale          string  `faker:"title_male"`
 	TitleFemale        string  `faker:"title_female"`
