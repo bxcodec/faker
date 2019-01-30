@@ -178,7 +178,7 @@ func main() {
 			MacAddress: cd:65:e1:d4:76:c6
 			URL: https://www.oEuqqAY.org/QgqfOhd
 			UserName: lVxELHS
-			ToolFreeNumber: (777) 831-964572
+			TollFreeNumber: (777) 831-964572
 			E164PhoneNumber: +724891571063
 			TitleMale: Mr.
 			TitleFemale: Queen
