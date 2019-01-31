@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -22,10 +23,6 @@ var creditCards = map[string]creditCard{
 	"mastercard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
 	"american express": {"American Express", 15, []int{34, 37}},
 	"discover":         {"Discover", 16, []int{6011}},
-	"VISA":             {"VISA", 16, []int{4539, 4556, 4916, 4532, 4929, 40240071, 4485, 4716, 4}},
-	"MasterCard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
-	"American Express": {"American Express", 15, []int{34, 37}},
-	"Discover":         {"Discover", 16, []int{6011}},
 }
 
 var pay Render
@@ -80,7 +77,7 @@ func (p Payment) CreditCardType(v reflect.Value) (interface{}, error) {
 func (p Payment) ccnumber() string {
 	ccType := p.cctype()
 	cacheCreditCard = ccType
-	card := creditCards[ccType]
+	card := creditCards[strings.ToLower(ccType)]
 	prefix := strconv.Itoa(card.prefixes[rand.Intn(len(card.prefixes))])
 
 	num := prefix
