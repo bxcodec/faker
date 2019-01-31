@@ -124,7 +124,7 @@ type SomeStruct struct {
 	MacAddress         string  `faker:"mac_address"`
 	URL                string  `faker:"url"`
 	UserName           string  `faker:"username"`
-	ToolFreeNumber     string  `faker:"tool_free_number"`
+	TollFreeNumber     string  `faker:"toll_free_number"`
 	E164PhoneNumber    string  `faker:"e_164_phone_number"`
 	TitleMale          string  `faker:"title_male"`
 	TitleFemale        string  `faker:"title_female"`
@@ -178,7 +178,7 @@ func main() {
 			MacAddress: cd:65:e1:d4:76:c6
 			URL: https://www.oEuqqAY.org/QgqfOhd
 			UserName: lVxELHS
-			ToolFreeNumber: (777) 831-964572
+			TollFreeNumber: (777) 831-964572
 			E164PhoneNumber: +724891571063
 			TitleMale: Mr.
 			TitleFemale: Queen
