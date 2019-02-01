@@ -1,12 +1,17 @@
 language: go
 go:
-- "1.10"
+- "1.11"
+
+env:
+ - env GO111MODULE=on
 
 before_install:
   - go get -t -v ./...
 
 script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - make lint-prepare
+  - make lint
+  - make test 
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

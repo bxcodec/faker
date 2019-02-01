@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bxcodec/faker/support/slice"
+	"github.com/bxcodec/faker/v3/support/slice"
 )
 
 func TestSetDowser(t *testing.T) {

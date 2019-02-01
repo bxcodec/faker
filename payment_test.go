@@ -19,7 +19,10 @@ func TestCreditCardType(t *testing.T) {
 }
 
 func TestCreditCardNumber(t *testing.T) {
-	GetPayment().CreditCardNumber(reflect.Value{})
+	_, err := GetPayment().CreditCardNumber(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
 }
 
 func TestSetPayment(t *testing.T) {

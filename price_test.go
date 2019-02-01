@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/support/slice"
+	"github.com/bxcodec/faker/v3/support/slice"
 )
 
 func TestSetPrice(t *testing.T) {

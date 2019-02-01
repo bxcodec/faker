@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bxcodec/faker/support/slice"
+	"github.com/bxcodec/faker/v3/support/slice"
 )
 
 func TestSetDateTimer(t *testing.T) {
@@ -20,7 +20,10 @@ func TestUnixTimeValueValid(t *testing.T) {
 	}{
 		some: 1212,
 	}
-	d.UnixTime(reflect.ValueOf(&ref.some).Elem())
+	_, err := d.UnixTime(reflect.ValueOf(&ref.some).Elem())
+	if err != nil {
+		t.Error("function Date need return valid value")
+	}
 
 	if time.Now().Unix() <= ref.some {
 		t.Error("UnixTime should return time <= now")
