@@ -4,13 +4,13 @@ go:
 
 env:
  - env GO111MODULE=on
- 
+
 before_install:
   - go get -t -v ./...
 
 script:
-  - make linter-prepare
-  - make linter
+  - make lint-prepare
+  - make lint
   - make test 
 
 after_success:
