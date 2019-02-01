@@ -14,7 +14,6 @@ lint-prepare:
 	@echo "Installing golangci-lint"
 	@go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
-
 lint: 
 	golangci-lint run \
 		--exclude="cyclomatic complexity" \
