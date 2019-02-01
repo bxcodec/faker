@@ -58,7 +58,7 @@ func (p Phone) tollfreephonenumber() string {
 		if index == 3 {
 			out += "-"
 		}
-		out += string(v)
+		out += v
 	}
 	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(1)], out)
 }
@@ -74,7 +74,7 @@ func (p Phone) e164PhoneNumber() string {
 	ints, _ := RandomInt(1, 10)
 
 	for _, v := range slice.IntToString(ints) {
-		out += string(v)
+		out += v
 	}
 	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(1)], strings.Join(slice.IntToString(ints), ""))
 }

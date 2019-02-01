@@ -318,7 +318,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		return v, nil
 	case reflect.Int:
-		return reflect.ValueOf(int(rand.Intn(100))), nil
+		return reflect.ValueOf(rand.Intn(100)), nil
 	case reflect.Int8:
 		return reflect.ValueOf(int8(rand.Intn(100))), nil
 	case reflect.Int16:

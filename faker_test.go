@@ -416,6 +416,10 @@ type SampleStruct struct {
 	Age  int
 }
 
+func (s SampleStruct) GetName() string {
+	return s.name
+}
+
 func TestUnexportedFieldStruct(t *testing.T) {
 	// This test is to ensure that the faker won't panic if trying to fake data on struct that has unexported field
 	a := new(SampleStruct)
@@ -559,12 +563,14 @@ func TestTagWithPointer(t *testing.T) {
 		School     *School  `faker:"school"`
 	}
 	// With custom provider
-	AddProvider("school", func(v reflect.Value) (interface{}, error) {
+	err := AddProvider("school", func(v reflect.Value) (interface{}, error) {
 		return &School{Location: "Jakarta"}, nil
 	})
-
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
 	var sample TestStruct
-	err := FakeData(&sample)
+	err = FakeData(&sample)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}

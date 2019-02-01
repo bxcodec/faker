@@ -1,17 +1,30 @@
 BINARY=faker
-TESTS=go test $$(go list ./... | grep -v /vendor/) -cover
 
-build:
-	${TESTS}
-	go build -o ${BINARY}
+build: test
+	@go build ./...
 
-install:
-	${TESTS}
-	go build -o ${BINARY}
+test: 
+	@go test -v ./...
 
 unittest:
-	go test -short $$(go list ./... | grep -v /vendor/)
+	@go test -v -short ./...
+
+# Linter
+lint-prepare: 
+	@echo "Installing golangci-lint"
+	@go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
 
 
+lint: 
+	golangci-lint run \
+		--exclude="cyclomatic complexity" \
+		--exclude-use-default=false \
+		--enable=golint \
+		--enable=gocyclo \
+		--enable=goconst \
+		--enable=unconvert \
+		./...
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+
+.PHONY: lint lint-prepare clean build unittest 
