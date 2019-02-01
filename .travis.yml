@@ -2,6 +2,9 @@ language: go
 go:
 - "1.11"
 
+env:
+ - env GO111MODULE=on
+ 
 before_install:
   - go get -t -v ./...
 
