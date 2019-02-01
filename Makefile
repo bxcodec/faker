@@ -12,8 +12,7 @@ unittest:
 # Linter
 lint-prepare: 
 	@echo "Installing golangci-lint"
-	# @go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
-	# curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin v1.13.2
+	# @go get -u github.com/golangci/golangci-lint/cmd/golangci-lint 
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.13.2
 
 lint: 
