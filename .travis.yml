@@ -6,7 +6,9 @@ before_install:
   - go get -t -v ./...
 
 script:
-  - go test -race -coverprofile=coverage.txt -covermode=atomic
+  - make linter-prepare
+  - make linter
+  - make test 
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

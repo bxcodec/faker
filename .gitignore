@@ -17,4 +17,4 @@ cover.html
 .glide/
 faker
 vendor/
-
+coverage.txt
