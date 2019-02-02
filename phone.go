@@ -11,6 +11,19 @@ import (
 
 var phone Phoner
 
+var usaAreaCodes = [52]string{
+	"518", "410", "404", "207", "512",
+	"225", "701", "208", "617", "775",
+	"843", "307", "803", "614", "603",
+	"303", "515", "302", "502", "717",
+	"860", "406", "808", "317", "601",
+	"904", "573", "907", "517", "402",
+	"501", "608", "334", "802", "615",
+	"405", "360", "602", "605", "401",
+	"919", "804", "916", "651", "503",
+	"385", "505", "417", "850", "785",
+	"609", "202"}
+
 // GetPhoner serves as a constructor for Phoner interface
 func GetPhoner() Phoner {
 	mu.Lock()
@@ -39,9 +52,9 @@ type Phone struct {
 }
 
 func (p Phone) phonenumber() string {
-	randInt, _ := RandomInt(1, 10)
+	randInt, _ := RandomInt(1, 4)
 	str := strings.Join(slice.IntToString(randInt), "")
-	return fmt.Sprintf("%s-%s-%s", str[:3], str[3:6], str[6:10])
+	return fmt.Sprintf("%s-555-%s", usaAreaCodes[rand.Intn(len(usaAreaCodes))], str)
 }
 
 // PhoneNumber generates phone numbers of type: "201-886-0269"
