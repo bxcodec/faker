@@ -11,7 +11,13 @@ import (
 	"time"
 )
 
-var mu = &sync.Mutex{}
+var (
+	mu = &sync.Mutex{}
+	// Sets nil if the value type is struct or map and the size of it equals to zero.
+	shouldSetNil = false
+	//Sets random integer generation to zero for slice and maps
+	testRandZero = false
+)
 
 // Supported tags
 const (
@@ -178,6 +184,11 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// SetNilIfLenIsEmpty allows to set nil for the slice and maps, if size is 0.
+func SetNilIfLenIsEmpty(setNil bool) {
+	shouldSetNil = setNil
+}
+
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
@@ -307,7 +318,10 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		res := randomString(25)
 		return reflect.ValueOf(res), nil
 	case reflect.Array, reflect.Slice:
-		len := rand.Intn(100)
+		len := randomInteger(100)
+		if shouldSetNil && len == 0 {
+			return reflect.Zero(t), nil
+		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
 			val, err := getValue(t.Elem())
@@ -352,7 +366,10 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 
 	case reflect.Map:
 		v := reflect.MakeMap(t)
-		len := rand.Intn(100)
+		len := randomInteger(100)
+		if shouldSetNil && len == 0 {
+			return reflect.Zero(t), nil
+		}
 		for i := 0; i < len; i++ {
 			key, err := getValue(t.Key())
 			if err != nil {
@@ -475,6 +492,15 @@ func randomString(n int) string {
 	}
 
 	return string(b)
+}
+
+// randomInteger returns a random integer between [0,n). If the testRandZero is set, returns 0
+// Written for test purposes for shouldSetNil
+func randomInteger(n int) int {
+	if testRandZero {
+		return 0
+	}
+	return rand.Intn(n)
 }
 
 func randomElementFromSliceString(s []string) string {
