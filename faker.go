@@ -184,8 +184,8 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// SetNilIfLenIsEmpty allows to set nil for the slice and maps, if size is 0.
-func SetNilIfLenIsEmpty(setNil bool) {
+// SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
+func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
 }
 

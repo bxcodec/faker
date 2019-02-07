@@ -311,10 +311,10 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	}
 }
 
-func TestSetNilIfLenIsEmpty(t *testing.T) {
+func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
 	rand.Seed(0)
-	SetNilIfLenIsEmpty(true)
+	SetNilIfLenIsZero(true)
 	testRandZero = true
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
@@ -327,7 +327,7 @@ func TestSetNilIfLenIsEmpty(t *testing.T) {
 		t.Error("Array has to be nil")
 	}
 	rand.Seed(time.Now().UnixNano())
-	SetNilIfLenIsEmpty(false)
+	SetNilIfLenIsZero(false)
 	testRandZero = false
 }
 
