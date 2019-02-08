@@ -313,7 +313,6 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 
 func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
-	rand.Seed(0)
 	SetNilIfLenIsZero(true)
 	testRandZero = true
 	if err := FakeData(&someStruct); err != nil {
@@ -326,9 +325,6 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 	if someStruct.Stime != nil && someStruct.SBool != nil {
 		t.Error("Array has to be nil")
 	}
-	rand.Seed(time.Now().UnixNano())
-	SetNilIfLenIsZero(false)
-	testRandZero = false
 }
 
 func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
