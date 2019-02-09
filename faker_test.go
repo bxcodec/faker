@@ -307,7 +307,23 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	}{}
 
 	if err := FakeData(temp); err == nil {
-		t.Error("Exptected error Unsupported tag, but got nil")
+		t.Error("Expected error Unsupported tag, but got nil")
+	}
+}
+
+func TestSetNilIfLenIsZero(t *testing.T) {
+	someStruct := SomeStruct{}
+	SetNilIfLenIsZero(true)
+	testRandZero = true
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if someStruct.MapStringString != nil && someStruct.MapStringStruct != nil &&
+		someStruct.MapStringStructPointer != nil {
+		t.Error("Map has to be nil")
+	}
+	if someStruct.Stime != nil && someStruct.SBool != nil {
+		t.Error("Array has to be nil")
 	}
 }
 
