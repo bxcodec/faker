@@ -317,7 +317,9 @@ func TestSetRandomStringLength(t *testing.T) {
 		t.Error("Random string len must not accept lower than 0 as a size")
 	}
 	strLen := 5
-	SetRandomStringLength(strLen)
+	if err := SetRandomStringLength(strLen); err != nil {
+		t.Error("SetRandomStringLength method is corrupted.")
+	}
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
@@ -331,8 +333,10 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	if err := SetRandomNumberBoundaries(10, 0); err == nil {
 		t.Error("Start must be smaller than end value")
 	}
-	boundary := NumberBoundary{start: 10, end: 90}
-	SetRandomNumberBoundaries(boundary.start, boundary.end)
+	boundary := numberBoundary{start: 10, end: 90}
+	if err := SetRandomNumberBoundaries(boundary.start, boundary.end); err != nil {
+		t.Error("SetRandomNumberBoundaries method is corrupted.")
+	}
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
@@ -347,7 +351,9 @@ func TestSetRandomMapAndSliceSize(t *testing.T) {
 		t.Error("Random Map and Slice must not accept lower than 0 as a size")
 	}
 	size := 5
-	SetRandomMapAndSliceSize(size)
+	if err := SetRandomMapAndSliceSize(size); err != nil {
+		t.Error("SetRandomMapAndSliceSize method is corrupted.")
+	}
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}

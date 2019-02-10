@@ -20,12 +20,12 @@ var (
 	//Sets the default number of string when it is created randomly.
 	randomStringLen = 25
 	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
-	numberBoundary = NumberBoundary{start: 0, end: 100}
+	nBoundary = numberBoundary{start: 0, end: 100}
 	//Sets the random size for slices and maps.
 	randomSize = 100
 )
 
-type NumberBoundary struct {
+type numberBoundary struct {
 	start int
 	end   int
 }
@@ -206,7 +206,7 @@ func SetNilIfLenIsZero(setNil bool) {
 // SetRandomStringLength sets a length for random string generation
 func SetRandomStringLength(size int) error {
 	if size < 0 {
-		return errors.New(fmt.Sprintf(ErrSmallerThanZero, size))
+		return fmt.Errorf(ErrSmallerThanZero, size)
 	}
 	randomStringLen = size
 	return nil
@@ -215,7 +215,7 @@ func SetRandomStringLength(size int) error {
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
 func SetRandomMapAndSliceSize(size int) error {
 	if size < 0 {
-		return errors.New(fmt.Sprintf(ErrSmallerThanZero, size))
+		return fmt.Errorf(ErrSmallerThanZero, size)
 	}
 	randomSize = size
 	return nil
@@ -226,7 +226,7 @@ func SetRandomNumberBoundaries(start, end int) error {
 	if start > end {
 		return errors.New(ErrStartValueBiggerThanEnd)
 	}
-	numberBoundary = NumberBoundary{start: start, end: end}
+	nBoundary = numberBoundary{start: start, end: end}
 	return nil
 }
 
@@ -537,7 +537,7 @@ func randomString(n int) string {
 
 // randomInteger returns random integer between start and end boundary. [start, end)
 func randomInteger() int {
-	return rand.Intn(numberBoundary.end-numberBoundary.start) + numberBoundary.start
+	return rand.Intn(nBoundary.end-nBoundary.start) + nBoundary.start
 }
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
