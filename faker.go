@@ -17,7 +17,18 @@ var (
 	shouldSetNil = false
 	//Sets random integer generation to zero for slice and maps
 	testRandZero = false
+	//Sets the default number of string when it is created randomly.
+	randomStringLen = 25
+	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
+	numberBoundary = NumberBoundary{start: 0, end: 100}
+	//Sets the random size for slices and maps.
+	randomSize = 100
 )
+
+type NumberBoundary struct {
+	start int
+	end   int
+}
 
 // Supported tags
 const (
@@ -178,6 +189,9 @@ var (
 	ErrTagAlreadyExists    = "Tag exists"
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
+	ErrSmallerThanZero     = "Size:%d is smaller than zero."
+
+	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
 )
 
 func init() {
@@ -187,6 +201,33 @@ func init() {
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
+}
+
+// SetRandomStringLength sets a length for random string generation
+func SetRandomStringLength(size int) error {
+	if size < 0 {
+		return errors.New(fmt.Sprintf(ErrSmallerThanZero, size))
+	}
+	randomStringLen = size
+	return nil
+}
+
+// SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
+func SetRandomMapAndSliceSize(size int) error {
+	if size < 0 {
+		return errors.New(fmt.Sprintf(ErrSmallerThanZero, size))
+	}
+	randomSize = size
+	return nil
+}
+
+// SetRandomNumberBoundaries sets boundary for random number generation
+func SetRandomNumberBoundaries(start, end int) error {
+	if start > end {
+		return errors.New(ErrStartValueBiggerThanEnd)
+	}
+	numberBoundary = NumberBoundary{start: start, end: end}
+	return nil
 }
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
@@ -315,10 +356,10 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 
 	case reflect.String:
-		res := randomString(25)
+		res := randomString(randomStringLen)
 		return reflect.ValueOf(res), nil
 	case reflect.Array, reflect.Slice:
-		len := randomInteger(100)
+		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
@@ -332,15 +373,15 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		return v, nil
 	case reflect.Int:
-		return reflect.ValueOf(rand.Intn(100)), nil
+		return reflect.ValueOf(randomInteger()), nil
 	case reflect.Int8:
-		return reflect.ValueOf(int8(rand.Intn(100))), nil
+		return reflect.ValueOf(int8(randomInteger())), nil
 	case reflect.Int16:
-		return reflect.ValueOf(int16(rand.Intn(100))), nil
+		return reflect.ValueOf(int16(randomInteger())), nil
 	case reflect.Int32:
-		return reflect.ValueOf(int32(rand.Intn(100))), nil
+		return reflect.ValueOf(int32(randomInteger())), nil
 	case reflect.Int64:
-		return reflect.ValueOf(int64(rand.Intn(100))), nil
+		return reflect.ValueOf(int64(randomInteger())), nil
 	case reflect.Float32:
 		return reflect.ValueOf(rand.Float32()), nil
 	case reflect.Float64:
@@ -350,23 +391,23 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		return reflect.ValueOf(val), nil
 
 	case reflect.Uint:
-		return reflect.ValueOf(uint(rand.Intn(100))), nil
+		return reflect.ValueOf(uint(randomInteger())), nil
 
 	case reflect.Uint8:
-		return reflect.ValueOf(uint8(rand.Intn(100))), nil
+		return reflect.ValueOf(uint8(randomInteger())), nil
 
 	case reflect.Uint16:
-		return reflect.ValueOf(uint16(rand.Intn(100))), nil
+		return reflect.ValueOf(uint16(randomInteger())), nil
 
 	case reflect.Uint32:
-		return reflect.ValueOf(uint32(rand.Intn(100))), nil
+		return reflect.ValueOf(uint32(randomInteger())), nil
 
 	case reflect.Uint64:
-		return reflect.ValueOf(uint64(rand.Intn(100))), nil
+		return reflect.ValueOf(uint64(randomInteger())), nil
 
 	case reflect.Map:
 		v := reflect.MakeMap(t)
-		len := randomInteger(100)
+		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
@@ -494,13 +535,18 @@ func randomString(n int) string {
 	return string(b)
 }
 
-// randomInteger returns a random integer between [0,n). If the testRandZero is set, returns 0
+// randomInteger returns random integer between start and end boundary. [start, end)
+func randomInteger() int {
+	return rand.Intn(numberBoundary.end-numberBoundary.start) + numberBoundary.start
+}
+
+// randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
 // Written for test purposes for shouldSetNil
-func randomInteger(n int) int {
+func randomSliceAndMapSize() int {
 	if testRandZero {
 		return 0
 	}
-	return rand.Intn(n)
+	return rand.Intn(randomSize)
 }
 
 func randomElementFromSliceString(s []string) string {

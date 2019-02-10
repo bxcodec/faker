@@ -311,6 +311,51 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	}
 }
 
+func TestSetRandomStringLength(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomStringLength(-1); err == nil {
+		t.Error("Random string len must not accept lower than 0 as a size")
+	}
+	strLen := 5
+	SetRandomStringLength(strLen)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if len(someStruct.StringValue) > strLen {
+		t.Error("SetRandomStringLength did not work.")
+	}
+}
+
+func TestSetRandomNumberBoundaries(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomNumberBoundaries(10, 0); err == nil {
+		t.Error("Start must be smaller than end value")
+	}
+	boundary := NumberBoundary{start: 10, end: 90}
+	SetRandomNumberBoundaries(boundary.start, boundary.end)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if someStruct.Inta >= boundary.end || someStruct.Inta < boundary.start {
+		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.start, boundary.end)
+	}
+}
+
+func TestSetRandomMapAndSliceSize(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomMapAndSliceSize(-1); err == nil {
+		t.Error("Random Map and Slice must not accept lower than 0 as a size")
+	}
+	size := 5
+	SetRandomMapAndSliceSize(size)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
+		t.Error("SetRandomMapAndSliceSize did not work.")
+	}
+}
+
 func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
 	SetNilIfLenIsZero(true)
