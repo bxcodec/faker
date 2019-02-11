@@ -50,7 +50,7 @@ Supported tag:
 
 
 **Payment :**
-* Credit Card Type (VISA, MASTERCARD, AMERICAN EXPRESS, DISCOVER)
+* Credit Card Type (VISA, MASTERCARD, AMERICAN EXPRESS, DISCOVER, JCB, DINERS CLUB)
 * Credit Card Number
 
 **Address :**
