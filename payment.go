@@ -23,6 +23,8 @@ var creditCards = map[string]creditCard{
 	"mastercard":       {"MasterCard", 16, []int{51, 52, 53, 54, 55}},
 	"american express": {"American Express", 15, []int{34, 37}},
 	"discover":         {"Discover", 16, []int{6011}},
+	"jcb":              {"JCB", 16, []int{3528, 3538, 3548, 3558, 3568, 3578, 3588}},
+	"diners club":      {"Diners Club", 14, []int{36, 38, 39}},
 }
 
 var pay Render
@@ -69,7 +71,7 @@ func (p Payment) cctype() string {
 }
 
 // CreditCardType returns one of the following credit values:
-// VISA, MasterCard, American Express and Discover
+// VISA, MasterCard, American Express, Discover, JCB and Diners Club
 func (p Payment) CreditCardType(v reflect.Value) (interface{}, error) {
 	return p.cctype(), nil
 }
