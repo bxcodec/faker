@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -79,6 +81,11 @@ const (
 	Amount             = "amount"
 	AmountWithCurrency = "amount_with_currency"
 	SKIP               = "-"
+	Length             = "len"
+	BoundaryStart      = "boundary_start"
+	BoundaryEnd        = "boundary_end"
+	Equals             = "="
+	comma              = ","
 )
 
 var defaultTag = map[string]string{
@@ -192,6 +199,8 @@ var (
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
 
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
+	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
+	ErrUnknownType             = "Unknown Type"
 )
 
 func init() {
@@ -406,11 +415,11 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		return reflect.ValueOf(uint64(randomInteger())), nil
 
 	case reflect.Map:
-		v := reflect.MakeMap(t)
 		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
+		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			key, err := getValue(t.Key())
 			if err != nil {
@@ -435,14 +444,12 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	if v.Kind() != reflect.Ptr {
 		return errors.New(ErrValueNotPtr)
 	}
-
-	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
-	}
-
 	v = reflect.Indirect(v)
 	switch v.Kind() {
 	case reflect.Ptr:
+		if _, exist := mapperTag[tag]; !exist {
+			return errors.New(ErrTagNotSupported)
+		}
 		if _, def := defaultTag[tag]; !def {
 			res, err := mapperTag[tag](v)
 			if err != nil {
@@ -462,14 +469,19 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		newv.Elem().Set(rval)
 		v.Set(newv)
 		return nil
-	case reflect.Float32, reflect.Float64:
-		return userDefinedFloat(v, tag)
 	case reflect.String:
 		return userDefinedString(v, tag)
-
-	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
-		return userDefinedInt(v, tag)
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
+		reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return userDefinedNumber(v, tag)
+	case reflect.Slice, reflect.Array:
+		return userDefinedArray(v, tag)
+	case reflect.Map:
+		return userDefinedMap(v, tag)
 	default:
+		if _, exist := mapperTag[tag]; !exist {
+			return errors.New(ErrTagNotSupported)
+		}
 		res, err := mapperTag[tag](v)
 		if err != nil {
 			return err
@@ -479,43 +491,174 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	return nil
 }
 
-func userDefinedFloat(v reflect.Value, tag string) error {
-	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
+func userDefinedMap(v reflect.Value, tag string) error {
+	len := randomSliceAndMapSize()
+	if shouldSetNil && len == 0 {
+		v.Set(reflect.Zero(v.Type()))
+		return nil
 	}
-	res, err := mapperTag[tag](v)
-	if err != nil {
-		return err
+	definedMap := reflect.MakeMap(v.Type())
+	for i := 0; i < len; i++ {
+		key, err := getValueWithTag(v.Type().Key(), tag)
+		if err != nil {
+			return err
+		}
+		val, err := getValueWithTag(v.Type().Elem(), tag)
+		if err != nil {
+			return err
+		}
+		definedMap.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(val))
 	}
-	v.Set(reflect.ValueOf(res))
+	v.Set(definedMap)
+	return nil
+}
+
+func getValueWithTag(t reflect.Type, tag string) (interface{}, error) {
+	switch t.Kind() {
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
+		reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		res, err := extractNumberFromTag(tag, t)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	case reflect.String:
+		res, err := extractStringFromTag(tag)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	default:
+		return 0, errors.New(ErrUnknownType)
+	}
+}
+
+func userDefinedArray(v reflect.Value, tag string) error {
+	len := randomSliceAndMapSize()
+	if shouldSetNil && len == 0 {
+		v.Set(reflect.Zero(v.Type()))
+		return nil
+	}
+	array := reflect.MakeSlice(v.Type(), len, len)
+	for i := 0; i < len; i++ {
+		res, err := getValueWithTag(v.Type().Elem(), tag)
+		if err != nil {
+			return err
+		}
+		array.Index(i).Set(reflect.ValueOf(res))
+	}
+	v.Set(array)
 	return nil
 }
 
 func userDefinedString(v reflect.Value, tag string) error {
-	val := ""
-	if _, exist := mapperTag[tag]; !exist {
+	var res interface{}
+	var err error
+
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err = tagFunc(v)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err = extractStringFromTag(tag)
+		if err != nil {
+			return err
+		}
+	}
+	if res == nil {
 		return errors.New(ErrTagNotSupported)
 	}
-	item, err := mapperTag[tag](v)
-	if err != nil {
-		return err
-	}
-	val, _ = item.(string)
+	val, _ := res.(string)
 	v.SetString(val)
 	return nil
 }
 
-func userDefinedInt(v reflect.Value, tag string) error {
-	if _, exist := mapperTag[tag]; !exist {
+func userDefinedNumber(v reflect.Value, tag string) error {
+	var res interface{}
+	var err error
+
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err = tagFunc(v)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err = extractNumberFromTag(tag, v.Type())
+		if err != nil {
+			return err
+		}
+	}
+	if res == nil {
 		return errors.New(ErrTagNotSupported)
 	}
-	val, err := mapperTag[tag](v)
-	if err != nil {
-		return err
-	}
 
-	v.Set(reflect.ValueOf(val))
+	v.Set(reflect.ValueOf(res))
 	return nil
+}
+
+func extractStringFromTag(tag string) (interface{}, error) {
+	if !strings.Contains(tag, Length) {
+		return nil, errors.New(ErrTagNotSupported)
+	}
+	len, err := extractNumberFromText(tag)
+	if err != nil {
+		return nil, err
+	}
+	res := randomString(len)
+	return res, nil
+}
+
+func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
+	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
+		return nil, errors.New(ErrTagNotSupported)
+	}
+	valuesStr := strings.SplitN(tag, comma, -1)
+	if len(valuesStr) != 2 {
+		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+	}
+	startBoundary, err := extractNumberFromText(valuesStr[0])
+	if err != nil {
+		return nil, err
+	}
+	endBoundary, err := extractNumberFromText(valuesStr[1])
+	if err != nil {
+		return nil, err
+	}
+	boundary := numberBoundary{start: startBoundary, end: endBoundary}
+	switch t.Kind() {
+	case reflect.Uint:
+		return uint(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint8:
+		return uint8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint16:
+		return uint16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint32:
+		return uint32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint64:
+		return uint64(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int:
+		return randomIntegerWithBoundary(boundary), nil
+	case reflect.Int8:
+		return int8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int16:
+		return int16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int32:
+		return int32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int64:
+		return int64(randomIntegerWithBoundary(boundary)), nil
+	default:
+		return nil, errors.New(ErrTagNotSupported)
+	}
+}
+
+func extractNumberFromText(text string) (int, error) {
+	text = strings.TrimSpace(text)
+	texts := strings.SplitN(text, Equals, -1)
+	if len(texts) != 2 {
+		return 0, fmt.Errorf(ErrWrongFormattedTag, text)
+	}
+	return strconv.Atoi(texts[1])
 }
 
 func randomString(n int) string {
@@ -535,7 +678,12 @@ func randomString(n int) string {
 	return string(b)
 }
 
-// randomInteger returns random integer between start and end boundary. [start, end)
+// randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
+func randomIntegerWithBoundary(boundary numberBoundary) int {
+	return rand.Intn(boundary.end-boundary.start) + boundary.start
+}
+
+// randomInteger returns a random integer between start and end boundary. [start, end)
 func randomInteger() int {
 	return rand.Intn(nBoundary.end-nBoundary.start) + nBoundary.start
 }
