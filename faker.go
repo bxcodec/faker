@@ -201,6 +201,7 @@ var (
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
 	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
 	ErrUnknownType             = "Unknown Type"
+	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
 )
 
 func init() {
@@ -648,7 +649,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	case reflect.Int64:
 		return int64(randomIntegerWithBoundary(boundary)), nil
 	default:
-		return nil, errors.New(ErrTagNotSupported)
+		return nil, errors.New(ErrNotSupportedTypeForTag)
 	}
 }
 

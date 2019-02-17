@@ -79,6 +79,7 @@ type SomeStructWithLen struct {
 	ASString []string          `faker:"len=2"`
 	SString  string            `faker:"len=2"`
 	MSString map[string]string `faker:"len=2"`
+	MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
 }
 
 func (s SomeStruct) String() string {
@@ -456,6 +457,47 @@ func TestBoundaryAndLen(t *testing.T) {
 				t.Error(err)
 			}
 		}
+		for k, v := range someStruct.MIint {
+			if err := validateRange(k); err != nil {
+				t.Error(err)
+			}
+			if err := validateRange(v); err != nil {
+				t.Error(err)
+			}
+		}
+	}
+}
+
+func TestExtractNumberFromTagFail(t *testing.T) {
+	notSupportedStruct := &struct {
+		Test int `faker:"boundary_start=5"`
+	}{}
+	if err := FakeData(&notSupportedStruct); err == nil {
+		t.Error(err)
+	}
+	wrongFormatStruct := &struct {
+		Test int `faker:"boundary_start=5 boundary_end=10"`
+	}{}
+	if err := FakeData(&wrongFormatStruct); err == nil {
+		t.Error(err)
+	}
+	startExtractionStruct := &struct {
+		Test int `faker:"boundary_start=asda, boundary_end=10"`
+	}{}
+	if err := FakeData(&startExtractionStruct); err == nil {
+		t.Error(err)
+	}
+	endExtractionStruct := &struct {
+		Test int `faker:"boundary_start=5, boundary_end=asda"`
+	}{}
+	if err := FakeData(&endExtractionStruct); err == nil {
+		t.Error(err)
+	}
+	notSupportedTypeStruct := &struct {
+		Test float32 `faker:"boundary_start=5, boundary_end=10"`
+	}{}
+	if err := FakeData(&notSupportedTypeStruct); err == nil {
+		t.Error(err)
 	}
 }
 
