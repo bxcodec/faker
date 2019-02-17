@@ -419,7 +419,7 @@ func TestBoundaryAndLen(t *testing.T) {
 		if err := validateRange(int(someStruct.Int32)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.Inta)); err != nil {
+		if err := validateRange(someStruct.Inta); err != nil {
 			t.Error(err)
 		}
 		if err := validateRange(int(someStruct.Int64)); err != nil {
