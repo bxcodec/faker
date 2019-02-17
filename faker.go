@@ -473,7 +473,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	case reflect.String:
 		return userDefinedString(v, tag)
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
-		reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		return userDefinedNumber(v, tag)
 	case reflect.Slice, reflect.Array:
 		return userDefinedArray(v, tag)

@@ -469,6 +469,12 @@ func TestBoundaryAndLen(t *testing.T) {
 }
 
 func TestExtractNumberFromTagFail(t *testing.T) {
+	notSupportedTypeStruct := &struct {
+		Test float32 `faker:"boundary_start=5, boundary_end=10"`
+	}{}
+	if err := FakeData(&notSupportedTypeStruct); err == nil {
+		t.Error(err)
+	}
 	notSupportedStruct := &struct {
 		Test int `faker:"boundary_start=5"`
 	}{}
@@ -493,10 +499,19 @@ func TestExtractNumberFromTagFail(t *testing.T) {
 	if err := FakeData(&endExtractionStruct); err == nil {
 		t.Error(err)
 	}
-	notSupportedTypeStruct := &struct {
-		Test float32 `faker:"boundary_start=5, boundary_end=10"`
+	wrongSplitFormatStruct := &struct {
+		Test int `faker:"boundary_start5, boundary_end=10"`
 	}{}
-	if err := FakeData(&notSupportedTypeStruct); err == nil {
+	if err := FakeData(&wrongSplitFormatStruct); err == nil {
+		t.Error(err)
+	}
+}
+
+func TestUserDefinedStringFail(t *testing.T) {
+	wrongFormatStruct := &struct {
+		Test string `faker:"len=asd"`
+	}{}
+	if err := FakeData(&wrongFormatStruct); err == nil {
 		t.Error(err)
 	}
 }
