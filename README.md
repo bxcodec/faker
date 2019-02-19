@@ -288,9 +288,9 @@ type SomeStruct struct {
 }
 
 func main(){
-    SetRandomMapAndSliceSize(20) //Random generated map or array size wont exceed 20...
+    faker.SetRandomMapAndSliceSize(20) //Random generated map or array size wont exceed 20...
 	a := SomeStruct{}
-	err := FakeData(&a)
+	err := faker.FakeData(&a)
 	if err != nil {
 		fmt.Println(err)
 	}
