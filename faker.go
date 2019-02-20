@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -17,7 +19,18 @@ var (
 	shouldSetNil = false
 	//Sets random integer generation to zero for slice and maps
 	testRandZero = false
+	//Sets the default number of string when it is created randomly.
+	randomStringLen = 25
+	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
+	nBoundary = numberBoundary{start: 0, end: 100}
+	//Sets the random size for slices and maps.
+	randomSize = 100
 )
+
+type numberBoundary struct {
+	start int
+	end   int
+}
 
 // Supported tags
 const (
@@ -68,6 +81,11 @@ const (
 	Amount             = "amount"
 	AmountWithCurrency = "amount_with_currency"
 	SKIP               = "-"
+	Length             = "len"
+	BoundaryStart      = "boundary_start"
+	BoundaryEnd        = "boundary_end"
+	Equals             = "="
+	comma              = ","
 )
 
 var defaultTag = map[string]string{
@@ -178,6 +196,12 @@ var (
 	ErrTagAlreadyExists    = "Tag exists"
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
+	ErrSmallerThanZero     = "Size:%d is smaller than zero."
+
+	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
+	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
+	ErrUnknownType             = "Unknown Type"
+	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
 )
 
 func init() {
@@ -187,6 +211,33 @@ func init() {
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
+}
+
+// SetRandomStringLength sets a length for random string generation
+func SetRandomStringLength(size int) error {
+	if size < 0 {
+		return fmt.Errorf(ErrSmallerThanZero, size)
+	}
+	randomStringLen = size
+	return nil
+}
+
+// SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
+func SetRandomMapAndSliceSize(size int) error {
+	if size < 0 {
+		return fmt.Errorf(ErrSmallerThanZero, size)
+	}
+	randomSize = size
+	return nil
+}
+
+// SetRandomNumberBoundaries sets boundary for random number generation
+func SetRandomNumberBoundaries(start, end int) error {
+	if start > end {
+		return errors.New(ErrStartValueBiggerThanEnd)
+	}
+	nBoundary = numberBoundary{start: start, end: end}
+	return nil
 }
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
@@ -315,10 +366,10 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 
 	case reflect.String:
-		res := randomString(25)
+		res := randomString(randomStringLen)
 		return reflect.ValueOf(res), nil
 	case reflect.Array, reflect.Slice:
-		len := randomInteger(100)
+		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
@@ -332,15 +383,15 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		return v, nil
 	case reflect.Int:
-		return reflect.ValueOf(rand.Intn(100)), nil
+		return reflect.ValueOf(randomInteger()), nil
 	case reflect.Int8:
-		return reflect.ValueOf(int8(rand.Intn(100))), nil
+		return reflect.ValueOf(int8(randomInteger())), nil
 	case reflect.Int16:
-		return reflect.ValueOf(int16(rand.Intn(100))), nil
+		return reflect.ValueOf(int16(randomInteger())), nil
 	case reflect.Int32:
-		return reflect.ValueOf(int32(rand.Intn(100))), nil
+		return reflect.ValueOf(int32(randomInteger())), nil
 	case reflect.Int64:
-		return reflect.ValueOf(int64(rand.Intn(100))), nil
+		return reflect.ValueOf(int64(randomInteger())), nil
 	case reflect.Float32:
 		return reflect.ValueOf(rand.Float32()), nil
 	case reflect.Float64:
@@ -350,26 +401,26 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		return reflect.ValueOf(val), nil
 
 	case reflect.Uint:
-		return reflect.ValueOf(uint(rand.Intn(100))), nil
+		return reflect.ValueOf(uint(randomInteger())), nil
 
 	case reflect.Uint8:
-		return reflect.ValueOf(uint8(rand.Intn(100))), nil
+		return reflect.ValueOf(uint8(randomInteger())), nil
 
 	case reflect.Uint16:
-		return reflect.ValueOf(uint16(rand.Intn(100))), nil
+		return reflect.ValueOf(uint16(randomInteger())), nil
 
 	case reflect.Uint32:
-		return reflect.ValueOf(uint32(rand.Intn(100))), nil
+		return reflect.ValueOf(uint32(randomInteger())), nil
 
 	case reflect.Uint64:
-		return reflect.ValueOf(uint64(rand.Intn(100))), nil
+		return reflect.ValueOf(uint64(randomInteger())), nil
 
 	case reflect.Map:
-		v := reflect.MakeMap(t)
-		len := randomInteger(100)
+		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
+		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			key, err := getValue(t.Key())
 			if err != nil {
@@ -394,14 +445,12 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	if v.Kind() != reflect.Ptr {
 		return errors.New(ErrValueNotPtr)
 	}
-
-	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
-	}
-
 	v = reflect.Indirect(v)
 	switch v.Kind() {
 	case reflect.Ptr:
+		if _, exist := mapperTag[tag]; !exist {
+			return errors.New(ErrTagNotSupported)
+		}
 		if _, def := defaultTag[tag]; !def {
 			res, err := mapperTag[tag](v)
 			if err != nil {
@@ -421,14 +470,19 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		newv.Elem().Set(rval)
 		v.Set(newv)
 		return nil
-	case reflect.Float32, reflect.Float64:
-		return userDefinedFloat(v, tag)
 	case reflect.String:
 		return userDefinedString(v, tag)
-
-	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16:
-		return userDefinedInt(v, tag)
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
+		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+		return userDefinedNumber(v, tag)
+	case reflect.Slice, reflect.Array:
+		return userDefinedArray(v, tag)
+	case reflect.Map:
+		return userDefinedMap(v, tag)
 	default:
+		if _, exist := mapperTag[tag]; !exist {
+			return errors.New(ErrTagNotSupported)
+		}
 		res, err := mapperTag[tag](v)
 		if err != nil {
 			return err
@@ -438,43 +492,174 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	return nil
 }
 
-func userDefinedFloat(v reflect.Value, tag string) error {
-	if _, exist := mapperTag[tag]; !exist {
-		return errors.New(ErrTagNotSupported)
+func userDefinedMap(v reflect.Value, tag string) error {
+	len := randomSliceAndMapSize()
+	if shouldSetNil && len == 0 {
+		v.Set(reflect.Zero(v.Type()))
+		return nil
 	}
-	res, err := mapperTag[tag](v)
-	if err != nil {
-		return err
+	definedMap := reflect.MakeMap(v.Type())
+	for i := 0; i < len; i++ {
+		key, err := getValueWithTag(v.Type().Key(), tag)
+		if err != nil {
+			return err
+		}
+		val, err := getValueWithTag(v.Type().Elem(), tag)
+		if err != nil {
+			return err
+		}
+		definedMap.SetMapIndex(reflect.ValueOf(key), reflect.ValueOf(val))
 	}
-	v.Set(reflect.ValueOf(res))
+	v.Set(definedMap)
+	return nil
+}
+
+func getValueWithTag(t reflect.Type, tag string) (interface{}, error) {
+	switch t.Kind() {
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
+		reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		res, err := extractNumberFromTag(tag, t)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	case reflect.String:
+		res, err := extractStringFromTag(tag)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	default:
+		return 0, errors.New(ErrUnknownType)
+	}
+}
+
+func userDefinedArray(v reflect.Value, tag string) error {
+	len := randomSliceAndMapSize()
+	if shouldSetNil && len == 0 {
+		v.Set(reflect.Zero(v.Type()))
+		return nil
+	}
+	array := reflect.MakeSlice(v.Type(), len, len)
+	for i := 0; i < len; i++ {
+		res, err := getValueWithTag(v.Type().Elem(), tag)
+		if err != nil {
+			return err
+		}
+		array.Index(i).Set(reflect.ValueOf(res))
+	}
+	v.Set(array)
 	return nil
 }
 
 func userDefinedString(v reflect.Value, tag string) error {
-	val := ""
-	if _, exist := mapperTag[tag]; !exist {
+	var res interface{}
+	var err error
+
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err = tagFunc(v)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err = extractStringFromTag(tag)
+		if err != nil {
+			return err
+		}
+	}
+	if res == nil {
 		return errors.New(ErrTagNotSupported)
 	}
-	item, err := mapperTag[tag](v)
-	if err != nil {
-		return err
-	}
-	val, _ = item.(string)
+	val, _ := res.(string)
 	v.SetString(val)
 	return nil
 }
 
-func userDefinedInt(v reflect.Value, tag string) error {
-	if _, exist := mapperTag[tag]; !exist {
+func userDefinedNumber(v reflect.Value, tag string) error {
+	var res interface{}
+	var err error
+
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err = tagFunc(v)
+		if err != nil {
+			return err
+		}
+	} else {
+		res, err = extractNumberFromTag(tag, v.Type())
+		if err != nil {
+			return err
+		}
+	}
+	if res == nil {
 		return errors.New(ErrTagNotSupported)
 	}
-	val, err := mapperTag[tag](v)
-	if err != nil {
-		return err
-	}
 
-	v.Set(reflect.ValueOf(val))
+	v.Set(reflect.ValueOf(res))
 	return nil
+}
+
+func extractStringFromTag(tag string) (interface{}, error) {
+	if !strings.Contains(tag, Length) {
+		return nil, errors.New(ErrTagNotSupported)
+	}
+	len, err := extractNumberFromText(tag)
+	if err != nil {
+		return nil, err
+	}
+	res := randomString(len)
+	return res, nil
+}
+
+func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
+	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
+		return nil, errors.New(ErrTagNotSupported)
+	}
+	valuesStr := strings.SplitN(tag, comma, -1)
+	if len(valuesStr) != 2 {
+		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+	}
+	startBoundary, err := extractNumberFromText(valuesStr[0])
+	if err != nil {
+		return nil, err
+	}
+	endBoundary, err := extractNumberFromText(valuesStr[1])
+	if err != nil {
+		return nil, err
+	}
+	boundary := numberBoundary{start: startBoundary, end: endBoundary}
+	switch t.Kind() {
+	case reflect.Uint:
+		return uint(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint8:
+		return uint8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint16:
+		return uint16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint32:
+		return uint32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint64:
+		return uint64(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int:
+		return randomIntegerWithBoundary(boundary), nil
+	case reflect.Int8:
+		return int8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int16:
+		return int16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int32:
+		return int32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int64:
+		return int64(randomIntegerWithBoundary(boundary)), nil
+	default:
+		return nil, errors.New(ErrNotSupportedTypeForTag)
+	}
+}
+
+func extractNumberFromText(text string) (int, error) {
+	text = strings.TrimSpace(text)
+	texts := strings.SplitN(text, Equals, -1)
+	if len(texts) != 2 {
+		return 0, fmt.Errorf(ErrWrongFormattedTag, text)
+	}
+	return strconv.Atoi(texts[1])
 }
 
 func randomString(n int) string {
@@ -494,13 +679,23 @@ func randomString(n int) string {
 	return string(b)
 }
 
-// randomInteger returns a random integer between [0,n). If the testRandZero is set, returns 0
+// randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
+func randomIntegerWithBoundary(boundary numberBoundary) int {
+	return rand.Intn(boundary.end-boundary.start) + boundary.start
+}
+
+// randomInteger returns a random integer between start and end boundary. [start, end)
+func randomInteger() int {
+	return rand.Intn(nBoundary.end-nBoundary.start) + nBoundary.start
+}
+
+// randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
 // Written for test purposes for shouldSetNil
-func randomInteger(n int) int {
+func randomSliceAndMapSize() int {
 	if testRandZero {
 		return 0
 	}
-	return rand.Intn(n)
+	return rand.Intn(randomSize)
 }
 
 func randomElementFromSliceString(s []string) string {

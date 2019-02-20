@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+const (
+	someStructLen           = 2
+	someStructBoundaryStart = 5
+	someStructBoundaryEnd   = 10
+)
+
 type SomeStruct struct {
 	Inta    int
 	Int8    int8
@@ -55,6 +61,25 @@ type SomeStruct struct {
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
 	MapStringStructPointer map[string]*AStruct
+}
+
+type SomeStructWithLen struct {
+	Inta  int   `faker:"boundary_start=5, boundary_end=10"`
+	Int8  int8  `faker:"boundary_start=5, boundary_end=10"`
+	Int16 int16 `faker:"boundary_start=5, boundary_end=10"`
+	Int32 int32 `faker:"boundary_start=5, boundary_end=10"`
+	Int64 int64 `faker:"boundary_start=5, boundary_end=10"`
+
+	UInta  uint   `faker:"boundary_start=5, boundary_end=10"`
+	UInt8  uint8  `faker:"boundary_start=5, boundary_end=10"`
+	UInt16 uint16 `faker:"boundary_start=5, boundary_end=10"`
+	UInt32 uint32 `faker:"boundary_start=5, boundary_end=10"`
+	UInt64 uint64 `faker:"boundary_start=5, boundary_end=10"`
+
+	ASString []string          `faker:"len=2"`
+	SString  string            `faker:"len=2"`
+	MSString map[string]string `faker:"len=2"`
+	MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
 }
 
 func (s SomeStruct) String() string {
@@ -311,6 +336,57 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	}
 }
 
+func TestSetRandomStringLength(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomStringLength(-1); err == nil {
+		t.Error("Random string len must not accept lower than 0 as a size")
+	}
+	strLen := 5
+	if err := SetRandomStringLength(strLen); err != nil {
+		t.Error("SetRandomStringLength method is corrupted.")
+	}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if len(someStruct.StringValue) > strLen {
+		t.Error("SetRandomStringLength did not work.")
+	}
+}
+
+func TestSetRandomNumberBoundaries(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomNumberBoundaries(10, 0); err == nil {
+		t.Error("Start must be smaller than end value")
+	}
+	boundary := numberBoundary{start: 10, end: 90}
+	if err := SetRandomNumberBoundaries(boundary.start, boundary.end); err != nil {
+		t.Error("SetRandomNumberBoundaries method is corrupted.")
+	}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if someStruct.Inta >= boundary.end || someStruct.Inta < boundary.start {
+		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.start, boundary.end)
+	}
+}
+
+func TestSetRandomMapAndSliceSize(t *testing.T) {
+	someStruct := SomeStruct{}
+	if err := SetRandomMapAndSliceSize(-1); err == nil {
+		t.Error("Random Map and Slice must not accept lower than 0 as a size")
+	}
+	size := 5
+	if err := SetRandomMapAndSliceSize(size); err != nil {
+		t.Error("SetRandomMapAndSliceSize method is corrupted.")
+	}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
+		t.Error("SetRandomMapAndSliceSize did not work.")
+	}
+}
+
 func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
 	SetNilIfLenIsZero(true)
@@ -325,6 +401,134 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 	if someStruct.Stime != nil && someStruct.SBool != nil {
 		t.Error("Array has to be nil")
 	}
+	testRandZero = false
+}
+
+func TestBoundaryAndLen(t *testing.T) {
+	iterate := 10
+	someStruct := SomeStructWithLen{}
+	for i := 0; i < iterate; i++ {
+		if err := FakeData(&someStruct); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.Int8)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.Int16)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.Int32)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(someStruct.Inta); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.Int64)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.UInt8)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.UInt16)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.UInt32)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.UInta)); err != nil {
+			t.Error(err)
+		}
+		if err := validateRange(int(someStruct.UInt64)); err != nil {
+			t.Error(err)
+		}
+		if err := validateLen(someStruct.SString); err != nil {
+			t.Error(err)
+		}
+		for _, str := range someStruct.ASString {
+			if err := validateLen(str); err != nil {
+				t.Error(err)
+			}
+		}
+		for k, v := range someStruct.MSString {
+			if err := validateLen(k); err != nil {
+				t.Error(err)
+			}
+			if err := validateLen(v); err != nil {
+				t.Error(err)
+			}
+		}
+		for k, v := range someStruct.MIint {
+			if err := validateRange(k); err != nil {
+				t.Error(err)
+			}
+			if err := validateRange(v); err != nil {
+				t.Error(err)
+			}
+		}
+	}
+}
+
+func TestExtractNumberFromTagFail(t *testing.T) {
+	notSupportedTypeStruct := &struct {
+		Test float32 `faker:"boundary_start=5, boundary_end=10"`
+	}{}
+	if err := FakeData(&notSupportedTypeStruct); err == nil {
+		t.Error(err)
+	}
+	notSupportedStruct := &struct {
+		Test int `faker:"boundary_start=5"`
+	}{}
+	if err := FakeData(&notSupportedStruct); err == nil {
+		t.Error(err)
+	}
+	wrongFormatStruct := &struct {
+		Test int `faker:"boundary_start=5 boundary_end=10"`
+	}{}
+	if err := FakeData(&wrongFormatStruct); err == nil {
+		t.Error(err)
+	}
+	startExtractionStruct := &struct {
+		Test int `faker:"boundary_start=asda, boundary_end=10"`
+	}{}
+	if err := FakeData(&startExtractionStruct); err == nil {
+		t.Error(err)
+	}
+	endExtractionStruct := &struct {
+		Test int `faker:"boundary_start=5, boundary_end=asda"`
+	}{}
+	if err := FakeData(&endExtractionStruct); err == nil {
+		t.Error(err)
+	}
+	wrongSplitFormatStruct := &struct {
+		Test int `faker:"boundary_start5, boundary_end=10"`
+	}{}
+	if err := FakeData(&wrongSplitFormatStruct); err == nil {
+		t.Error(err)
+	}
+}
+
+func TestUserDefinedStringFail(t *testing.T) {
+	wrongFormatStruct := &struct {
+		Test string `faker:"len=asd"`
+	}{}
+	if err := FakeData(&wrongFormatStruct); err == nil {
+		t.Error(err)
+	}
+}
+
+func validateLen(value string) error {
+	if len(value) != someStructLen {
+		return fmt.Errorf("Got %d, but expected to be %d as a string len", len(value), someStructLen)
+	}
+	return nil
+}
+
+func validateRange(value int) error {
+	if value < someStructBoundaryStart || value > someStructBoundaryEnd {
+		return fmt.Errorf("%d must be between %d and %d", value, someStructBoundaryStart,
+			someStructBoundaryEnd)
+	}
+	return nil
 }
 
 func TestSetDataWithTagIfFirstArgumentNotPtr(t *testing.T) {
