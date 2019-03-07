@@ -139,5 +139,5 @@ func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 // Paragraph get a paragraph randomly in string
 func Paragraph() string {
 	i := Lorem{}
-	return i.word()
+	return i.paragraph()
 }
