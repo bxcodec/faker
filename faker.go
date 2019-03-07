@@ -41,13 +41,13 @@ const (
 	tagName            = "faker"
 	ID                 = "uuid_digit"
 	HyphenatedID       = "uuid_hyphenated"
-	Email              = "email"
-	MacAddress         = "mac_address"
-	DomainName         = "domain_name"
-	UserName           = "username"
-	URL                = "url"
-	IPV4               = "ipv4"
-	IPV6               = "ipv6"
+	EmailTag           = "email"
+	MacAddressTag      = "mac_address"
+	DomainNameTag      = "domain_name"
+	UserNameTag        = "username"
+	URLTag             = "url"
+	IPV4Tag            = "ipv4"
+	IPV6Tag            = "ipv6"
 	PASSWORD           = "password"
 	LATITUDE           = "lat"
 	LONGITUDE          = "long"
@@ -56,19 +56,19 @@ const (
 	PhoneNumber        = "phone_number"
 	TollFreeNumber     = "toll_free_number"
 	E164PhoneNumber    = "e_164_phone_number"
-	TitleMale          = "title_male"
-	TitleFemale        = "title_female"
-	FirstName          = "first_name"
-	FirstNameMale      = "first_name_male"
-	FirstNameFemale    = "first_name_female"
-	LastName           = "last_name"
+	TitleMaleTag       = "title_male"
+	TitleFemaleTag     = "title_female"
+	FirstNameTag       = "first_name"
+	FirstNameMaleTag   = "first_name_male"
+	FirstNameFemaleTag = "first_name_female"
+	LastNameTag        = "last_name"
 	NAME               = "name"
-	UnixTime           = "unix_time"
+	UnixTimeTag        = "unix_time"
 	DATE               = "date"
 	TIME               = "time"
-	MonthName          = "month_name"
+	MonthNameTag       = "month_name"
 	YEAR               = "year"
-	DayOfWeek          = "day_of_week"
+	DayOfWeekTag       = "day_of_week"
 	DayOfMonthTag      = "day_of_month"
 	TIMESTAMP          = "timestamp"
 	CENTURY            = "century"
@@ -89,13 +89,13 @@ const (
 )
 
 var defaultTag = map[string]string{
-	Email:              Email,
-	MacAddress:         MacAddress,
-	DomainName:         DomainName,
-	URL:                URL,
-	UserName:           UserName,
-	IPV4:               IPV4,
-	IPV6:               IPV6,
+	EmailTag:           EmailTag,
+	MacAddressTag:      MacAddressTag,
+	DomainNameTag:      DomainNameTag,
+	URLTag:             URLTag,
+	UserNameTag:        UserNameTag,
+	IPV4Tag:            IPV4Tag,
+	IPV6Tag:            IPV6Tag,
 	PASSWORD:           PASSWORD,
 	CreditCardType:     CreditCardType,
 	CreditCardNumber:   CreditCardNumber,
@@ -104,24 +104,24 @@ var defaultTag = map[string]string{
 	PhoneNumber:        PhoneNumber,
 	TollFreeNumber:     TollFreeNumber,
 	E164PhoneNumber:    E164PhoneNumber,
-	TitleMale:          TitleMale,
-	TitleFemale:        TitleFemale,
-	FirstName:          FirstName,
-	FirstNameMale:      FirstNameMale,
-	FirstNameFemale:    FirstNameFemale,
-	LastName:           LastName,
+	TitleMaleTag:       TitleMaleTag,
+	TitleFemaleTag:     TitleFemaleTag,
+	FirstNameTag:       FirstNameTag,
+	FirstNameMaleTag:   FirstNameMaleTag,
+	FirstNameFemaleTag: FirstNameFemaleTag,
+	LastNameTag:        LastNameTag,
 	NAME:               NAME,
-	UnixTime:           UnixTime,
+	UnixTimeTag:        UnixTimeTag,
 	DATE:               DATE,
-	TIME:               Time,
-	MonthName:          MonthName,
-	YEAR:               Year,
-	DayOfWeek:          DayOfWeek,
-	DayOfMonthTag:      DayOfMonth,
+	TIME:               TimeFormat,
+	MonthNameTag:       MonthNameTag,
+	YEAR:               YearFormat,
+	DayOfWeekTag:       DayOfWeekTag,
+	DayOfMonthTag:      DayOfMonthFormat,
 	TIMESTAMP:          TIMESTAMP,
 	CENTURY:            CENTURY,
 	TIMEZONE:           TIMEZONE,
-	TimePeriodTag:      TimePeriod,
+	TimePeriodTag:      TimePeriodFormat,
 	WORD:               WORD,
 	SENTENCE:           SENTENCE,
 	PARAGRAPH:          PARAGRAPH,
@@ -137,13 +137,13 @@ var defaultTag = map[string]string{
 type TaggedFunction func(v reflect.Value) (interface{}, error)
 
 var mapperTag = map[string]TaggedFunction{
-	Email:              GetNetworker().Email,
-	MacAddress:         GetNetworker().MacAddress,
-	DomainName:         GetNetworker().DomainName,
-	URL:                GetNetworker().URL,
-	UserName:           GetNetworker().UserName,
-	IPV4:               GetNetworker().IPv4,
-	IPV6:               GetNetworker().IPv6,
+	EmailTag:           GetNetworker().Email,
+	MacAddressTag:      GetNetworker().MacAddress,
+	DomainNameTag:      GetNetworker().DomainName,
+	URLTag:             GetNetworker().URL,
+	UserNameTag:        GetNetworker().UserName,
+	IPV4Tag:            GetNetworker().IPv4,
+	IPV6Tag:            GetNetworker().IPv6,
 	PASSWORD:           GetNetworker().Password,
 	CreditCardType:     GetPayment().CreditCardType,
 	CreditCardNumber:   GetPayment().CreditCardNumber,
@@ -152,19 +152,19 @@ var mapperTag = map[string]TaggedFunction{
 	PhoneNumber:        GetPhoner().PhoneNumber,
 	TollFreeNumber:     GetPhoner().TollFreePhoneNumber,
 	E164PhoneNumber:    GetPhoner().E164PhoneNumber,
-	TitleMale:          GetPerson().TitleMale,
-	TitleFemale:        GetPerson().TitleFeMale,
-	FirstName:          GetPerson().FirstName,
-	FirstNameMale:      GetPerson().FirstNameMale,
-	FirstNameFemale:    GetPerson().FirstNameFemale,
-	LastName:           GetPerson().LastName,
+	TitleMaleTag:       GetPerson().TitleMale,
+	TitleFemaleTag:     GetPerson().TitleFeMale,
+	FirstNameTag:       GetPerson().FirstName,
+	FirstNameMaleTag:   GetPerson().FirstNameMale,
+	FirstNameFemaleTag: GetPerson().FirstNameFemale,
+	LastNameTag:        GetPerson().LastName,
 	NAME:               GetPerson().Name,
-	UnixTime:           GetDateTimer().UnixTime,
+	UnixTimeTag:        GetDateTimer().UnixTime,
 	DATE:               GetDateTimer().Date,
 	TIME:               GetDateTimer().Time,
-	MonthName:          GetDateTimer().MonthName,
+	MonthNameTag:       GetDateTimer().MonthName,
 	YEAR:               GetDateTimer().Year,
-	DayOfWeek:          GetDateTimer().DayOfWeek,
+	DayOfWeekTag:       GetDateTimer().DayOfWeek,
 	DayOfMonthTag:      GetDateTimer().DayOfMonth,
 	TIMESTAMP:          GetDateTimer().Timestamp,
 	CENTURY:            GetDateTimer().Century,

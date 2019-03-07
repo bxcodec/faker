@@ -137,6 +137,12 @@ func (p Person) TitleMale(v reflect.Value) (interface{}, error) {
 	return p.titlemale(), nil
 }
 
+// TitleMale get a title male randomly in string ("Mr.", "Dr.", "Prof.", "Lord", "King", "Prince")
+func TitleMale() string {
+	p := Person{}
+	return p.titlemale()
+}
+
 func (p Person) titleFemale() string {
 	return randomElementFromSliceString(titlesFemale)
 }
@@ -144,6 +150,12 @@ func (p Person) titleFemale() string {
 // TitleFeMale generates random titles for females
 func (p Person) TitleFeMale(v reflect.Value) (interface{}, error) {
 	return p.titleFemale(), nil
+}
+
+// TitleFemale get a title female randomly in string ("Mrs.", "Ms.", "Miss", "Dr.", "Prof.", "Lady", "Queen", "Princess")
+func TitleFemale() string {
+	p := Person{}
+	return p.titleFemale()
 }
 
 func (p Person) firstname() string {
@@ -155,6 +167,12 @@ func (p Person) FirstName(v reflect.Value) (interface{}, error) {
 	return p.firstname(), nil
 }
 
+// Firstname get fake firstname
+func Firstname() string {
+	p := Person{}
+	return p.firstname()
+}
+
 func (p Person) firstnamemale() string {
 	return randomElementFromSliceString(firstNamesMale)
 }
@@ -162,6 +180,12 @@ func (p Person) firstnamemale() string {
 // FirstNameMale retuns first names for males
 func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
 	return p.firstnamemale(), nil
+}
+
+// FirstnameMale get fake firstname for male
+func FirstnameMale() string {
+	p := Person{}
+	return p.firstnamemale()
 }
 
 func (p Person) firstnamefemale() string {
@@ -173,6 +197,12 @@ func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
 	return p.firstnamefemale(), nil
 }
 
+// FirstnameFemale get fake firstname for female
+func FirstnameFemale() string {
+	p := Person{}
+	return p.firstnamefemale()
+}
+
 func (p Person) lastname() string {
 	return randomElementFromSliceString(lastNames)
 }
@@ -180,6 +210,12 @@ func (p Person) lastname() string {
 // LastName returns last name
 func (p Person) LastName(v reflect.Value) (interface{}, error) {
 	return p.lastname(), nil
+}
+
+// Lastname get fake lastname
+func Lastname() string {
+	p := Person{}
+	return p.lastname()
 }
 
 func (p Person) name() string {
@@ -192,4 +228,10 @@ func (p Person) name() string {
 // Name returns a random name
 func (p Person) Name(v reflect.Value) (interface{}, error) {
 	return p.name(), nil
+}
+
+// Name get fake name
+func Name() string {
+	p := Person{}
+	return p.name()
 }

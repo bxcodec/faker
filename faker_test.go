@@ -763,7 +763,7 @@ func TestExtend(t *testing.T) {
 func TestTagAlreadyExists(t *testing.T) {
 	// This test is to ensure that existing tag cannot be rewritten
 
-	err := AddProvider(Email, func(v reflect.Value) (interface{}, error) {
+	err := AddProvider(EmailTag, func(v reflect.Value) (interface{}, error) {
 		return nil, nil
 	})
 

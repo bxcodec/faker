@@ -84,6 +84,12 @@ func (l Lorem) Word(v reflect.Value) (interface{}, error) {
 	return l.word(), nil
 }
 
+// Word get a word randomly in string
+func Word() string {
+	i := Lorem{}
+	return i.word()
+}
+
 func (l Lorem) sentence() string {
 	sentence := ""
 	r, _ := RandomInt(1, 6)
@@ -107,6 +113,12 @@ func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 	return sentence, nil
 }
 
+// Sentence get a sentence randomly in string
+func Sentence() string {
+	i := Lorem{}
+	return i.sentence()
+}
+
 func (l Lorem) paragraph() string {
 	paragraph := ""
 	size := rand.Intn(10) + 1
@@ -122,4 +134,10 @@ func (l Lorem) paragraph() string {
 // Paragraph returns a series of sentences as a paragraph using the wordList const
 func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 	return l.paragraph(), nil
+}
+
+// Paragraph get a paragraph randomly in string
+func Paragraph() string {
+	i := Lorem{}
+	return i.word()
 }

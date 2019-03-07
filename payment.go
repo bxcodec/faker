@@ -76,6 +76,12 @@ func (p Payment) CreditCardType(v reflect.Value) (interface{}, error) {
 	return p.cctype(), nil
 }
 
+// CCType get a credit card type randomly in string (VISA, MasterCard, etc)
+func CCType() string {
+	p := Payment{}
+	return p.cctype()
+}
+
 func (p Payment) ccnumber() string {
 	ccType := p.cctype()
 	cacheCreditCard = ccType
@@ -92,4 +98,10 @@ func (p Payment) ccnumber() string {
 // CreditCardNumber generated credit card number according to the card number rules
 func (p Payment) CreditCardNumber(v reflect.Value) (interface{}, error) {
 	return p.ccnumber(), nil
+}
+
+// CCNumber get a credit card number randomly in string (VISA, MasterCard, etc)
+func CCNumber() string {
+	p := Payment{}
+	return p.ccnumber()
 }
