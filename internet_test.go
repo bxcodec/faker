@@ -104,3 +104,56 @@ func TestPassword(t *testing.T) {
 		t.Error("Expected hash password")
 	}
 }
+
+func TestFakeEmail(t *testing.T) {
+	email := Email()
+	if !strings.Contains(email, "@") {
+		t.Error("Expected  email")
+	}
+}
+func TestFakeMacAddress(t *testing.T) {
+	mc := MacAddress()
+	if strings.Count(mc, ":") != 5 {
+		t.Error("Expected mac address")
+	}
+}
+func TestFakeDomainName(t *testing.T) {
+	domain := DomainName()
+	preTld := strings.Split(domain, ".")
+
+	if !slice.Contains(tld, preTld[1]) {
+		t.Error("Expected get DomainName")
+	}
+}
+func TestFakeURL(t *testing.T) {
+	resURL := URL()
+	if !strings.Contains(resURL, "http") {
+		t.Error("Expected get url")
+	}
+}
+
+func TestFakeUserName(t *testing.T) {
+	usrname := Username()
+	if usrname == "" {
+		t.Error("Expected get username")
+	}
+}
+func TestFakeIPv4(t *testing.T) {
+	ip := IPv4()
+	if strings.Count(ip, ".") != 3 {
+		t.Error("Expected IPv4 format")
+	}
+}
+func TestFakeIPv6(t *testing.T) {
+	ip := IPv6()
+	if strings.Count(ip, ":") != 7 {
+		t.Error("Expected IPv4 format")
+	}
+}
+
+func TestFakePassword(t *testing.T) {
+	pass := Password()
+	if pass == "" {
+		t.Error("Expected hash password")
+	}
+}
