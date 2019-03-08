@@ -596,13 +596,13 @@ var timezones = []string{
 // These example values must use the reference time "Mon Jan 2 15:04:05 MST 2006"
 // as described at https://gobyexample.com/time-formatting-parsing
 const (
-	BaseDate   = "2006-01-02"
-	Time       = "15:04:05"
-	Month      = "January"
-	Year       = "2006"
-	Day        = "Monday"
-	DayOfMonth = "_2"
-	TimePeriod = "PM"
+	BaseDateFormat   = "2006-01-02"
+	TimeFormat       = "15:04:05"
+	MonthFormat      = "January"
+	YearFormat       = "2006"
+	DayFormat        = "Monday"
+	DayOfMonthFormat = "_2"
+	TimePeriodFormat = "PM"
 )
 
 // A DateTimer contains random Time generators, returning time string in certain particular format
@@ -659,17 +659,29 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 	return val, nil
 }
 
-func (d DateTime) date() string {
-	return time.Unix(RandomUnixTime(), 0).Format(BaseDate)
+// UnixTime get unix time randomly
+func UnixTime() int64 {
+	datetime := DateTime{}
+	return datetime.unixtime()
 }
 
-// Date formats DateTime using example BaseDate const
+func (d DateTime) date() string {
+	return time.Unix(RandomUnixTime(), 0).Format(BaseDateFormat)
+}
+
+// Date formats DateTime using example BaseDateFormat const
 func (d DateTime) Date(v reflect.Value) (interface{}, error) {
 	return d.date(), nil
 }
 
+// Date get fake date in string randomly
+func Date() string {
+	datetime := DateTime{}
+	return datetime.date()
+}
+
 func (d DateTime) time() string {
-	return time.Unix(RandomUnixTime(), 0).Format(Time)
+	return time.Unix(RandomUnixTime(), 0).Format(TimeFormat)
 }
 
 // Time formats DateTime using example Time const
@@ -677,8 +689,14 @@ func (d DateTime) Time(v reflect.Value) (interface{}, error) {
 	return d.time(), nil
 }
 
+// TimeString get time randomly in string format
+func TimeString() string {
+	datetime := DateTime{}
+	return datetime.time()
+}
+
 func (d DateTime) monthName() string {
-	return time.Unix(RandomUnixTime(), 0).Format(Month)
+	return time.Unix(RandomUnixTime(), 0).Format(MonthFormat)
 }
 
 // MonthName formats DateTime using example Month const
@@ -686,16 +704,29 @@ func (d DateTime) MonthName(v reflect.Value) (interface{}, error) {
 	return d.monthName(), nil
 }
 
+// MonthName get month name randomly in string format
+func MonthName() string {
+	datetime := DateTime{}
+	return datetime.monthName()
+}
+
 func (d DateTime) year() string {
-	return time.Unix(RandomUnixTime(), 0).Format(Year)
+	return time.Unix(RandomUnixTime(), 0).Format(YearFormat)
 }
 
 // Year formats DateTime using example Year const
 func (d DateTime) Year(v reflect.Value) (interface{}, error) {
 	return d.year(), nil
 }
+
+// YearString get year randomly in string format
+func YearString() string {
+	datetime := DateTime{}
+	return datetime.year()
+}
+
 func (d DateTime) dayOfWeek() string {
-	return time.Unix(RandomUnixTime(), 0).Format(Day)
+	return time.Unix(RandomUnixTime(), 0).Format(DayFormat)
 }
 
 // DayOfWeek formats DateTime using example Day const
@@ -703,8 +734,14 @@ func (d DateTime) DayOfWeek(v reflect.Value) (interface{}, error) {
 	return d.dayOfWeek(), nil
 }
 
+// DayOfWeek get day of week randomly in string format
+func DayOfWeek() string {
+	datetime := DateTime{}
+	return datetime.dayOfWeek()
+}
+
 func (d DateTime) dayOfMonth() string {
-	return time.Unix(RandomUnixTime(), 0).Format(DayOfMonth)
+	return time.Unix(RandomUnixTime(), 0).Format(DayOfMonthFormat)
 }
 
 // DayOfMonth formats DateTime using example DayOfMonth const
@@ -712,14 +749,27 @@ func (d DateTime) DayOfMonth(v reflect.Value) (interface{}, error) {
 	return d.dayOfMonth(), nil
 }
 
+// DayOfMonth get month randomly in string format
+func DayOfMonth() string {
+	datetime := DateTime{}
+	return datetime.dayOfMonth()
+}
+
 func (d DateTime) timestamp() string {
-	return time.Unix(RandomUnixTime(), 0).Format(fmt.Sprintf("%s %s", BaseDate, Time))
+	return time.Unix(RandomUnixTime(), 0).Format(fmt.Sprintf("%s %s", BaseDateFormat, TimeFormat))
 }
 
 // Timestamp formats DateTime using example Timestamp const
 func (d DateTime) Timestamp(v reflect.Value) (interface{}, error) {
 	return d.timestamp(), nil
 }
+
+// Timestamp get timestamp randomly in string format: 2006-01-02 15:04:05
+func Timestamp() string {
+	datetime := DateTime{}
+	return datetime.timestamp()
+}
+
 func (d DateTime) century() string {
 	return randomElementFromSliceString(century)
 }
@@ -727,6 +777,12 @@ func (d DateTime) century() string {
 // Century returns a random century
 func (d DateTime) Century(v reflect.Value) (interface{}, error) {
 	return d.century(), nil
+}
+
+// Century get century randomly in string
+func Century() string {
+	datetime := DateTime{}
+	return datetime.century()
 }
 
 func (d DateTime) timezone() string {
@@ -738,13 +794,25 @@ func (d DateTime) TimeZone(v reflect.Value) (interface{}, error) {
 	return d.timezone(), nil
 }
 
+// Timezone get timezone randomly in string
+func Timezone() string {
+	datetime := DateTime{}
+	return datetime.timezone()
+}
+
 func (d DateTime) period() string {
-	return time.Unix(RandomUnixTime(), 0).Format(TimePeriod)
+	return time.Unix(RandomUnixTime(), 0).Format(TimePeriodFormat)
 }
 
 // TimePeriod formats DateTime using example TimePeriod const
 func (d DateTime) TimePeriod(v reflect.Value) (interface{}, error) {
 	return d.period(), nil
+}
+
+// Timeperiod get timeperiod randomly in string (AM/PM)
+func Timeperiod() string {
+	datetime := DateTime{}
+	return datetime.period()
 }
 
 // RandomUnixTime is a helper function returning random Unix time

@@ -34,102 +34,102 @@ type numberBoundary struct {
 
 // Supported tags
 const (
-	letterIdxBits      = 6                    // 6 bits to represent a letter index
-	letterIdxMask      = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
-	letterIdxMax       = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
-	letterBytes        = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	tagName            = "faker"
-	ID                 = "uuid_digit"
-	HyphenatedID       = "uuid_hyphenated"
-	Email              = "email"
-	MacAddress         = "mac_address"
-	DomainName         = "domain_name"
-	UserName           = "username"
-	URL                = "url"
-	IPV4               = "ipv4"
-	IPV6               = "ipv6"
-	PASSWORD           = "password"
-	LATITUDE           = "lat"
-	LONGITUDE          = "long"
-	CreditCardNumber   = "cc_number"
-	CreditCardType     = "cc_type"
-	PhoneNumber        = "phone_number"
-	TollFreeNumber     = "toll_free_number"
-	E164PhoneNumber    = "e_164_phone_number"
-	TitleMale          = "title_male"
-	TitleFemale        = "title_female"
-	FirstName          = "first_name"
-	FirstNameMale      = "first_name_male"
-	FirstNameFemale    = "first_name_female"
-	LastName           = "last_name"
-	NAME               = "name"
-	UnixTime           = "unix_time"
-	DATE               = "date"
-	TIME               = "time"
-	MonthName          = "month_name"
-	YEAR               = "year"
-	DayOfWeek          = "day_of_week"
-	DayOfMonthTag      = "day_of_month"
-	TIMESTAMP          = "timestamp"
-	CENTURY            = "century"
-	TIMEZONE           = "timezone"
-	TimePeriodTag      = "time_period"
-	WORD               = "word"
-	SENTENCE           = "sentence"
-	PARAGRAPH          = "paragraph"
-	Currency           = "currency"
-	Amount             = "amount"
-	AmountWithCurrency = "amount_with_currency"
-	SKIP               = "-"
-	Length             = "len"
-	BoundaryStart      = "boundary_start"
-	BoundaryEnd        = "boundary_end"
-	Equals             = "="
-	comma              = ","
+	letterIdxBits         = 6                    // 6 bits to represent a letter index
+	letterIdxMask         = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
+	letterIdxMax          = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	letterBytes           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	tagName               = "faker"
+	ID                    = "uuid_digit"
+	HyphenatedID          = "uuid_hyphenated"
+	EmailTag              = "email"
+	MacAddressTag         = "mac_address"
+	DomainNameTag         = "domain_name"
+	UserNameTag           = "username"
+	URLTag                = "url"
+	IPV4Tag               = "ipv4"
+	IPV6Tag               = "ipv6"
+	PASSWORD              = "password"
+	LATITUDE              = "lat"
+	LONGITUDE             = "long"
+	CreditCardNumber      = "cc_number"
+	CreditCardType        = "cc_type"
+	PhoneNumber           = "phone_number"
+	TollFreeNumber        = "toll_free_number"
+	E164PhoneNumberTag    = "e_164_phone_number"
+	TitleMaleTag          = "title_male"
+	TitleFemaleTag        = "title_female"
+	FirstNameTag          = "first_name"
+	FirstNameMaleTag      = "first_name_male"
+	FirstNameFemaleTag    = "first_name_female"
+	LastNameTag           = "last_name"
+	NAME                  = "name"
+	UnixTimeTag           = "unix_time"
+	DATE                  = "date"
+	TIME                  = "time"
+	MonthNameTag          = "month_name"
+	YEAR                  = "year"
+	DayOfWeekTag          = "day_of_week"
+	DayOfMonthTag         = "day_of_month"
+	TIMESTAMP             = "timestamp"
+	CENTURY               = "century"
+	TIMEZONE              = "timezone"
+	TimePeriodTag         = "time_period"
+	WORD                  = "word"
+	SENTENCE              = "sentence"
+	PARAGRAPH             = "paragraph"
+	CurrencyTag           = "currency"
+	AmountTag             = "amount"
+	AmountWithCurrencyTag = "amount_with_currency"
+	SKIP                  = "-"
+	Length                = "len"
+	BoundaryStart         = "boundary_start"
+	BoundaryEnd           = "boundary_end"
+	Equals                = "="
+	comma                 = ","
 )
 
 var defaultTag = map[string]string{
-	Email:              Email,
-	MacAddress:         MacAddress,
-	DomainName:         DomainName,
-	URL:                URL,
-	UserName:           UserName,
-	IPV4:               IPV4,
-	IPV6:               IPV6,
-	PASSWORD:           PASSWORD,
-	CreditCardType:     CreditCardType,
-	CreditCardNumber:   CreditCardNumber,
-	LATITUDE:           LATITUDE,
-	LONGITUDE:          LONGITUDE,
-	PhoneNumber:        PhoneNumber,
-	TollFreeNumber:     TollFreeNumber,
-	E164PhoneNumber:    E164PhoneNumber,
-	TitleMale:          TitleMale,
-	TitleFemale:        TitleFemale,
-	FirstName:          FirstName,
-	FirstNameMale:      FirstNameMale,
-	FirstNameFemale:    FirstNameFemale,
-	LastName:           LastName,
-	NAME:               NAME,
-	UnixTime:           UnixTime,
-	DATE:               DATE,
-	TIME:               Time,
-	MonthName:          MonthName,
-	YEAR:               Year,
-	DayOfWeek:          DayOfWeek,
-	DayOfMonthTag:      DayOfMonth,
-	TIMESTAMP:          TIMESTAMP,
-	CENTURY:            CENTURY,
-	TIMEZONE:           TIMEZONE,
-	TimePeriodTag:      TimePeriod,
-	WORD:               WORD,
-	SENTENCE:           SENTENCE,
-	PARAGRAPH:          PARAGRAPH,
-	Currency:           Currency,
-	Amount:             Amount,
-	AmountWithCurrency: AmountWithCurrency,
-	ID:                 ID,
-	HyphenatedID:       HyphenatedID,
+	EmailTag:              EmailTag,
+	MacAddressTag:         MacAddressTag,
+	DomainNameTag:         DomainNameTag,
+	URLTag:                URLTag,
+	UserNameTag:           UserNameTag,
+	IPV4Tag:               IPV4Tag,
+	IPV6Tag:               IPV6Tag,
+	PASSWORD:              PASSWORD,
+	CreditCardType:        CreditCardType,
+	CreditCardNumber:      CreditCardNumber,
+	LATITUDE:              LATITUDE,
+	LONGITUDE:             LONGITUDE,
+	PhoneNumber:           PhoneNumber,
+	TollFreeNumber:        TollFreeNumber,
+	E164PhoneNumberTag:    E164PhoneNumberTag,
+	TitleMaleTag:          TitleMaleTag,
+	TitleFemaleTag:        TitleFemaleTag,
+	FirstNameTag:          FirstNameTag,
+	FirstNameMaleTag:      FirstNameMaleTag,
+	FirstNameFemaleTag:    FirstNameFemaleTag,
+	LastNameTag:           LastNameTag,
+	NAME:                  NAME,
+	UnixTimeTag:           UnixTimeTag,
+	DATE:                  DATE,
+	TIME:                  TimeFormat,
+	MonthNameTag:          MonthNameTag,
+	YEAR:                  YearFormat,
+	DayOfWeekTag:          DayOfWeekTag,
+	DayOfMonthTag:         DayOfMonthFormat,
+	TIMESTAMP:             TIMESTAMP,
+	CENTURY:               CENTURY,
+	TIMEZONE:              TIMEZONE,
+	TimePeriodTag:         TimePeriodFormat,
+	WORD:                  WORD,
+	SENTENCE:              SENTENCE,
+	PARAGRAPH:             PARAGRAPH,
+	CurrencyTag:           CurrencyTag,
+	AmountTag:             AmountTag,
+	AmountWithCurrencyTag: AmountWithCurrencyTag,
+	ID:                    ID,
+	HyphenatedID:          HyphenatedID,
 }
 
 // TaggedFunction used as the standard layout function for tag providers in struct.
@@ -137,47 +137,47 @@ var defaultTag = map[string]string{
 type TaggedFunction func(v reflect.Value) (interface{}, error)
 
 var mapperTag = map[string]TaggedFunction{
-	Email:              GetNetworker().Email,
-	MacAddress:         GetNetworker().MacAddress,
-	DomainName:         GetNetworker().DomainName,
-	URL:                GetNetworker().URL,
-	UserName:           GetNetworker().UserName,
-	IPV4:               GetNetworker().IPv4,
-	IPV6:               GetNetworker().IPv6,
-	PASSWORD:           GetNetworker().Password,
-	CreditCardType:     GetPayment().CreditCardType,
-	CreditCardNumber:   GetPayment().CreditCardNumber,
-	LATITUDE:           GetAddress().Latitude,
-	LONGITUDE:          GetAddress().Longitude,
-	PhoneNumber:        GetPhoner().PhoneNumber,
-	TollFreeNumber:     GetPhoner().TollFreePhoneNumber,
-	E164PhoneNumber:    GetPhoner().E164PhoneNumber,
-	TitleMale:          GetPerson().TitleMale,
-	TitleFemale:        GetPerson().TitleFeMale,
-	FirstName:          GetPerson().FirstName,
-	FirstNameMale:      GetPerson().FirstNameMale,
-	FirstNameFemale:    GetPerson().FirstNameFemale,
-	LastName:           GetPerson().LastName,
-	NAME:               GetPerson().Name,
-	UnixTime:           GetDateTimer().UnixTime,
-	DATE:               GetDateTimer().Date,
-	TIME:               GetDateTimer().Time,
-	MonthName:          GetDateTimer().MonthName,
-	YEAR:               GetDateTimer().Year,
-	DayOfWeek:          GetDateTimer().DayOfWeek,
-	DayOfMonthTag:      GetDateTimer().DayOfMonth,
-	TIMESTAMP:          GetDateTimer().Timestamp,
-	CENTURY:            GetDateTimer().Century,
-	TIMEZONE:           GetDateTimer().TimeZone,
-	TimePeriodTag:      GetDateTimer().TimePeriod,
-	WORD:               GetLorem().Word,
-	SENTENCE:           GetLorem().Sentence,
-	PARAGRAPH:          GetLorem().Paragraph,
-	Currency:           GetPrice().Currency,
-	Amount:             GetPrice().Amount,
-	AmountWithCurrency: GetPrice().AmountWithCurrency,
-	ID:                 GetIdentifier().Digit,
-	HyphenatedID:       GetIdentifier().Hyphenated,
+	EmailTag:              GetNetworker().Email,
+	MacAddressTag:         GetNetworker().MacAddress,
+	DomainNameTag:         GetNetworker().DomainName,
+	URLTag:                GetNetworker().URL,
+	UserNameTag:           GetNetworker().UserName,
+	IPV4Tag:               GetNetworker().IPv4,
+	IPV6Tag:               GetNetworker().IPv6,
+	PASSWORD:              GetNetworker().Password,
+	CreditCardType:        GetPayment().CreditCardType,
+	CreditCardNumber:      GetPayment().CreditCardNumber,
+	LATITUDE:              GetAddress().Latitude,
+	LONGITUDE:             GetAddress().Longitude,
+	PhoneNumber:           GetPhoner().PhoneNumber,
+	TollFreeNumber:        GetPhoner().TollFreePhoneNumber,
+	E164PhoneNumberTag:    GetPhoner().E164PhoneNumber,
+	TitleMaleTag:          GetPerson().TitleMale,
+	TitleFemaleTag:        GetPerson().TitleFeMale,
+	FirstNameTag:          GetPerson().FirstName,
+	FirstNameMaleTag:      GetPerson().FirstNameMale,
+	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
+	LastNameTag:           GetPerson().LastName,
+	NAME:                  GetPerson().Name,
+	UnixTimeTag:           GetDateTimer().UnixTime,
+	DATE:                  GetDateTimer().Date,
+	TIME:                  GetDateTimer().Time,
+	MonthNameTag:          GetDateTimer().MonthName,
+	YEAR:                  GetDateTimer().Year,
+	DayOfWeekTag:          GetDateTimer().DayOfWeek,
+	DayOfMonthTag:         GetDateTimer().DayOfMonth,
+	TIMESTAMP:             GetDateTimer().Timestamp,
+	CENTURY:               GetDateTimer().Century,
+	TIMEZONE:              GetDateTimer().TimeZone,
+	TimePeriodTag:         GetDateTimer().TimePeriod,
+	WORD:                  GetLorem().Word,
+	SENTENCE:              GetLorem().Sentence,
+	PARAGRAPH:             GetLorem().Paragraph,
+	CurrencyTag:           GetPrice().Currency,
+	AmountTag:             GetPrice().Amount,
+	AmountWithCurrencyTag: GetPrice().AmountWithCurrency,
+	ID:                    GetIdentifier().Digit,
+	HyphenatedID:          GetIdentifier().Hyphenated,
 }
 
 // Generic Error Messages for tags

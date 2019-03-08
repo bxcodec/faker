@@ -36,7 +36,7 @@ func TestDate(t *testing.T) {
 	if err != nil {
 		t.Error("function Date need return valid value")
 	}
-	_, err = time.Parse(BaseDate, date.(string))
+	_, err = time.Parse(BaseDateFormat, date.(string))
 
 	if err != nil {
 		t.Error("function Date need return valid value")
@@ -49,7 +49,7 @@ func TestTime(t *testing.T) {
 	if err != nil {
 		t.Error("function Time need return valid value")
 	}
-	_, err = time.Parse(Time, tm.(string))
+	_, err = time.Parse(TimeFormat, tm.(string))
 	if err != nil {
 		t.Error("function Time need return valid value")
 	}
@@ -61,7 +61,7 @@ func TestMonthName(t *testing.T) {
 	if err != nil {
 		t.Error("function Month need return valid month")
 	}
-	_, err = time.Parse(Month, mt.(string))
+	_, err = time.Parse(MonthFormat, mt.(string))
 	if err != nil {
 		t.Error("function Month need return valid month")
 	}
@@ -73,7 +73,7 @@ func TestYear(t *testing.T) {
 	if err != nil {
 		t.Error("function Year need return valid year")
 	}
-	_, err = time.Parse(Year, year.(string))
+	_, err = time.Parse(YearFormat, year.(string))
 	if err != nil {
 		t.Error("function Year need return valid year")
 	}
@@ -85,7 +85,7 @@ func TestDayOfWeek(t *testing.T) {
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
 	}
-	_, err = time.Parse(Day, week.(string))
+	_, err = time.Parse(DayFormat, week.(string))
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
 	}
@@ -119,7 +119,7 @@ func TestDayOfMonth(t *testing.T) {
 	if err != nil {
 		t.Error("function DayOfMonth need return valid digit")
 	}
-	_, err = time.Parse(DayOfMonth, mt.(string))
+	_, err = time.Parse(DayOfMonthFormat, mt.(string))
 	if err != nil {
 		t.Error("function DayOfMonth need return valid digit")
 	}
@@ -131,7 +131,7 @@ func TestTimestamp(t *testing.T) {
 	if err != nil {
 		t.Error("function Timestamp need return valid timestamp format")
 	}
-	_, err = time.Parse(fmt.Sprintf("%s %s", BaseDate, Time), tstmp.(string))
+	_, err = time.Parse(fmt.Sprintf("%s %s", BaseDateFormat, TimeFormat), tstmp.(string))
 	if err != nil {
 		t.Error("function Timestamp need return valid timestamp format")
 	}
@@ -165,7 +165,96 @@ func TestTimePeriod(t *testing.T) {
 	if err != nil {
 		t.Error("function TimePeriod need return valid period")
 	}
-	_, err = time.Parse(TimePeriod, periode.(string))
+	_, err = time.Parse(TimePeriodFormat, periode.(string))
+	if err != nil {
+		t.Error("function TimePeriod need return valid period")
+	}
+}
+
+func TestFakeUnixTime(t *testing.T) {
+	unixTime := UnixTime()
+
+	if time.Now().Unix() <= unixTime {
+		t.Error("UnixTime should return time <= now")
+	}
+}
+
+func TestFakeDate(t *testing.T) {
+	date := Date()
+
+	_, err := time.Parse(BaseDateFormat, date)
+	if err != nil {
+		t.Error("function Date need return valid value")
+	}
+}
+
+func TestFakeTime(t *testing.T) {
+	tm := TimeString()
+	_, err := time.Parse(TimeFormat, tm)
+	if err != nil {
+		t.Error("function Time need return valid value")
+	}
+}
+
+func TestFakeMonthName(t *testing.T) {
+	mt := MonthName()
+	_, err := time.Parse(MonthFormat, mt)
+	if err != nil {
+		t.Error("function Month need return valid month")
+	}
+}
+
+func TestFakeYear(t *testing.T) {
+	year := YearString()
+	_, err := time.Parse(YearFormat, year)
+	if err != nil {
+		t.Error("function Year need return valid year")
+	}
+}
+
+func TestFakeDayOfWeek(t *testing.T) {
+	week := DayOfWeek()
+	_, err := time.Parse(DayFormat, week)
+	if err != nil {
+		t.Error("function DayOfWeek need return valid day")
+	}
+}
+
+func TestFakeDayOfMonth(t *testing.T) {
+	mt := DayOfMonth()
+	_, err := time.Parse(DayOfMonthFormat, mt)
+	if err != nil {
+		t.Error("function DayOfMonth need return valid digit")
+	}
+}
+
+func TestFakeTimestamp(t *testing.T) {
+
+	tstmp := Timestamp()
+
+	_, err := time.Parse(fmt.Sprintf("%s %s", BaseDateFormat, TimeFormat), tstmp)
+	if err != nil {
+		t.Error("function Timestamp need return valid timestamp format")
+	}
+}
+
+func TestFakeCentury(t *testing.T) {
+	centry := Century()
+	if !slice.Contains(century, centry) {
+		t.Error("Expected century from functuon Century")
+	}
+}
+
+func TestFakeTimeZone(t *testing.T) {
+	tz := Timezone()
+	if !slice.Contains(timezones, tz) {
+		t.Error("Expected timezone from variable timezones")
+	}
+}
+
+func TestFakeTimePeriod(t *testing.T) {
+	periode := Timeperiod()
+	_, err := time.Parse(TimePeriodFormat, periode)
 	if err != nil {
 		t.Error("function TimePeriod need return valid period")
 	}

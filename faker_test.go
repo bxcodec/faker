@@ -162,6 +162,7 @@ type TaggedStruct struct {
 	CreditCardNumber   string  `faker:"cc_number"`
 	CreditCardType     string  `faker:"cc_type"`
 	Email              string  `faker:"email"`
+	DomainName         string  `faker:"domain_name"`
 	IPV4               string  `faker:"ipv4"`
 	IPV6               string  `faker:"ipv6"`
 	Password           string  `faker:"password"`
@@ -206,6 +207,7 @@ func (t TaggedStruct) String() string {
 	CreditCardNumber: %s,
 	CreditCardType: %s,
 	Email: %s,
+	DomainName: %s,
 	IPV4: %s,
 	IPV6: %s,
 	Password: %s,
@@ -242,7 +244,7 @@ func (t TaggedStruct) String() string {
 	HyphenatedID: %s,
 	ID: %s,
 }`, t.Latitude, t.Longitude, t.CreditCardNumber,
-		t.CreditCardType, t.Email, t.IPV4,
+		t.CreditCardType, t.Email, t.DomainName, t.IPV4,
 		t.IPV6, t.Password, t.PhoneNumber, t.MacAddress,
 		t.URL, t.UserName, t.TollFreeNumber,
 		t.E164PhoneNumber, t.TitleMale, t.TitleFemale,
@@ -763,7 +765,7 @@ func TestExtend(t *testing.T) {
 func TestTagAlreadyExists(t *testing.T) {
 	// This test is to ensure that existing tag cannot be rewritten
 
-	err := AddProvider(Email, func(v reflect.Value) (interface{}, error) {
+	err := AddProvider(EmailTag, func(v reflect.Value) (interface{}, error) {
 		return nil, nil
 	})
 

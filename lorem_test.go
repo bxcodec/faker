@@ -45,3 +45,24 @@ func TestParagraph(t *testing.T) {
 		t.Error("Expected paragraph")
 	}
 }
+
+func TestFakeWord(t *testing.T) {
+	word := Word()
+	if !slice.Contains(wordList, word) {
+		t.Error("Expected word from slice wordList")
+	}
+}
+
+func TestFakeSentence(t *testing.T) {
+	res := Sentence()
+	if res == "" || !strings.HasSuffix(res, ".") {
+		t.Error("Expected sentence")
+	}
+}
+
+func TestFakeParagraph(t *testing.T) {
+	res := Paragraph()
+	if res == "" || !strings.HasSuffix(res, ".") {
+		t.Error("Expected paragraph")
+	}
+}

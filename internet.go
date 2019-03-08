@@ -65,6 +65,12 @@ func (internet Internet) Email(v reflect.Value) (interface{}, error) {
 	return internet.email(), nil
 }
 
+// Email get email randomly in string
+func Email() string {
+	i := Internet{}
+	return i.email()
+}
+
 func (internet Internet) macAddress() string {
 	ip := make([]byte, 6)
 	for i := 0; i < 6; i++ {
@@ -78,6 +84,12 @@ func (internet Internet) MacAddress(v reflect.Value) (interface{}, error) {
 	return internet.macAddress(), nil
 }
 
+// MacAddress get mac address randomly in string
+func MacAddress() string {
+	i := Internet{}
+	return i.macAddress()
+}
+
 func (internet Internet) domainName() string {
 	return randomString(7) + "." + randomElementFromSliceString(tld)
 }
@@ -85,6 +97,12 @@ func (internet Internet) domainName() string {
 // DomainName generates random domain name
 func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
 	return internet.domainName(), nil
+}
+
+// DomainName get email domain name in string
+func DomainName() string {
+	i := Internet{}
+	return i.domainName()
 }
 
 func (internet Internet) url() string {
@@ -101,6 +119,12 @@ func (internet Internet) URL(v reflect.Value) (interface{}, error) {
 	return internet.url(), nil
 }
 
+// URL get Url randomly in string
+func URL() string {
+	i := Internet{}
+	return i.url()
+}
+
 func (internet Internet) username() string {
 	return randomString(7)
 }
@@ -108,6 +132,12 @@ func (internet Internet) username() string {
 // UserName generates random username
 func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
 	return internet.username(), nil
+}
+
+// Username get username randomly in string
+func Username() string {
+	i := Internet{}
+	return i.username()
 }
 
 func (internet Internet) ipv4() string {
@@ -124,6 +154,12 @@ func (internet Internet) IPv4(v reflect.Value) (interface{}, error) {
 	return internet.ipv4(), nil
 }
 
+// IPv4 get IPv4 randomly in string
+func IPv4() string {
+	i := Internet{}
+	return i.ipv4()
+}
+
 func (internet Internet) ipv6() string {
 	size := 16
 	ip := make([]byte, size)
@@ -138,6 +174,12 @@ func (internet Internet) IPv6(v reflect.Value) (interface{}, error) {
 	return internet.ipv6(), nil
 }
 
+// IPv6 get IPv6 randomly in string
+func IPv6() string {
+	i := Internet{}
+	return i.ipv6()
+}
+
 func (internet Internet) password() string {
 	return randomString(50)
 }
@@ -145,4 +187,10 @@ func (internet Internet) password() string {
 // Password returns a hashed password
 func (internet Internet) Password(v reflect.Value) (interface{}, error) {
 	return internet.password(), nil
+}
+
+// Password get password randomly in string
+func Password() string {
+	i := Internet{}
+	return i.password()
 }

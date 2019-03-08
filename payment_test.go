@@ -28,3 +28,20 @@ func TestCreditCardNumber(t *testing.T) {
 func TestSetPayment(t *testing.T) {
 	SetPayment(Payment{})
 }
+
+func TestFakeCreditCardType(t *testing.T) {
+	ccType := CCType()
+	randCC := strings.ToLower(ccType)
+
+	if _, exist := creditCards[randCC]; !exist {
+		t.Errorf("Expected from function creditCardType() : %s", randCC)
+	}
+}
+
+func TestFakeCreditCardNumber(t *testing.T) {
+	ccNumber := CCNumber()
+
+	if ccNumber == "" {
+		t.Error("Expected Credit Card Number ")
+	}
+}

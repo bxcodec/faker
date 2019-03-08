@@ -91,3 +91,60 @@ func TestNameFemale(t *testing.T) {
 		t.Error("Expected from function name string get empty string")
 	}
 }
+
+func TestFakeTitleMale(t *testing.T) {
+	male := TitleMale()
+	if !slice.Contains(titlesMale, male) {
+		t.Error("Expected value from variable titleMales in function TitleMale")
+	}
+}
+
+func TestFakeTitleFemale(t *testing.T) {
+	female := TitleFemale()
+	if !slice.Contains(titlesFemale, female) {
+		t.Error("Expected value from variable titleFemales in function TitleFeMale")
+	}
+}
+
+func TestFakeFirstNameMale(t *testing.T) {
+	firstName := FirstNameMale()
+	if !slice.Contains(firstNamesMale, firstName) {
+		t.Error("Expected value from variable firstNamesMale in function FirstNameMale")
+	}
+}
+
+func TestFakeFirstNameFemale(t *testing.T) {
+	firstName := FirstNameFemale()
+	if !slice.Contains(firstNamesFemale, firstName) {
+		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
+	}
+}
+
+func TestFakeFirstName(t *testing.T) {
+	firstname := FirstName()
+	if !slice.Contains(firstNames, firstname) {
+		t.Error("Expected value from either firstNamesMale or firstNamesFemale in function FirstName")
+	}
+}
+
+func TestFakeLastName(t *testing.T) {
+	lastname := LastName()
+	if !slice.Contains(lastNames, lastname) {
+		t.Error("Expected value from variable lastNames in function LastName")
+	}
+}
+
+func TestFakeNameMale(t *testing.T) {
+	name := Name()
+	randNameFlag = 51
+	if name == "" {
+		t.Error("Expected from function name string get empty string")
+	}
+}
+func TestFakeNameFemale(t *testing.T) {
+	name := Name()
+	randNameFlag = 20
+	if name == "" {
+		t.Error("Expected from function name string get empty string")
+	}
+}

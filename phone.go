@@ -49,6 +49,12 @@ func (p Phone) PhoneNumber(v reflect.Value) (interface{}, error) {
 	return p.phonenumber(), nil
 }
 
+// Phonenumber get fake phone number
+func Phonenumber() string {
+	p := Phone{}
+	return p.phonenumber()
+}
+
 func (p Phone) tollfreephonenumber() string {
 	out := ""
 	boxDigitsStart := []string{"777", "888"}
@@ -68,6 +74,12 @@ func (p Phone) TollFreePhoneNumber(v reflect.Value) (interface{}, error) {
 	return p.tollfreephonenumber(), nil
 }
 
+// TollFreePhoneNumber get fake TollFreePhoneNumber
+func TollFreePhoneNumber() string {
+	p := Phone{}
+	return p.tollfreephonenumber()
+}
+
 func (p Phone) e164PhoneNumber() string {
 	out := ""
 	boxDigitsStart := []string{"7", "8"}
@@ -82,4 +94,10 @@ func (p Phone) e164PhoneNumber() string {
 // E164PhoneNumber generates phone numbers of type: "+27113456789"
 func (p Phone) E164PhoneNumber(v reflect.Value) (interface{}, error) {
 	return p.e164PhoneNumber(), nil
+}
+
+// E164PhoneNumber get fake E164PhoneNumber
+func E164PhoneNumber() string {
+	p := Phone{}
+	return p.e164PhoneNumber()
 }
