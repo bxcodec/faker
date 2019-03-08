@@ -1,6 +1,5 @@
 ## Without Tag
 
----
 
 You also can use faker to generate your structs data randomly without any tag. And it will fill the data based on its data-type.
 
