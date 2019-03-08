@@ -1,7 +1,5 @@
 ## Single Fake Function
 
-------
-
 ### Address
 
 ------
