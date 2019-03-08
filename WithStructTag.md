@@ -83,6 +83,7 @@ type SomeStruct struct {
 	CreditCardNumber   string  `faker:"cc_number"`
 	CreditCardType     string  `faker:"cc_type"`
 	Email              string  `faker:"email"`
+	DomainName		   string  `faker:"domain_name"`
 	IPV4               string  `faker:"ipv4"`
 	IPV6               string  `faker:"ipv6"`
 	Password           string  `faker:"password"`
@@ -137,6 +138,7 @@ func main() {
 			CreditCardType: American Express
 			CreditCardNumber: 373641309057568
 			Email: mJBJtbv@OSAaT.ru
+			DomainName: FWZcaRE.ru,
 			IPV4: 99.23.42.63
 			IPV6: 975c:fb2c:2133:fbdd:beda:282e:1e0a:ec7d
 			Password: dfJdyHGuVkHBgnHLQQgpINApynzexnRpgIKBpiIjpTPOmNyMFb
@@ -231,7 +233,7 @@ Results:
 ---
 
 You can set length for your random strings also set boundary for your integers.
-```
+```go
 package main
 
 import (

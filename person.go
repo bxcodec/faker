@@ -167,8 +167,8 @@ func (p Person) FirstName(v reflect.Value) (interface{}, error) {
 	return p.firstname(), nil
 }
 
-// Firstname get fake firstname
-func Firstname() string {
+// FirstName get fake firstname
+func FirstName() string {
 	p := Person{}
 	return p.firstname()
 }
@@ -182,8 +182,8 @@ func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
 	return p.firstnamemale(), nil
 }
 
-// FirstnameMale get fake firstname for male
-func FirstnameMale() string {
+// FirstNameMale get fake firstname for male
+func FirstNameMale() string {
 	p := Person{}
 	return p.firstnamemale()
 }
@@ -197,8 +197,8 @@ func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
 	return p.firstnamefemale(), nil
 }
 
-// FirstnameFemale get fake firstname for female
-func FirstnameFemale() string {
+// FirstNameFemale get fake firstname for female
+func FirstNameFemale() string {
 	p := Person{}
 	return p.firstnamefemale()
 }
@@ -212,8 +212,8 @@ func (p Person) LastName(v reflect.Value) (interface{}, error) {
 	return p.lastname(), nil
 }
 
-// Lastname get fake lastname
-func Lastname() string {
+// LastName get fake lastname
+func LastName() string {
 	p := Person{}
 	return p.lastname()
 }

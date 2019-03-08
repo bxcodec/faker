@@ -107,28 +107,28 @@ func TestFakeTitleFemale(t *testing.T) {
 }
 
 func TestFakeFirstNameMale(t *testing.T) {
-	firstName := FirstnameMale()
+	firstName := FirstNameMale()
 	if !slice.Contains(firstNamesMale, firstName) {
 		t.Error("Expected value from variable firstNamesMale in function FirstNameMale")
 	}
 }
 
 func TestFakeFirstNameFemale(t *testing.T) {
-	firstName := FirstnameFemale()
+	firstName := FirstNameFemale()
 	if !slice.Contains(firstNamesFemale, firstName) {
 		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
 	}
 }
 
 func TestFakeFirstName(t *testing.T) {
-	firstname := Firstname()
+	firstname := FirstName()
 	if !slice.Contains(firstNames, firstname) {
 		t.Error("Expected value from either firstNamesMale or firstNamesFemale in function FirstName")
 	}
 }
 
 func TestFakeLastName(t *testing.T) {
-	lastname := Lastname()
+	lastname := LastName()
 	if !slice.Contains(lastNames, lastname) {
 		t.Error("Expected value from variable lastNames in function LastName")
 	}
