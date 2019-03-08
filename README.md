@@ -39,6 +39,7 @@ go get -u github.com/bxcodec/faker
 ---
  
  - Using Struct's tag:  [WithStructTag.md](/WithStructTag.md)
+ - Custom Struct's tag (define your own faker data): [CustomFaker.md](/CustomFaker.md)
  - Without struct's tag: [WithoutTag.md](/WithoutTag.md)
  - Single Fake Data Function: [SingleFakeData.md](/SingleFakeData.md)
  
