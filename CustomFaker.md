@@ -1,5 +1,4 @@
 ## Custom Generator Provider
----
 
 You can also add your own generator function to your own defined tags. See example below
 
