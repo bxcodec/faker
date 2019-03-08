@@ -32,7 +32,7 @@ See documentation in [Godoc](https://godoc.org/github.com/bxcodec/faker)
 #### Download
 
 ```shell
-go get -u github.com/bxcodec/faker
+go get -u github.com/bxcodec/faker/v3
 ```
 # Example
 
