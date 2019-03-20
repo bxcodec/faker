@@ -297,9 +297,9 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
 	}
-	sample := new(Sample)
+	var sample = new(Sample)
 	if err := FakeData(sample); err == nil {
-		t.Error("Expected Got Error. But got nil")
+		t.Error("Expected Error. But got nil")
 	}
 }
 
@@ -817,5 +817,31 @@ func TestTagWithPointer(t *testing.T) {
 
 	if sample.School == nil || sample.School.Location == "" {
 		t.Error("Expected filled but got emtpy")
+	}
+}
+
+func TestOmitSetTagOmitsAlreadySetStructField(t *testing.T) {
+	type TestStruct struct {
+		FirstName string `json:"first_name,omitempty" faker:"first_name_male,omitset"`
+		Email     string `json:"email,omitempty" faker:"email"`
+	}
+
+	firstName := "Heino"
+	test := TestStruct{
+		FirstName: firstName,
+		Email:     "heino@me.com",
+	}
+
+	err := FakeData(&test)
+	if err != nil {
+		t.Error("expected not error, but got: ", err)
+	}
+
+	if test.FirstName != firstName {
+		t.Fatalf("expected: %s, but got: %s", firstName, test.FirstName)
+	}
+
+	if test.Email == "" {
+		t.Error("expected filled but got empty")
 	}
 }
