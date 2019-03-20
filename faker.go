@@ -39,7 +39,7 @@ const (
 	letterIdxMax          = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	letterBytes           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName               = "faker"
-	omitset               = "omitset"
+	keep                  = "keep"
 	ID                    = "uuid_digit"
 	HyphenatedID          = "uuid_hyphenated"
 	EmailTag              = "email"
@@ -328,7 +328,6 @@ func getValue(a interface{}) (reflect.Value, error) {
 
 	switch k {
 	case reflect.Ptr:
-		fmt.Println(a)
 		v := reflect.New(t.Elem())
 		var val reflect.Value
 		var err error
@@ -360,8 +359,8 @@ func getValue(a interface{}) (reflect.Value, error) {
 				tags := decodeTags(t, i)
 
 				switch {
-				case tags.omitSet:
-					v.Field(i).Set(v.Field(i))
+				case tags.keepOriginal:
+					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
 					val, err := getValue(v.Field(i).Interface())
 					if err != nil {
@@ -461,24 +460,27 @@ func getValue(a interface{}) (reflect.Value, error) {
 }
 
 func decodeTags(typ reflect.Type, i int) structTag {
-	//tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
+	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
 
-	//if len(tags) > 1 && tags[1] == omitset {
-	//	return structTag{
-	//		fieldType: tags[0],
-	//		omitSet:   true,
-	//	}
-	//}
+	keepOriginal := false
+	res := make([]string, 0)
+	for _, tag := range tags {
+		if tag == keep {
+			keepOriginal = true
+			continue
+		}
+		res = append(res, tag)
+	}
 
 	return structTag{
-		fieldType: typ.Field(i).Tag.Get(tagName),
-		omitSet:   false,
+		fieldType:    strings.Join(res, ","),
+		keepOriginal: keepOriginal,
 	}
 }
 
 type structTag struct {
-	fieldType string
-	omitSet   bool
+	fieldType    string
+	keepOriginal bool
 }
 
 func setDataWithTag(v reflect.Value, tag string) error {

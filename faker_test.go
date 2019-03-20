@@ -820,13 +820,13 @@ func TestTagWithPointer(t *testing.T) {
 	}
 }
 
-func TestOmitSetTagOmitsAlreadySetStructField(t *testing.T) {
+func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		FirstName string `json:"first_name,omitempty" faker:"first_name_male,omitset"`
+		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
 		Email     string `json:"email,omitempty" faker:"email"`
 	}
 
-	firstName := "Heino"
+	firstName := "Heino van der Laien"
 	test := TestStruct{
 		FirstName: firstName,
 		Email:     "heino@me.com",
