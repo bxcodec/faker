@@ -32,7 +32,7 @@ type numberBoundary struct {
 	end   int
 }
 
-// Supported tag
+// Supported tags
 const (
 	letterIdxBits         = 6                    // 6 bits to represent a letter index
 	letterIdxMask         = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
@@ -181,7 +181,7 @@ var mapperTag = map[string]TaggedFunction{
 	HyphenatedID:          GetIdentifier().Hyphenated,
 }
 
-// Generic Error Messages for tag
+// Generic Error Messages for tags
 // 		ErrUnsupportedKindPtr: Error when get fake from ptr
 // 		ErrUnsupportedKind: Error on passing unsupported kind
 // 		ErrValueNotPtr: Error when value is not pointer
