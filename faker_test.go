@@ -820,16 +820,31 @@ func TestTagWithPointer(t *testing.T) {
 	}
 }
 
+func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
+	type TestStruct struct {
+		Email     string `json:"email,omitempty" faker:"email,keep"`
+	}
+
+	test := TestStruct{}
+
+	err := FakeData(&test)
+	if err != nil {
+		t.Error("expected not error, but got: ", err)
+	}
+
+	if test.Email == "" {
+		t.Error("expected filled but got empty")
+	}
+}
 func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	type TestStruct struct {
 		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
-		Email     string `json:"email,omitempty" faker:"email"`
+		Email     string `json:"email,omitempty" faker:"email,keep"`
 	}
 
 	firstName := "Heino van der Laien"
 	test := TestStruct{
 		FirstName: firstName,
-		Email:     "heino@me.com",
 	}
 
 	err := FakeData(&test)
@@ -843,5 +858,32 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 
 	if test.Email == "" {
 		t.Error("expected filled but got empty")
+	}
+}
+
+func TestItThrowsAnErrorWhenKeepIsUsedOnUncomparableType(t *testing.T) {
+	type TypeStructWithStruct struct {
+		Struct struct{} `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithMap struct {
+		Map map[string]string `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithSlice struct {
+		Slice []string `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithArray struct {
+		Array [4]string `faker:"first_name_male,keep"`
+	}
+
+	withStruct := TypeStructWithStruct{}
+	withMap := TypeStructWithMap{}
+	withSlice := TypeStructWithSlice{}
+	withArray := TypeStructWithArray{}
+
+	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+		err := FakeData(&item)
+		if err == nil {
+			t.Errorf("expected error, but got nil")
+		}
 	}
 }

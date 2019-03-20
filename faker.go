@@ -360,6 +360,17 @@ func getValue(a interface{}) (reflect.Value, error) {
 
 				switch {
 				case tags.keepOriginal:
+					zero, err := isZero(reflect.ValueOf(a).Field(i))
+					if err != nil {
+						return reflect.Value{}, err
+					}
+					if zero {
+						err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
+						if err != nil {
+							return reflect.Value{}, err
+						}
+						continue
+					}
 					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
 					val, err := getValue(v.Field(i).Interface())
@@ -457,6 +468,15 @@ func getValue(a interface{}) (reflect.Value, error) {
 		return reflect.Value{}, err
 	}
 
+}
+
+func isZero(field reflect.Value) (bool, error) {
+	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array, reflect.Map} {
+		if kind == field.Kind() {
+			return false, fmt.Errorf("keep not allowed on struct")
+		}
+	}
+	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
 
 func decodeTags(typ reflect.Type, i int) structTag {
