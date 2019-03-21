@@ -861,7 +861,7 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	}
 }
 
-func TestItThrowsAnErrorWhenKeepIsUsedOnUncomparableType(t *testing.T) {
+func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	type TypeStructWithStruct struct {
 		Struct struct{} `faker:"first_name_male,keep"`
 	}
@@ -885,5 +885,31 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnUncomparableType(t *testing.T) {
 		if err == nil {
 			t.Errorf("expected error, but got nil")
 		}
+	}
+}
+
+func TestItThrowsAnErrorWhenPointerToInterfaceIsUsed(t *testing.T) {
+	type PtrToInterface struct {
+		Interface *interface{}
+	}
+
+	interfacePtr := PtrToInterface{}
+
+	err := FakeData(&interfacePtr)
+	if err == nil {
+		t.Errorf("expected error, but got nil")
+	}
+}
+
+func TestItThrowsAnErrorWhenZeroValueWithKeepAndUnsupportedTagIsUsed(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"keep,unsupported"`
+	}
+
+	val := String{}
+
+	err := FakeData(&val)
+	if err == nil {
+		t.Errorf("expected error, but got nil")
 	}
 }
