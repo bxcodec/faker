@@ -39,6 +39,7 @@ const (
 	letterIdxMax          = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	letterBytes           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName               = "faker"
+	keep                  = "keep"
 	ID                    = "uuid_digit"
 	HyphenatedID          = "uuid_hyphenated"
 	EmailTag              = "email"
@@ -256,12 +257,12 @@ func FakeData(a interface{}) error {
 
 	rval := reflect.ValueOf(a)
 
-	finalValue, err := getValue(reflectType.Elem())
+	finalValue, err := getValue(a)
 	if err != nil {
 		return err
 	}
 
-	rval.Elem().Set(finalValue.Convert(reflectType.Elem()))
+	rval.Elem().Set(finalValue.Elem().Convert(reflectType.Elem()))
 	return nil
 }
 
@@ -318,15 +319,28 @@ func AddProvider(tag string, provider TaggedFunction) error {
 	return nil
 }
 
-func getValue(t reflect.Type) (reflect.Value, error) {
+func getValue(a interface{}) (reflect.Value, error) {
+	t := reflect.TypeOf(a)
+	if t == nil {
+		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
+	}
 	k := t.Kind()
 
 	switch k {
 	case reflect.Ptr:
 		v := reflect.New(t.Elem())
-		val, err := getValue(t.Elem())
-		if err != nil {
-			return reflect.Value{}, err
+		var val reflect.Value
+		var err error
+		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
+			val, err = getValue(reflect.ValueOf(a).Elem().Interface())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else {
+			val, err = getValue(v.Elem().Interface())
+			if err != nil {
+				return reflect.Value{}, err
+			}
 		}
 		v.Elem().Set(val.Convert(t.Elem()))
 		return v, nil
@@ -342,20 +356,33 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 				if !v.Field(i).CanSet() {
 					continue // to avoid panic to set on unexported field in struct
 				}
-				tag := t.Field(i).Tag.Get(tagName)
+				tags := decodeTags(t, i)
 
-				switch tag {
-				case "":
-					val, err := getValue(v.Field(i).Type())
+				switch {
+				case tags.keepOriginal:
+					zero, err := isZero(reflect.ValueOf(a).Field(i))
+					if err != nil {
+						return reflect.Value{}, err
+					}
+					if zero {
+						err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
+						if err != nil {
+							return reflect.Value{}, err
+						}
+						continue
+					}
+					v.Field(i).Set(reflect.ValueOf(a).Field(i))
+				case tags.fieldType == "":
+					val, err := getValue(v.Field(i).Interface())
 					if err != nil {
 						return reflect.Value{}, err
 					}
 					val = val.Convert(v.Field(i).Type())
 					v.Field(i).Set(val)
-				case SKIP:
+				case tags.fieldType == SKIP:
 					continue
 				default:
-					err := setDataWithTag(v.Field(i).Addr(), tag)
+					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -375,7 +402,7 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(t.Elem())
+			val, err := getValue(v.Index(i).Interface())
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -422,11 +449,14 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		}
 		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
-			key, err := getValue(t.Key())
+			keyInstance := reflect.New(t.Key()).Elem().Interface()
+			key, err := getValue(keyInstance)
 			if err != nil {
 				return reflect.Value{}, err
 			}
-			val, err := getValue(t.Elem())
+
+			valueInstance := reflect.New(t.Elem()).Elem().Interface()
+			val, err := getValue(valueInstance)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -438,6 +468,39 @@ func getValue(t reflect.Type) (reflect.Value, error) {
 		return reflect.Value{}, err
 	}
 
+}
+
+func isZero(field reflect.Value) (bool, error) {
+	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array, reflect.Map} {
+		if kind == field.Kind() {
+			return false, fmt.Errorf("keep not allowed on struct")
+		}
+	}
+	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
+}
+
+func decodeTags(typ reflect.Type, i int) structTag {
+	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
+
+	keepOriginal := false
+	res := make([]string, 0)
+	for _, tag := range tags {
+		if tag == keep {
+			keepOriginal = true
+			continue
+		}
+		res = append(res, tag)
+	}
+
+	return structTag{
+		fieldType:    strings.Join(res, ","),
+		keepOriginal: keepOriginal,
+	}
+}
+
+type structTag struct {
+	fieldType    string
+	keepOriginal bool
 }
 
 func setDataWithTag(v reflect.Value, tag string) error {

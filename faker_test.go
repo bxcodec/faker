@@ -297,9 +297,9 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
 	}
-	sample := new(Sample)
+	var sample = new(Sample)
 	if err := FakeData(sample); err == nil {
-		t.Error("Expected Got Error. But got nil")
+		t.Error("Expected Error. But got nil")
 	}
 }
 
@@ -817,5 +817,99 @@ func TestTagWithPointer(t *testing.T) {
 
 	if sample.School == nil || sample.School.Location == "" {
 		t.Error("Expected filled but got emtpy")
+	}
+}
+
+func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
+	type TestStruct struct {
+		Email     string `json:"email,omitempty" faker:"email,keep"`
+	}
+
+	test := TestStruct{}
+
+	err := FakeData(&test)
+	if err != nil {
+		t.Error("expected not error, but got: ", err)
+	}
+
+	if test.Email == "" {
+		t.Error("expected filled but got empty")
+	}
+}
+func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
+	type TestStruct struct {
+		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
+		Email     string `json:"email,omitempty" faker:"email,keep"`
+	}
+
+	firstName := "Heino van der Laien"
+	test := TestStruct{
+		FirstName: firstName,
+	}
+
+	err := FakeData(&test)
+	if err != nil {
+		t.Error("expected not error, but got: ", err)
+	}
+
+	if test.FirstName != firstName {
+		t.Fatalf("expected: %s, but got: %s", firstName, test.FirstName)
+	}
+
+	if test.Email == "" {
+		t.Error("expected filled but got empty")
+	}
+}
+
+func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
+	type TypeStructWithStruct struct {
+		Struct struct{} `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithMap struct {
+		Map map[string]string `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithSlice struct {
+		Slice []string `faker:"first_name_male,keep"`
+	}
+	type TypeStructWithArray struct {
+		Array [4]string `faker:"first_name_male,keep"`
+	}
+
+	withStruct := TypeStructWithStruct{}
+	withMap := TypeStructWithMap{}
+	withSlice := TypeStructWithSlice{}
+	withArray := TypeStructWithArray{}
+
+	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+		err := FakeData(&item)
+		if err == nil {
+			t.Errorf("expected error, but got nil")
+		}
+	}
+}
+
+func TestItThrowsAnErrorWhenPointerToInterfaceIsUsed(t *testing.T) {
+	type PtrToInterface struct {
+		Interface *interface{}
+	}
+
+	interfacePtr := PtrToInterface{}
+
+	err := FakeData(&interfacePtr)
+	if err == nil {
+		t.Errorf("expected error, but got nil")
+	}
+}
+
+func TestItThrowsAnErrorWhenZeroValueWithKeepAndUnsupportedTagIsUsed(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"keep,unsupported"`
+	}
+
+	val := String{}
+
+	err := FakeData(&val)
+	if err == nil {
+		t.Errorf("expected error, but got nil")
 	}
 }
