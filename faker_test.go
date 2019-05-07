@@ -685,7 +685,12 @@ func TestSkipField(t *testing.T) {
 	a := struct {
 		ID              int
 		ShouldBeSkipped int `faker:"-"`
+		ShouldBeSkippedFilled int `faker:"-"`
+		
 	}{}
+
+
+	a.ShouldBeSkippedFilled = 10
 
 	err := FakeData(&a)
 
@@ -694,6 +699,10 @@ func TestSkipField(t *testing.T) {
 	}
 
 	if a.ShouldBeSkipped != 0 {
+		t.Error("Expected that field will be skipped")
+	}
+	
+	if a.ShouldBeSkippedFilled != 10 {
 		t.Error("Expected that field will be skipped")
 	}
 

@@ -345,19 +345,18 @@ func getValue(a interface{}) (reflect.Value, error) {
 		v.Elem().Set(val.Convert(t.Elem()))
 		return v, nil
 	case reflect.Struct:
-
 		switch t.String() {
 		case "time.Time":
 			ft := time.Now().Add(time.Duration(rand.Int63()))
 			return reflect.ValueOf(ft), nil
 		default:
+			originalDataVal := reflect.ValueOf(a)
 			v := reflect.New(t).Elem()
 			for i := 0; i < v.NumField(); i++ {
 				if !v.Field(i).CanSet() {
 					continue // to avoid panic to set on unexported field in struct
 				}
 				tags := decodeTags(t, i)
-
 				switch {
 				case tags.keepOriginal:
 					zero, err := isZero(reflect.ValueOf(a).Field(i))
@@ -380,7 +379,10 @@ func getValue(a interface{}) (reflect.Value, error) {
 					val = val.Convert(v.Field(i).Type())
 					v.Field(i).Set(val)
 				case tags.fieldType == SKIP:
-					continue
+					item := originalDataVal.Field(i).Interface()
+					if v.CanSet() && item != nil {
+						v.Field(i).Set(reflect.ValueOf(item))
+					}
 				default:
 					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
 					if err != nil {
