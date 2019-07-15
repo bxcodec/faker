@@ -874,9 +874,6 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	type TypeStructWithStruct struct {
 		Struct struct{} `faker:"first_name_male,keep"`
 	}
-	type TypeStructWithMap struct {
-		Map map[string]string `faker:"first_name_male,keep"`
-	}
 	type TypeStructWithSlice struct {
 		Slice []string `faker:"first_name_male,keep"`
 	}
@@ -885,11 +882,10 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	}
 
 	withStruct := TypeStructWithStruct{}
-	withMap := TypeStructWithMap{}
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+	for _, item := range []interface{}{withArray, withStruct, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
