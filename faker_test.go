@@ -293,6 +293,34 @@ func TestFakerData(t *testing.T) {
 
 }
 
+func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
+	type Sample struct {
+		Map map[string]interface{} `faker:"custom"`
+	}
+
+	err := AddProvider("custom", func(v reflect.Value) (interface{}, error) {
+		return map[string]interface{}{"foo": "bar"}, nil
+	})
+	if err != nil {
+		t.Error("Expected NoError, but Got Err", err)
+	}
+
+	var sample = new(Sample)
+	err = FakeData(sample)
+	if err != nil {
+		t.Error("Expected NoError, but Got Err:", err)
+	}
+
+	actual, ok := sample.Map["foo"]
+	if !ok {
+		t.Error("map key not set by custom faker")
+	}
+
+	if actual != "bar" {
+		t.Error("map value not set by custom faker")
+	}
+}
+
 func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
