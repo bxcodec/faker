@@ -875,13 +875,16 @@ func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 }
 func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		FirstName string            `json:"first_name,omitempty" faker:"first_name_male,keep"`
+		Email     string            `json:"email,omitempty" faker:"email,keep"`
+		Map       map[string]string `json:"map,omitempty" faker:"keep"`
 	}
 
 	firstName := "Heino van der Laien"
+	m := map[string]string{"foo": "bar"}
 	test := TestStruct{
 		FirstName: firstName,
+		Map:       m,
 	}
 
 	err := FakeData(&test)
@@ -891,6 +894,12 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 
 	if test.FirstName != firstName {
 		t.Fatalf("expected: %s, but got: %s", firstName, test.FirstName)
+	}
+
+	for k, v := range m {
+		if test.Map[k] != v {
+			t.Fatalf("expected: %s, but got: %s", m, test.Map)
+		}
 	}
 
 	if test.Email == "" {
