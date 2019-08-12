@@ -683,12 +683,10 @@ func TestSkipField(t *testing.T) {
 	// This test is to ensure that the faker won't fill field with tag skip
 
 	a := struct {
-		ID              int
-		ShouldBeSkipped int `faker:"-"`
+		ID                    int
+		ShouldBeSkipped       int `faker:"-"`
 		ShouldBeSkippedFilled int `faker:"-"`
-		
 	}{}
-
 
 	a.ShouldBeSkippedFilled = 10
 
@@ -701,7 +699,7 @@ func TestSkipField(t *testing.T) {
 	if a.ShouldBeSkipped != 0 {
 		t.Error("Expected that field will be skipped")
 	}
-	
+
 	if a.ShouldBeSkippedFilled != 10 {
 		t.Error("Expected that field will be skipped")
 	}
@@ -808,30 +806,30 @@ func TestTagWithPointer(t *testing.T) {
 
 	//Assert
 	if sample.FirstName == nil || *sample.FirstName == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Email == nil || *sample.Email == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Latitude == nil || *sample.Latitude == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Latitude32 == nil || *sample.Latitude32 == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 
 	if sample.UnixTime == nil || *sample.UnixTime == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 
 	if sample.School == nil || sample.School.Location == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 }
 
 func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		Email string `json:"email,omitempty" faker:"email,keep"`
 	}
 
 	test := TestStruct{}
@@ -889,7 +887,7 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+	for _, item := range []interface{}{withArray, withStruct, withMap, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
