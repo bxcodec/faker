@@ -683,12 +683,10 @@ func TestSkipField(t *testing.T) {
 	// This test is to ensure that the faker won't fill field with tag skip
 
 	a := struct {
-		ID              int
-		ShouldBeSkipped int `faker:"-"`
+		ID                    int
+		ShouldBeSkipped       int `faker:"-"`
 		ShouldBeSkippedFilled int `faker:"-"`
-		
 	}{}
-
 
 	a.ShouldBeSkippedFilled = 10
 
@@ -701,7 +699,7 @@ func TestSkipField(t *testing.T) {
 	if a.ShouldBeSkipped != 0 {
 		t.Error("Expected that field will be skipped")
 	}
-	
+
 	if a.ShouldBeSkippedFilled != 10 {
 		t.Error("Expected that field will be skipped")
 	}
@@ -831,7 +829,7 @@ func TestTagWithPointer(t *testing.T) {
 
 func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		Email string `json:"email,omitempty" faker:"email,keep"`
 	}
 
 	test := TestStruct{}
@@ -889,7 +887,7 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+	for _, item := range []interface{}{withArray, withStruct, withMap, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
@@ -919,6 +917,71 @@ func TestItThrowsAnErrorWhenZeroValueWithKeepAndUnsupportedTagIsUsed(t *testing.
 
 	err := FakeData(&val)
 	if err == nil {
+		t.Errorf("expected error, but got nil")
+	}
+}
+
+func TestUnique(t *testing.T) {
+	type UniqueStruct struct {
+		StringVal string `faker:"word,unique"`
+		IntVal    int    `faker:"unique"`
+	}
+
+	for i := 0; i < 50; i++ {
+		val := UniqueStruct{}
+		FakeData(&val)
+	}
+
+	found := []interface{}{}
+	for _, v := range uniqueValues["word"] {
+		for _, f := range found {
+			if f == v {
+				t.Errorf("expected unique values, found \"%s\" at least twice", v)
+				ResetUnique()
+				return
+			}
+		}
+		found = append(found, v)
+	}
+
+	ResetUnique()
+}
+
+func TestUniqueReset(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"word,unique"`
+	}
+
+	for i := 0; i < 20; i++ {
+		val := String{}
+		FakeData(&val)
+	}
+
+	ResetUnique()
+	length := len(uniqueValues)
+	if length > 0 {
+		t.Errorf("expected empty uniqueValues map, but got a length of %d", length)
+	}
+}
+
+func TestUniqueFailure(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"word,unique"`
+	}
+
+	hasError := false
+	length := len(wordList) + 1
+	for i := 0; i < length; i++ {
+		val := String{}
+		err := FakeData(&val)
+		if err != nil {
+			hasError = true
+			break
+		}
+	}
+
+	ResetUnique()
+	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
 }
