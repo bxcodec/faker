@@ -64,6 +64,9 @@ Supported tag:
 **Skip :**
 * \-
 
+**Unique :**
+* unique
+
 ```go
 
 package main
@@ -270,5 +273,26 @@ Result:
         bigsYNfVcNMGtnzgaqEjeRRlIcUdbR:hYOnJupEOvblTTEYzZYPuTVmvTmiit
         ]
     MIint:map[7:7 5:7 8:8 9:5 6:5]
+}
+```
+## Unique values
+
+```go
+// SomeStruct ...
+type SomeStruct struct {
+	Word string `faker:"word,unique"`
+}
+
+func main() {
+
+	for i := 0 ; i < 5 ; i++ { // Generate 5 structs having a unique word
+		a := SomeStruct{}
+		err := faker.FakeData(&a)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Printf("%+v", a)
+	}
+	faker.ResetUnique() // Forget all generated unique values. Allows to start generating another unrelated dataset.
 }
 ```
