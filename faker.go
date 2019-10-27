@@ -870,3 +870,14 @@ func generateUnique(dataType string, fn func() interface{}) (interface{}, error)
 	}
 	return reflect.Value{}, fmt.Errorf(ErrUniqueFailure, dataType)
 }
+
+func singleFakeData(dataType string, fn func() interface{}) interface{} {
+	if generateUniqueValues {
+		v, err := generateUnique(dataType, fn)
+		if err != nil {
+			panic(err)
+		}
+		return v
+	}
+	return fn()
+}

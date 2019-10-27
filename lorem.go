@@ -87,19 +87,9 @@ func (l Lorem) Word(v reflect.Value) (interface{}, error) {
 // Word get a word randomly in string
 func Word() string {
 	i := Lorem{}
-	if generateUniqueValues {
-		v, err := generateUnique(WORD, func() interface{} {
-			return i.word()
-		})
-
-		if err != nil {
-			panic(err)
-		}
-
-		return v.(string)
-	}
-
-	return i.word()
+	return singleFakeData(WORD, func() interface{} {
+		return i.word()
+	}).(string)
 }
 
 func (l Lorem) sentence() string {
@@ -128,18 +118,9 @@ func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 // Sentence get a sentence randomly in string
 func Sentence() string {
 	i := Lorem{}
-	if generateUniqueValues {
-		v, err := generateUnique(SENTENCE, func() interface{} {
-			return i.sentence()
-		})
-
-		if err != nil {
-			panic(err)
-		}
-
-		return v.(string)
-	}
-	return i.sentence()
+	return singleFakeData(SENTENCE, func() interface{} {
+		return i.sentence()
+	}).(string)
 }
 
 func (l Lorem) paragraph() string {
@@ -162,16 +143,7 @@ func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 // Paragraph get a paragraph randomly in string
 func Paragraph() string {
 	i := Lorem{}
-	if generateUniqueValues {
-		v, err := generateUnique(PARAGRAPH, func() interface{} {
-			return i.paragraph()
-		})
-
-		if err != nil {
-			panic(err)
-		}
-
-		return v.(string)
-	}
-	return i.paragraph()
+	return singleFakeData(PARAGRAPH, func() interface{} {
+		return i.paragraph()
+	}).(string)
 }
