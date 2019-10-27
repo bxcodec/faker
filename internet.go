@@ -67,8 +67,10 @@ func (internet Internet) Email(v reflect.Value) (interface{}, error) {
 
 // Email get email randomly in string
 func Email() string {
-	i := Internet{}
-	return i.email()
+	return singleFakeData(EmailTag, func() interface{} {
+		i := Internet{}
+		return i.email()
+	}).(string)
 }
 
 func (internet Internet) macAddress() string {
@@ -86,8 +88,10 @@ func (internet Internet) MacAddress(v reflect.Value) (interface{}, error) {
 
 // MacAddress get mac address randomly in string
 func MacAddress() string {
-	i := Internet{}
-	return i.macAddress()
+	return singleFakeData(MacAddressTag, func() interface{} {
+		i := Internet{}
+		return i.macAddress()
+	}).(string)
 }
 
 func (internet Internet) domainName() string {
@@ -101,8 +105,10 @@ func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
 
 // DomainName get email domain name in string
 func DomainName() string {
-	i := Internet{}
-	return i.domainName()
+	return singleFakeData(DomainNameTag, func() interface{} {
+		i := Internet{}
+		return i.domainName()
+	}).(string)
 }
 
 func (internet Internet) url() string {
@@ -121,8 +127,10 @@ func (internet Internet) URL(v reflect.Value) (interface{}, error) {
 
 // URL get Url randomly in string
 func URL() string {
-	i := Internet{}
-	return i.url()
+	return singleFakeData(URLTag, func() interface{} {
+		i := Internet{}
+		return i.url()
+	}).(string)
 }
 
 func (internet Internet) username() string {
@@ -136,8 +144,10 @@ func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
 
 // Username get username randomly in string
 func Username() string {
-	i := Internet{}
-	return i.username()
+	return singleFakeData(UserNameTag, func() interface{} {
+		i := Internet{}
+		return i.username()
+	}).(string)
 }
 
 func (internet Internet) ipv4() string {
@@ -156,8 +166,10 @@ func (internet Internet) IPv4(v reflect.Value) (interface{}, error) {
 
 // IPv4 get IPv4 randomly in string
 func IPv4() string {
-	i := Internet{}
-	return i.ipv4()
+	return singleFakeData(IPV4Tag, func() interface{} {
+		i := Internet{}
+		return i.ipv4()
+	}).(string)
 }
 
 func (internet Internet) ipv6() string {
@@ -176,8 +188,10 @@ func (internet Internet) IPv6(v reflect.Value) (interface{}, error) {
 
 // IPv6 get IPv6 randomly in string
 func IPv6() string {
-	i := Internet{}
-	return i.ipv6()
+	return singleFakeData(IPV6Tag, func() interface{} {
+		i := Internet{}
+		return i.ipv6()
+	}).(string)
 }
 
 func (internet Internet) password() string {
@@ -191,6 +205,8 @@ func (internet Internet) Password(v reflect.Value) (interface{}, error) {
 
 // Password get password randomly in string
 func Password() string {
-	i := Internet{}
-	return i.password()
+	return singleFakeData(PASSWORD, func() interface{} {
+		i := Internet{}
+		return i.password()
+	}).(string)
 }

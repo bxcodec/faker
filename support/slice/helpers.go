@@ -15,6 +15,16 @@ func Contains(slice []string, item string) bool {
 	return ok
 }
 
+// ContainsValue check if value exists in slice, no matter its type
+func ContainsValue(slice []interface{}, value interface{}) bool {
+	for _, v := range slice {
+		if v == value {
+			return true
+		}
+	}
+	return false
+}
+
 // IntToString Convert slice int to slice string
 func IntToString(intSl []int) (str []string) {
 	for i := range intSl {

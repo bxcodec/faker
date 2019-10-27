@@ -84,6 +84,7 @@ faker.Name()				// => Mrs. Casandra Kiehn
 ---
 
 ```go
+faker.Phonenumber() // -> 201-886-0269
 faker.TollFreePhoneNumber() // => (777) 831-964572
 faker.E164PhoneNumber()		// => +724891571063
 ```

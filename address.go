@@ -62,12 +62,16 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 
 // Longitude get fake longitude randomly
 func Longitude() float64 {
-	address := Address{}
-	return float64(address.longitude())
+	return singleFakeData(LONGITUDE, func() interface{} {
+		address := Address{}
+		return float64(address.longitude())
+	}).(float64)
 }
 
 // Latitude get fake latitude randomly
 func Latitude() float64 {
-	address := Address{}
-	return float64(address.latitude())
+	return singleFakeData(LATITUDE, func() interface{} {
+		address := Address{}
+		return float64(address.latitude())
+	}).(float64)
 }

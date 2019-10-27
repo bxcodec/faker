@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/bxcodec/faker/v3/support/slice"
 )
 
 var (
@@ -416,7 +418,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 					}
 
 					value := v.Field(i).Interface()
-					if sliceContains(uniqueValues[tags.fieldType], value) { // Retry if unique value already found
+					if slice.ContainsValue(uniqueValues[tags.fieldType], value) { // Retry if unique value already found
 						i--
 						retry++
 						continue
@@ -507,15 +509,6 @@ func getValue(a interface{}) (reflect.Value, error) {
 		return reflect.Value{}, err
 	}
 
-}
-
-func sliceContains(slice []interface{}, value interface{}) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
 }
 
 func isZero(field reflect.Value) (bool, error) {
@@ -863,7 +856,7 @@ func RandomInt(parameters ...int) (p []int, err error) {
 func generateUnique(dataType string, fn func() interface{}) (interface{}, error) {
 	for i := 0; i < maxRetry; i++ {
 		value := fn()
-		if !sliceContains(uniqueValues[dataType], value) { // Retry if unique value already found
+		if !slice.ContainsValue(uniqueValues[dataType], value) { // Retry if unique value already found
 			uniqueValues[dataType] = append(uniqueValues[dataType], value)
 			return value, nil
 		}

@@ -139,8 +139,10 @@ func (p Person) TitleMale(v reflect.Value) (interface{}, error) {
 
 // TitleMale get a title male randomly in string ("Mr.", "Dr.", "Prof.", "Lord", "King", "Prince")
 func TitleMale() string {
-	p := Person{}
-	return p.titlemale()
+	return singleFakeData(TitleMaleTag, func() interface{} {
+		p := Person{}
+		return p.titlemale()
+	}).(string)
 }
 
 func (p Person) titleFemale() string {
@@ -154,8 +156,10 @@ func (p Person) TitleFeMale(v reflect.Value) (interface{}, error) {
 
 // TitleFemale get a title female randomly in string ("Mrs.", "Ms.", "Miss", "Dr.", "Prof.", "Lady", "Queen", "Princess")
 func TitleFemale() string {
-	p := Person{}
-	return p.titleFemale()
+	return singleFakeData(TitleFemaleTag, func() interface{} {
+		p := Person{}
+		return p.titleFemale()
+	}).(string)
 }
 
 func (p Person) firstname() string {
@@ -169,8 +173,10 @@ func (p Person) FirstName(v reflect.Value) (interface{}, error) {
 
 // FirstName get fake firstname
 func FirstName() string {
-	p := Person{}
-	return p.firstname()
+	return singleFakeData(FirstNameTag, func() interface{} {
+		p := Person{}
+		return p.firstname()
+	}).(string)
 }
 
 func (p Person) firstnamemale() string {
@@ -184,8 +190,10 @@ func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
 
 // FirstNameMale get fake firstname for male
 func FirstNameMale() string {
-	p := Person{}
-	return p.firstnamemale()
+	return singleFakeData(FirstNameMaleTag, func() interface{} {
+		p := Person{}
+		return p.firstnamemale()
+	}).(string)
 }
 
 func (p Person) firstnamefemale() string {
@@ -199,8 +207,10 @@ func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
 
 // FirstNameFemale get fake firstname for female
 func FirstNameFemale() string {
-	p := Person{}
-	return p.firstnamefemale()
+	return singleFakeData(FirstNameFemaleTag, func() interface{} {
+		p := Person{}
+		return p.firstnamefemale()
+	}).(string)
 }
 
 func (p Person) lastname() string {
@@ -214,8 +224,10 @@ func (p Person) LastName(v reflect.Value) (interface{}, error) {
 
 // LastName get fake lastname
 func LastName() string {
-	p := Person{}
-	return p.lastname()
+	return singleFakeData(LastNameTag, func() interface{} {
+		p := Person{}
+		return p.lastname()
+	}).(string)
 }
 
 func (p Person) name() string {
@@ -232,6 +244,8 @@ func (p Person) Name(v reflect.Value) (interface{}, error) {
 
 // Name get fake name
 func Name() string {
-	p := Person{}
-	return p.name()
+	return singleFakeData(NAME, func() interface{} {
+		p := Person{}
+		return p.name()
+	}).(string)
 }

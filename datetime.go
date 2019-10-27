@@ -661,8 +661,10 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 
 // UnixTime get unix time randomly
 func UnixTime() int64 {
-	datetime := DateTime{}
-	return datetime.unixtime()
+	return singleFakeData(UnixTimeTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.unixtime()
+	}).(int64)
 }
 
 func (d DateTime) date() string {
@@ -676,8 +678,10 @@ func (d DateTime) Date(v reflect.Value) (interface{}, error) {
 
 // Date get fake date in string randomly
 func Date() string {
-	datetime := DateTime{}
-	return datetime.date()
+	return singleFakeData(DATE, func() interface{} {
+		datetime := DateTime{}
+		return datetime.date()
+	}).(string)
 }
 
 func (d DateTime) time() string {
@@ -691,8 +695,10 @@ func (d DateTime) Time(v reflect.Value) (interface{}, error) {
 
 // TimeString get time randomly in string format
 func TimeString() string {
-	datetime := DateTime{}
-	return datetime.time()
+	return singleFakeData(TIME, func() interface{} {
+		datetime := DateTime{}
+		return datetime.time()
+	}).(string)
 }
 
 func (d DateTime) monthName() string {
@@ -706,8 +712,10 @@ func (d DateTime) MonthName(v reflect.Value) (interface{}, error) {
 
 // MonthName get month name randomly in string format
 func MonthName() string {
-	datetime := DateTime{}
-	return datetime.monthName()
+	return singleFakeData(MonthNameTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.monthName()
+	}).(string)
 }
 
 func (d DateTime) year() string {
@@ -721,8 +729,10 @@ func (d DateTime) Year(v reflect.Value) (interface{}, error) {
 
 // YearString get year randomly in string format
 func YearString() string {
-	datetime := DateTime{}
-	return datetime.year()
+	return singleFakeData(YEAR, func() interface{} {
+		datetime := DateTime{}
+		return datetime.year()
+	}).(string)
 }
 
 func (d DateTime) dayOfWeek() string {
@@ -736,8 +746,10 @@ func (d DateTime) DayOfWeek(v reflect.Value) (interface{}, error) {
 
 // DayOfWeek get day of week randomly in string format
 func DayOfWeek() string {
-	datetime := DateTime{}
-	return datetime.dayOfWeek()
+	return singleFakeData(DayOfWeekTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.dayOfWeek()
+	}).(string)
 }
 
 func (d DateTime) dayOfMonth() string {
@@ -751,8 +763,10 @@ func (d DateTime) DayOfMonth(v reflect.Value) (interface{}, error) {
 
 // DayOfMonth get month randomly in string format
 func DayOfMonth() string {
-	datetime := DateTime{}
-	return datetime.dayOfMonth()
+	return singleFakeData(DayOfMonthTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.dayOfMonth()
+	}).(string)
 }
 
 func (d DateTime) timestamp() string {
@@ -766,8 +780,10 @@ func (d DateTime) Timestamp(v reflect.Value) (interface{}, error) {
 
 // Timestamp get timestamp randomly in string format: 2006-01-02 15:04:05
 func Timestamp() string {
-	datetime := DateTime{}
-	return datetime.timestamp()
+	return singleFakeData(TIMESTAMP, func() interface{} {
+		datetime := DateTime{}
+		return datetime.timestamp()
+	}).(string)
 }
 
 func (d DateTime) century() string {
@@ -781,8 +797,10 @@ func (d DateTime) Century(v reflect.Value) (interface{}, error) {
 
 // Century get century randomly in string
 func Century() string {
-	datetime := DateTime{}
-	return datetime.century()
+	return singleFakeData(CENTURY, func() interface{} {
+		datetime := DateTime{}
+		return datetime.century()
+	}).(string)
 }
 
 func (d DateTime) timezone() string {
@@ -796,8 +814,10 @@ func (d DateTime) TimeZone(v reflect.Value) (interface{}, error) {
 
 // Timezone get timezone randomly in string
 func Timezone() string {
-	datetime := DateTime{}
-	return datetime.timezone()
+	return singleFakeData(TIMEZONE, func() interface{} {
+		datetime := DateTime{}
+		return datetime.timezone()
+	}).(string)
 }
 
 func (d DateTime) period() string {
@@ -811,8 +831,10 @@ func (d DateTime) TimePeriod(v reflect.Value) (interface{}, error) {
 
 // Timeperiod get timeperiod randomly in string (AM/PM)
 func Timeperiod() string {
-	datetime := DateTime{}
-	return datetime.period()
+	return singleFakeData(TimePeriodTag, func() interface{} {
+		datetime := DateTime{}
+		return datetime.period()
+	}).(string)
 }
 
 // RandomUnixTime is a helper function returning random Unix time
