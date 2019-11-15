@@ -266,7 +266,7 @@ func FakeData(a interface{}) error {
 	return nil
 }
 
-// AddProvider extend faker with tag to generate fake data with specified custom algoritm
+// AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
 // 		type Gondoruwo struct {
 // 			Name       string
