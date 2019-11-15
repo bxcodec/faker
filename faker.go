@@ -286,7 +286,7 @@ func FakeData(a interface{}) error {
 	return nil
 }
 
-// AddProvider extend faker with tag to generate fake data with specified custom algoritm
+// AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
 // 		type Gondoruwo struct {
 // 			Name       string
@@ -512,7 +512,11 @@ func getValue(a interface{}) (reflect.Value, error) {
 }
 
 func isZero(field reflect.Value) (bool, error) {
-	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array, reflect.Map} {
+	if field.Kind() == reflect.Map {
+		return field.Len() == 0, nil
+	}
+
+	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array} {
 		if kind == field.Kind() {
 			return false, fmt.Errorf("keep not allowed on struct")
 		}
@@ -603,6 +607,16 @@ func setDataWithTag(v reflect.Value, tag string) error {
 }
 
 func userDefinedMap(v reflect.Value, tag string) error {
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err := tagFunc(v)
+		if err != nil {
+			return err
+		}
+
+		v.Set(reflect.ValueOf(res))
+		return nil
+	}
+
 	len := randomSliceAndMapSize()
 	if shouldSetNil && len == 0 {
 		v.Set(reflect.Zero(v.Type()))

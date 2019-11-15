@@ -166,7 +166,7 @@ func (p Person) firstname() string {
 	return randomElementFromSliceString(firstNames)
 }
 
-// FirstName retuns first names
+// FirstName returns first names
 func (p Person) FirstName(v reflect.Value) (interface{}, error) {
 	return p.firstname(), nil
 }
@@ -183,7 +183,7 @@ func (p Person) firstnamemale() string {
 	return randomElementFromSliceString(firstNamesMale)
 }
 
-// FirstNameMale retuns first names for males
+// FirstNameMale returns first names for males
 func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
 	return p.firstnamemale(), nil
 }
@@ -200,7 +200,7 @@ func (p Person) firstnamefemale() string {
 	return randomElementFromSliceString(firstNamesFemale)
 }
 
-// FirstNameFemale retuns first names for females
+// FirstNameFemale returns first names for females
 func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
 	return p.firstnamefemale(), nil
 }
