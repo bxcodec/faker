@@ -32,14 +32,14 @@ type Addresser interface {
 // Address struct
 type Address struct{}
 
-func (i Address) latitute() float32 {
+func (i Address) latitude() float32 {
 	return (rand.Float32() * 180) - 90
 }
 
 // Latitude sets latitude of the address
 func (i Address) Latitude(v reflect.Value) (interface{}, error) {
 	kind := v.Kind()
-	val := i.latitute()
+	val := i.latitude()
 	if kind == reflect.Float32 {
 		return val, nil
 	}
@@ -62,12 +62,16 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 
 // Longitude get fake longitude randomly
 func Longitude() float64 {
-	address := Address{}
-	return float64(address.longitude())
+	return singleFakeData(LONGITUDE, func() interface{} {
+		address := Address{}
+		return float64(address.longitude())
+	}).(float64)
 }
 
 // Latitude get fake latitude randomly
 func Latitude() float64 {
-	address := Address{}
-	return float64(address.latitute())
+	return singleFakeData(LATITUDE, func() interface{} {
+		address := Address{}
+		return float64(address.latitude())
+	}).(float64)
 }
