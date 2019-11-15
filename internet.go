@@ -120,7 +120,7 @@ func (internet Internet) url() string {
 	return fmt.Sprintf(format, internet.domainName(), internet.username())
 }
 
-// URL generates random URL standardised in urlFormats const
+// URL generates random URL standardized in urlFormats const
 func (internet Internet) URL(v reflect.Value) (interface{}, error) {
 	return internet.url(), nil
 }
