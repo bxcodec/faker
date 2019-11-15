@@ -4,7 +4,7 @@
 
 Struct Data Fake Generator
 
-Faker  will generate you a fake data based on your Struct.
+Faker will generate you a fake data based on your Struct.
 
 [![Build Status](https://travis-ci.org/bxcodec/faker.svg?branch=master)](https://travis-ci.org/bxcodec/faker)
 [![codecov](https://codecov.io/gh/bxcodec/faker/branch/master/graph/badge.svg)](https://codecov.io/gh/bxcodec/faker)

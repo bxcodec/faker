@@ -293,6 +293,34 @@ func TestFakerData(t *testing.T) {
 
 }
 
+func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
+	type Sample struct {
+		Map map[string]interface{} `faker:"custom"`
+	}
+
+	err := AddProvider("custom", func(v reflect.Value) (interface{}, error) {
+		return map[string]interface{}{"foo": "bar"}, nil
+	})
+	if err != nil {
+		t.Error("Expected NoError, but Got Err", err)
+	}
+
+	var sample = new(Sample)
+	err = FakeData(sample)
+	if err != nil {
+		t.Error("Expected NoError, but Got Err:", err)
+	}
+
+	actual, ok := sample.Map["foo"]
+	if !ok {
+		t.Error("map key not set by custom faker")
+	}
+
+	if actual != "bar" {
+		t.Error("map value not set by custom faker")
+	}
+}
+
 func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
@@ -683,12 +711,10 @@ func TestSkipField(t *testing.T) {
 	// This test is to ensure that the faker won't fill field with tag skip
 
 	a := struct {
-		ID              int
-		ShouldBeSkipped int `faker:"-"`
+		ID                    int
+		ShouldBeSkipped       int `faker:"-"`
 		ShouldBeSkippedFilled int `faker:"-"`
-		
 	}{}
-
 
 	a.ShouldBeSkippedFilled = 10
 
@@ -701,7 +727,7 @@ func TestSkipField(t *testing.T) {
 	if a.ShouldBeSkipped != 0 {
 		t.Error("Expected that field will be skipped")
 	}
-	
+
 	if a.ShouldBeSkippedFilled != 10 {
 		t.Error("Expected that field will be skipped")
 	}
@@ -808,30 +834,30 @@ func TestTagWithPointer(t *testing.T) {
 
 	//Assert
 	if sample.FirstName == nil || *sample.FirstName == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Email == nil || *sample.Email == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Latitude == nil || *sample.Latitude == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 	if sample.Latitude32 == nil || *sample.Latitude32 == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 
 	if sample.UnixTime == nil || *sample.UnixTime == 0 {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 
 	if sample.School == nil || sample.School.Location == "" {
-		t.Error("Expected filled but got emtpy")
+		t.Error("Expected filled but got empty")
 	}
 }
 
 func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		Email string `json:"email,omitempty" faker:"email,keep"`
 	}
 
 	test := TestStruct{}
@@ -847,13 +873,16 @@ func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 }
 func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		FirstName string            `json:"first_name,omitempty" faker:"first_name_male,keep"`
+		Email     string            `json:"email,omitempty" faker:"email,keep"`
+		Map       map[string]string `json:"map,omitempty" faker:"keep"`
 	}
 
 	firstName := "Heino van der Laien"
+	m := map[string]string{"foo": "bar"}
 	test := TestStruct{
 		FirstName: firstName,
+		Map:       m,
 	}
 
 	err := FakeData(&test)
@@ -865,6 +894,12 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 		t.Fatalf("expected: %s, but got: %s", firstName, test.FirstName)
 	}
 
+	for k, v := range m {
+		if test.Map[k] != v {
+			t.Fatalf("expected: %s, but got: %s", m, test.Map)
+		}
+	}
+
 	if test.Email == "" {
 		t.Error("expected filled but got empty")
 	}
@@ -874,9 +909,6 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	type TypeStructWithStruct struct {
 		Struct struct{} `faker:"first_name_male,keep"`
 	}
-	type TypeStructWithMap struct {
-		Map map[string]string `faker:"first_name_male,keep"`
-	}
 	type TypeStructWithSlice struct {
 		Slice []string `faker:"first_name_male,keep"`
 	}
@@ -885,11 +917,10 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	}
 
 	withStruct := TypeStructWithStruct{}
-	withMap := TypeStructWithMap{}
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray,withStruct,withMap,withSlice} {
+	for _, item := range []interface{}{withArray, withStruct, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
@@ -919,6 +950,71 @@ func TestItThrowsAnErrorWhenZeroValueWithKeepAndUnsupportedTagIsUsed(t *testing.
 
 	err := FakeData(&val)
 	if err == nil {
+		t.Errorf("expected error, but got nil")
+	}
+}
+
+func TestUnique(t *testing.T) {
+	type UniqueStruct struct {
+		StringVal string `faker:"word,unique"`
+		IntVal    int    `faker:"unique"`
+	}
+
+	for i := 0; i < 50; i++ {
+		val := UniqueStruct{}
+		FakeData(&val)
+	}
+
+	found := []interface{}{}
+	for _, v := range uniqueValues["word"] {
+		for _, f := range found {
+			if f == v {
+				t.Errorf("expected unique values, found \"%s\" at least twice", v)
+				ResetUnique()
+				return
+			}
+		}
+		found = append(found, v)
+	}
+
+	ResetUnique()
+}
+
+func TestUniqueReset(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"word,unique"`
+	}
+
+	for i := 0; i < 20; i++ {
+		val := String{}
+		FakeData(&val)
+	}
+
+	ResetUnique()
+	length := len(uniqueValues)
+	if length > 0 {
+		t.Errorf("expected empty uniqueValues map, but got a length of %d", length)
+	}
+}
+
+func TestUniqueFailure(t *testing.T) {
+	type String struct {
+		StringVal string `faker:"word,unique"`
+	}
+
+	hasError := false
+	length := len(wordList) + 1
+	for i := 0; i < length; i++ {
+		val := String{}
+		err := FakeData(&val)
+		if err != nil {
+			hasError = true
+			break
+		}
+	}
+
+	ResetUnique()
+	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
 }

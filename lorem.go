@@ -87,7 +87,9 @@ func (l Lorem) Word(v reflect.Value) (interface{}, error) {
 // Word get a word randomly in string
 func Word() string {
 	i := Lorem{}
-	return i.word()
+	return singleFakeData(WORD, func() interface{} {
+		return i.word()
+	}).(string)
 }
 
 func (l Lorem) sentence() string {
@@ -116,7 +118,9 @@ func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 // Sentence get a sentence randomly in string
 func Sentence() string {
 	i := Lorem{}
-	return i.sentence()
+	return singleFakeData(SENTENCE, func() interface{} {
+		return i.sentence()
+	}).(string)
 }
 
 func (l Lorem) paragraph() string {
@@ -139,5 +143,7 @@ func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 // Paragraph get a paragraph randomly in string
 func Paragraph() string {
 	i := Lorem{}
-	return i.paragraph()
+	return singleFakeData(PARAGRAPH, func() interface{} {
+		return i.paragraph()
+	}).(string)
 }

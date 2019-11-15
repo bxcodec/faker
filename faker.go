@@ -11,6 +11,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/bxcodec/faker/v3/support/slice"
 )
 
 var (
@@ -25,6 +27,10 @@ var (
 	nBoundary = numberBoundary{start: 0, end: 100}
 	//Sets the random size for slices and maps.
 	randomSize = 100
+	// Sets the single fake data generator to generate unique values
+	generateUniqueValues = false
+	// Unique values are kept in memory so the generator retries if the value already exists
+	uniqueValues = map[string][]interface{}{}
 )
 
 type numberBoundary struct {
@@ -37,9 +43,11 @@ const (
 	letterIdxBits         = 6                    // 6 bits to represent a letter index
 	letterIdxMask         = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax          = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
+	maxRetry              = 10000                // max number of retry for unique values
 	letterBytes           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName               = "faker"
 	keep                  = "keep"
+	unique                = "unique"
 	ID                    = "uuid_digit"
 	HyphenatedID          = "uuid_hyphenated"
 	EmailTag              = "email"
@@ -198,6 +206,7 @@ var (
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
+	ErrUniqueFailure       = "Failed to generate a unique value for field \"%s\""
 
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
 	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
@@ -207,6 +216,17 @@ var (
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
+}
+
+// ResetUnique is used to forget generated unique values.
+// Call this when you're done generating a dataset.
+func ResetUnique() {
+	uniqueValues = map[string][]interface{}{}
+}
+
+// SetGenerateUniqueValues allows to set the single fake data generator functions to generate unique data.
+func SetGenerateUniqueValues(unique bool) {
+	generateUniqueValues = unique
 }
 
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
@@ -266,7 +286,7 @@ func FakeData(a interface{}) error {
 	return nil
 }
 
-// AddProvider extend faker with tag to generate fake data with specified custom algoritm
+// AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
 // 		type Gondoruwo struct {
 // 			Name       string
@@ -352,6 +372,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 		default:
 			originalDataVal := reflect.ValueOf(a)
 			v := reflect.New(t).Elem()
+			retry := 0 // error if cannot generate unique value after maxRetry tries
 			for i := 0; i < v.NumField(); i++ {
 				if !v.Field(i).CanSet() {
 					continue // to avoid panic to set on unexported field in struct
@@ -388,6 +409,24 @@ func getValue(a interface{}) (reflect.Value, error) {
 					if err != nil {
 						return reflect.Value{}, err
 					}
+				}
+
+				if tags.unique {
+
+					if retry >= maxRetry {
+						return reflect.Value{}, fmt.Errorf(ErrUniqueFailure, reflect.TypeOf(a).Field(i).Name)
+					}
+
+					value := v.Field(i).Interface()
+					if slice.ContainsValue(uniqueValues[tags.fieldType], value) { // Retry if unique value already found
+						i--
+						retry++
+						continue
+					}
+					retry = 0
+					uniqueValues[tags.fieldType] = append(uniqueValues[tags.fieldType], value)
+				} else {
+					retry = 0
 				}
 
 			}
@@ -473,7 +512,11 @@ func getValue(a interface{}) (reflect.Value, error) {
 }
 
 func isZero(field reflect.Value) (bool, error) {
-	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array, reflect.Map} {
+	if field.Kind() == reflect.Map {
+		return field.Len() == 0, nil
+	}
+
+	for _, kind := range []reflect.Kind{reflect.Struct, reflect.Slice, reflect.Array} {
 		if kind == field.Kind() {
 			return false, fmt.Errorf("keep not allowed on struct")
 		}
@@ -485,10 +528,14 @@ func decodeTags(typ reflect.Type, i int) structTag {
 	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
 
 	keepOriginal := false
+	uni := false
 	res := make([]string, 0)
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
+			continue
+		} else if tag == unique {
+			uni = true
 			continue
 		}
 		res = append(res, tag)
@@ -496,12 +543,14 @@ func decodeTags(typ reflect.Type, i int) structTag {
 
 	return structTag{
 		fieldType:    strings.Join(res, ","),
+		unique:       uni,
 		keepOriginal: keepOriginal,
 	}
 }
 
 type structTag struct {
 	fieldType    string
+	unique       bool
 	keepOriginal bool
 }
 
@@ -558,6 +607,16 @@ func setDataWithTag(v reflect.Value, tag string) error {
 }
 
 func userDefinedMap(v reflect.Value, tag string) error {
+	if tagFunc, ok := mapperTag[tag]; ok {
+		res, err := tagFunc(v)
+		if err != nil {
+			return err
+		}
+
+		v.Set(reflect.ValueOf(res))
+		return nil
+	}
+
 	len := randomSliceAndMapSize()
 	if shouldSetNil && len == 0 {
 		v.Set(reflect.Zero(v.Type()))
@@ -806,4 +865,26 @@ func RandomInt(parameters ...int) (p []int, err error) {
 		err = fmt.Errorf(ErrMoreArguments, len(parameters))
 	}
 	return p, err
+}
+
+func generateUnique(dataType string, fn func() interface{}) (interface{}, error) {
+	for i := 0; i < maxRetry; i++ {
+		value := fn()
+		if !slice.ContainsValue(uniqueValues[dataType], value) { // Retry if unique value already found
+			uniqueValues[dataType] = append(uniqueValues[dataType], value)
+			return value, nil
+		}
+	}
+	return reflect.Value{}, fmt.Errorf(ErrUniqueFailure, dataType)
+}
+
+func singleFakeData(dataType string, fn func() interface{}) interface{} {
+	if generateUniqueValues {
+		v, err := generateUnique(dataType, fn)
+		if err != nil {
+			panic(err)
+		}
+		return v
+	}
+	return fn()
 }

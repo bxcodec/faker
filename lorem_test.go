@@ -66,3 +66,51 @@ func TestFakeParagraph(t *testing.T) {
 		t.Error("Expected paragraph")
 	}
 }
+
+func TestUniqueWord(t *testing.T) {
+	SetGenerateUniqueValues(true)
+	word := Word()
+	ResetUnique()
+	SetGenerateUniqueValues(false)
+	if !slice.Contains(wordList, word) {
+		t.Error("Expected word from slice wordList")
+	}
+}
+
+func TestUniqueWordPanic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("expected panic, but didn't")
+		}
+		ResetUnique()
+		SetGenerateUniqueValues(false)
+	}()
+
+	SetGenerateUniqueValues(true)
+	length := len(wordList) + 1
+	for i := 0; i < length; i++ {
+		Word()
+	}
+	ResetUnique()
+	SetGenerateUniqueValues(false)
+}
+
+func TestUniqueSentence(t *testing.T) {
+	SetGenerateUniqueValues(true)
+	res := Sentence()
+	ResetUnique()
+	SetGenerateUniqueValues(false)
+	if res == "" || !strings.HasSuffix(res, ".") {
+		t.Error("Expected sentence")
+	}
+}
+
+func TestUniqueParagraph(t *testing.T) {
+	SetGenerateUniqueValues(true)
+	res := Paragraph()
+	ResetUnique()
+	SetGenerateUniqueValues(false)
+	if res == "" || !strings.HasSuffix(res, ".") {
+		t.Error("Expected paragraph")
+	}
+}
