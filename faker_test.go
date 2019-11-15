@@ -962,7 +962,10 @@ func TestUnique(t *testing.T) {
 
 	for i := 0; i < 50; i++ {
 		val := UniqueStruct{}
-		FakeData(&val)
+		err := FakeData(&val)
+		if err != nil {
+			t.Fatal("can't fake the unique data", err)
+		}
 	}
 
 	found := []interface{}{}
@@ -987,7 +990,10 @@ func TestUniqueReset(t *testing.T) {
 
 	for i := 0; i < 20; i++ {
 		val := String{}
-		FakeData(&val)
+		err := FakeData(&val)
+		if err != nil {
+			t.Fatal("can't fake the unique data", err)
+		}
 	}
 
 	ResetUnique()
