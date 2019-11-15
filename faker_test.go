@@ -293,6 +293,34 @@ func TestFakerData(t *testing.T) {
 
 }
 
+func TestCustomFakerOnUnsupportedMapStringInterface(t *testing.T) {
+	type Sample struct {
+		Map map[string]interface{} `faker:"custom"`
+	}
+
+	err := AddProvider("custom", func(v reflect.Value) (interface{}, error) {
+		return map[string]interface{}{"foo": "bar"}, nil
+	})
+	if err != nil {
+		t.Error("Expected NoError, but Got Err", err)
+	}
+
+	var sample = new(Sample)
+	err = FakeData(sample)
+	if err != nil {
+		t.Error("Expected NoError, but Got Err:", err)
+	}
+
+	actual, ok := sample.Map["foo"]
+	if !ok {
+		t.Error("map key not set by custom faker")
+	}
+
+	if actual != "bar" {
+		t.Error("map value not set by custom faker")
+	}
+}
+
 func TestUnsuportedMapStringInterface(t *testing.T) {
 	type Sample struct {
 		Map map[string]interface{}
@@ -845,13 +873,16 @@ func TestItOverwritesDefaultValueIfKeepIsSet(t *testing.T) {
 }
 func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 	type TestStruct struct {
-		FirstName string `json:"first_name,omitempty" faker:"first_name_male,keep"`
-		Email     string `json:"email,omitempty" faker:"email,keep"`
+		FirstName string            `json:"first_name,omitempty" faker:"first_name_male,keep"`
+		Email     string            `json:"email,omitempty" faker:"email,keep"`
+		Map       map[string]string `json:"map,omitempty" faker:"keep"`
 	}
 
 	firstName := "Heino van der Laien"
+	m := map[string]string{"foo": "bar"}
 	test := TestStruct{
 		FirstName: firstName,
+		Map:       m,
 	}
 
 	err := FakeData(&test)
@@ -863,6 +894,12 @@ func TestItKeepsStructPropertyWhenTagKeepIsSet(t *testing.T) {
 		t.Fatalf("expected: %s, but got: %s", firstName, test.FirstName)
 	}
 
+	for k, v := range m {
+		if test.Map[k] != v {
+			t.Fatalf("expected: %s, but got: %s", m, test.Map)
+		}
+	}
+
 	if test.Email == "" {
 		t.Error("expected filled but got empty")
 	}
@@ -872,9 +909,6 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	type TypeStructWithStruct struct {
 		Struct struct{} `faker:"first_name_male,keep"`
 	}
-	type TypeStructWithMap struct {
-		Map map[string]string `faker:"first_name_male,keep"`
-	}
 	type TypeStructWithSlice struct {
 		Slice []string `faker:"first_name_male,keep"`
 	}
@@ -883,11 +917,11 @@ func TestItThrowsAnErrorWhenKeepIsUsedOnIncomparableType(t *testing.T) {
 	}
 
 	withStruct := TypeStructWithStruct{}
-	withMap := TypeStructWithMap{}
 	withSlice := TypeStructWithSlice{}
 	withArray := TypeStructWithArray{}
 
-	for _, item := range []interface{}{withArray, withStruct, withMap, withSlice} {
+
+	for _, item := range []interface{}{withArray, withStruct, withSlice} {
 		err := FakeData(&item)
 		if err == nil {
 			t.Errorf("expected error, but got nil")
