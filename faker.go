@@ -724,7 +724,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 
 func extractStringFromTag(tag string) (interface{}, error) {
 	if !strings.Contains(tag, Length) {
-		return fmt.Errorf(ErrTagNotSupported,tag)
+		return nil, fmt.Errorf(ErrTagNotSupported,tag)
 	}
 	len, err := extractNumberFromText(tag)
 	if err != nil {
@@ -736,7 +736,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 
 func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
-		return fmt.Errorf(ErrTagNotSupported,tag)
+		return nil,fmt.Errorf(ErrTagNotSupported,tag)
 	}
 	valuesStr := strings.SplitN(tag, comma, -1)
 	if len(valuesStr) != 2 {
