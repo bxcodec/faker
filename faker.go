@@ -201,7 +201,7 @@ var (
 	ErrUnsupportedKindPtr  = "Unsupported kind: %s Change Without using * (pointer) in Field of %s"
 	ErrUnsupportedKind     = "Unsupported kind: %s"
 	ErrValueNotPtr         = "Not a pointer value"
-	ErrTagNotSupported     = "Tag unsupported"
+	ErrTagNotSupported     = "Tag unsupported: %s"
 	ErrTagAlreadyExists    = "Tag exists"
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
@@ -563,7 +563,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	switch v.Kind() {
 	case reflect.Ptr:
 		if _, exist := mapperTag[tag]; !exist {
-			return errors.New(ErrTagNotSupported)
+			return fmt.Errorf(ErrTagNotSupported,tag)
 		}
 		if _, def := defaultTag[tag]; !def {
 			res, err := mapperTag[tag](v)
@@ -595,7 +595,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return userDefinedMap(v, tag)
 	default:
 		if _, exist := mapperTag[tag]; !exist {
-			return errors.New(ErrTagNotSupported)
+			return fmt.Errorf(ErrTagNotSupported,tag)
 		}
 		res, err := mapperTag[tag](v)
 		if err != nil {
@@ -692,7 +692,7 @@ func userDefinedString(v reflect.Value, tag string) error {
 		}
 	}
 	if res == nil {
-		return errors.New(ErrTagNotSupported)
+		return fmt.Errorf(ErrTagNotSupported,tag)
 	}
 	val, _ := res.(string)
 	v.SetString(val)
@@ -715,7 +715,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 		}
 	}
 	if res == nil {
-		return errors.New(ErrTagNotSupported)
+		return fmt.Errorf(ErrTagNotSupported,tag)
 	}
 
 	v.Set(reflect.ValueOf(res))
@@ -724,7 +724,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 
 func extractStringFromTag(tag string) (interface{}, error) {
 	if !strings.Contains(tag, Length) {
-		return nil, errors.New(ErrTagNotSupported)
+		return nil, fmt.Errorf(ErrTagNotSupported,tag)
 	}
 	len, err := extractNumberFromText(tag)
 	if err != nil {
@@ -736,7 +736,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 
 func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
-		return nil, errors.New(ErrTagNotSupported)
+		return nil,fmt.Errorf(ErrTagNotSupported,tag)
 	}
 	valuesStr := strings.SplitN(tag, comma, -1)
 	if len(valuesStr) != 2 {
