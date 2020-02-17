@@ -68,13 +68,12 @@ Supported tag:
 * unique
 
 ```go
-
 package main
 
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker"
+	"github.com/bxcodec/faker/v3"
 )
 
 // SomeStruct ...
@@ -84,7 +83,7 @@ type SomeStruct struct {
 	CreditCardNumber   string  `faker:"cc_number"`
 	CreditCardType     string  `faker:"cc_type"`
 	Email              string  `faker:"email"`
-	DomainName		   string  `faker:"domain_name"`
+	DomainName         string  `faker:"domain_name"`
 	IPV4               string  `faker:"ipv4"`
 	IPV6               string  `faker:"ipv6"`
 	Password           string  `faker:"password"`
@@ -118,9 +117,9 @@ type SomeStruct struct {
 	Currency           string  `faker:"currency"`
 	Amount             float64 `faker:"amount"`
 	AmountWithCurrency string  `faker:"amount_with_currency"`
-	UUIDHypenated	   string  `faker:"uuid_hyphenated"`
-	UUID	           string  `faker:"uuid_digit"`
-	Skip		   string  `faker:"-"`
+	UUIDHypenated      string  `faker:"uuid_hyphenated"`
+	UUID               string  `faker:"uuid_digit"`
+	Skip               string  `faker:"-"`
 }
 
 func main() {
@@ -179,7 +178,6 @@ func main() {
 		}
 	*/
 }
-
 ```
 
 ## Length And Boundary
@@ -187,15 +185,17 @@ func main() {
 ---
 
 You can set length for your random strings also set boundary for your integers.
+
 ```go
 package main
 
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker"
+	"github.com/bxcodec/faker/v3"
 )
 
+// SomeStruct ...
 type SomeStruct struct {
 	Inta  int   `faker:"boundary_start=5, boundary_end=10"`
 	Int8  int8  `faker:"boundary_start=100, boundary_end=1000"`
@@ -215,8 +215,8 @@ type SomeStruct struct {
 	MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
 }
 
-func main(){
-    faker.SetRandomMapAndSliceSize(20) //Random generated map or array size wont exceed 20...
+func main() {
+	faker.SetRandomMapAndSliceSize(20) //Random generated map or array size wont exceed 20...
 	a := SomeStruct{}
 	err := faker.FakeData(&a)
 	if err != nil {
@@ -226,7 +226,9 @@ func main(){
 }
 
 ```
+
 Result:
+
 ```
 {
     Inta:7
@@ -275,17 +277,25 @@ Result:
     MIint:map[7:7 5:7 8:8 9:5 6:5]
 }
 ```
+
 ## Unique values
 
 ```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/bxcodec/faker/v3"
+)
+
 // SomeStruct ...
 type SomeStruct struct {
 	Word string `faker:"word,unique"`
 }
 
 func main() {
-
-	for i := 0 ; i < 5 ; i++ { // Generate 5 structs having a unique word
+	for i := 0; i < 5; i++ { // Generate 5 structs having a unique word
 		a := SomeStruct{}
 		err := faker.FakeData(&a)
 		if err != nil {
@@ -295,4 +305,10 @@ func main() {
 	}
 	faker.ResetUnique() // Forget all generated unique values. Allows to start generating another unrelated dataset.
 }
+```
+
+Result:
+
+```
+{Word:nobis}{Word:recusandae}{Word:praesentium}{Word:doloremque}{Word:non}
 ```

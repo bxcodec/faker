@@ -4,15 +4,15 @@
 You also can use faker to generate your structs data randomly without any tag. And it will fill the data based on its data-type.
 
 ```go
-
 package main
 
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker"
+	"github.com/bxcodec/faker/v3"
 )
 
+// SomeStruct ...
 type SomeStruct struct {
 	Int      int
 	Int8     int8
@@ -32,18 +32,20 @@ type SomeStruct struct {
 	SBool    []bool
 	Struct   AStruct
 }
+
+// AStruct ...
 type AStruct struct {
 	Number        int64
 	Height        int64
 	AnotherStruct BStruct
 }
 
+// BStruct ...
 type BStruct struct {
 	Image string
 }
 
 func main() {
-
 	a := SomeStruct{}
 	err := faker.FakeData(&a)
 	if err != nil {
