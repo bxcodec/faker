@@ -1,9 +1,4 @@
-## Custom Generator Provider
-
-You can also add your own generator function to your own defined tags. See example below
-
-```go
-package main
+package faker_test
 
 import (
 	"fmt"
@@ -27,14 +22,14 @@ type Sample struct {
 
 // CustomGenerator ...
 func CustomGenerator() {
-	faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("customIdFaker", func(v reflect.Value) (interface{}, error) {
 		return int64(43), nil
 	})
-	faker.AddProvider("danger", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("danger", func(v reflect.Value) (interface{}, error) {
 		return "danger-ranger", nil
 	})
 
-	faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
+	_ = faker.AddProvider("gondoruwo", func(v reflect.Value) (interface{}, error) {
 		obj := Gondoruwo{
 			Name:       "Power",
 			Locatadata: 324,
@@ -43,15 +38,12 @@ func CustomGenerator() {
 	})
 }
 
-func main() {
+// You can also add your own generator function to your own defined tags.
+func Example_customFaker() {
 	CustomGenerator()
 	var sample Sample
-	faker.FakeData(&sample)
+	_ = faker.FakeData(&sample)
 	fmt.Printf("%+v", sample)
+	// Output:
+	// {ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
 }
-```
-
-Results:
-```
-{ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
-```
