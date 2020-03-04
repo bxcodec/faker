@@ -447,6 +447,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 			if err != nil {
 				return reflect.Value{}, err
 			}
+			val = val.Convert(v.Index(i).Type())
 			v.Index(i).Set(val)
 		}
 		return v, nil
