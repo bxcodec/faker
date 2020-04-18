@@ -14,6 +14,8 @@ const (
 	someStructBoundaryEnd   = 10
 )
 
+type SomeInt32 int32
+
 type SomeStruct struct {
 	Inta    int
 	Int8    int8
@@ -61,6 +63,8 @@ type SomeStruct struct {
 	MapStringString        map[string]string
 	MapStringStruct        map[string]AStruct
 	MapStringStructPointer map[string]*AStruct
+
+	SomeInt32s []SomeInt32
 }
 
 type SomeStructWithLen struct {
