@@ -6,12 +6,17 @@ import (
 	"reflect"
 	"testing"
 	"time"
+	"unicode/utf8"
 )
 
 const (
 	someStructLen           = 2
 	someStructBoundaryStart = 5
 	someStructBoundaryEnd   = 10
+
+	someStructWithLenAndLangENG = 5
+	someStructWithLenAndLangCHI = 10
+	someStructWithLenAndLangRUS = 15
 )
 
 type SomeInt32 int32
@@ -84,6 +89,18 @@ type SomeStructWithLen struct {
 	SString  string            `faker:"len=2"`
 	MSString map[string]string `faker:"len=2"`
 	MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
+}
+
+type SomeStructWithLang struct {
+	ValueENG string `faker:"lang=eng"`
+	ValueCHI string `faker:"lang=chi"`
+	ValueRUS string `faker:"lang=rus"`
+}
+
+type SomeStructWithLenAndLang struct {
+	ValueENG string `faker:"len=5, lang=eng"`
+	ValueCHI string ` faker:"len=10, lang=chi"`
+	ValueRUS string ` faker:"len=15, lang=rus"`
 }
 
 func (s SomeStruct) String() string {
@@ -382,8 +399,16 @@ func TestSetRandomStringLength(t *testing.T) {
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
-	if len(someStruct.StringValue) > strLen {
+	if utfLen(someStruct.StringValue) > strLen {
 		t.Error("SetRandomStringLength did not work.")
+	}
+}
+
+func TestSetStringLang(t *testing.T) {
+	someStruct := SomeStruct{}
+	SetStringLang(LangENG)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
 	}
 }
 
@@ -475,19 +500,19 @@ func TestBoundaryAndLen(t *testing.T) {
 		if err := validateRange(int(someStruct.UInt64)); err != nil {
 			t.Error(err)
 		}
-		if err := validateLen(someStruct.SString); err != nil {
+		if err := validateLen(someStruct.SString, someStructLen); err != nil {
 			t.Error(err)
 		}
 		for _, str := range someStruct.ASString {
-			if err := validateLen(str); err != nil {
+			if err := validateLen(str, someStructLen); err != nil {
 				t.Error(err)
 			}
 		}
 		for k, v := range someStruct.MSString {
-			if err := validateLen(k); err != nil {
+			if err := validateLen(k, someStructLen); err != nil {
 				t.Error(err)
 			}
-			if err := validateLen(v); err != nil {
+			if err := validateLen(v, someStructLen); err != nil {
 				t.Error(err)
 			}
 		}
@@ -500,6 +525,69 @@ func TestBoundaryAndLen(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestLang(t *testing.T) {
+	someStruct := SomeStructWithLang{}
+	FakeData(&someStruct)
+
+	var err error
+	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = isStringLangCorrect(someStruct.ValueRUS, LangRUS)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = isStringLangCorrect(someStruct.ValueCHI, LangCHI)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestLangWithLen(t *testing.T) {
+	someStruct := SomeStructWithLenAndLang{}
+	FakeData(&someStruct)
+
+	var err error
+	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	engLen := utfLen(someStruct.ValueENG)
+	if engLen != someStructWithLenAndLangENG {
+		t.Errorf("Got %d, but expected to be %d as a string len", engLen, someStructWithLenAndLangENG)
+	}
+
+	err = isStringLangCorrect(someStruct.ValueRUS, LangRUS)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	chiLen := utfLen(someStruct.ValueCHI)
+	if chiLen != someStructWithLenAndLangCHI {
+		t.Errorf("Got %d, but expected to be %d as a string len", chiLen, someStructWithLenAndLangCHI)
+	}
+
+	err = isStringLangCorrect(someStruct.ValueCHI, LangCHI)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	rusLen := utfLen(someStruct.ValueRUS)
+	if rusLen != someStructWithLenAndLangRUS {
+		t.Errorf("Got %d, but expected to be %d as a string len", rusLen, someStructWithLenAndLangRUS)
+	}
+}
+
+func isStringLangCorrect(value string, lang langRuneBoundary) error {
+	for i := 0; i < len(value); {
+		r, size := utf8.DecodeLastRuneInString(value[i:])
+		if r < lang.start || r > lang.end {
+			return fmt.Errorf("Symbol is not in selected alphabet: start: %d, end: %d", lang.start, lang.end)
+		}
+		i += size
+	}
+	return nil
 }
 
 func TestExtractNumberFromTagFail(t *testing.T) {
@@ -550,9 +638,9 @@ func TestUserDefinedStringFail(t *testing.T) {
 	}
 }
 
-func validateLen(value string) error {
-	if len(value) != someStructLen {
-		return fmt.Errorf("Got %d, but expected to be %d as a string len", len(value), someStructLen)
+func validateLen(value string, length int) error {
+	if len(value) != length {
+		return fmt.Errorf("Got %d, but expected to be %d as a string len", len(value), length)
 	}
 	return nil
 }
@@ -1027,4 +1115,16 @@ func TestUniqueFailure(t *testing.T) {
 	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
+}
+
+// getStringLen for language independent string length
+func utfLen(value string) int {
+	var r int
+	fmt.Println(len(value))
+	for i := 0; i < len(value); {
+		_, size := utf8.DecodeRuneInString(value[i:])
+		i += size
+		r++
+	}
+	return r
 }
