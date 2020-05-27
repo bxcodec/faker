@@ -500,19 +500,19 @@ func TestBoundaryAndLen(t *testing.T) {
 		if err := validateRange(int(someStruct.UInt64)); err != nil {
 			t.Error(err)
 		}
-		if err := validateLen(someStruct.SString, someStructLen); err != nil {
+		if err := validateLen(someStruct.SString); err != nil {
 			t.Error(err)
 		}
 		for _, str := range someStruct.ASString {
-			if err := validateLen(str, someStructLen); err != nil {
+			if err := validateLen(str); err != nil {
 				t.Error(err)
 			}
 		}
 		for k, v := range someStruct.MSString {
-			if err := validateLen(k, someStructLen); err != nil {
+			if err := validateLen(k); err != nil {
 				t.Error(err)
 			}
-			if err := validateLen(v, someStructLen); err != nil {
+			if err := validateLen(v); err != nil {
 				t.Error(err)
 			}
 		}
@@ -529,7 +529,9 @@ func TestBoundaryAndLen(t *testing.T) {
 
 func TestLang(t *testing.T) {
 	someStruct := SomeStructWithLang{}
-	FakeData(&someStruct)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
 
 	var err error
 	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
@@ -548,7 +550,9 @@ func TestLang(t *testing.T) {
 
 func TestLangWithLen(t *testing.T) {
 	someStruct := SomeStructWithLenAndLang{}
-	FakeData(&someStruct)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
 
 	var err error
 	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
@@ -638,9 +642,9 @@ func TestUserDefinedStringFail(t *testing.T) {
 	}
 }
 
-func validateLen(value string, length int) error {
-	if len(value) != length {
-		return fmt.Errorf("Got %d, but expected to be %d as a string len", len(value), length)
+func validateLen(value string) error {
+	if len(value) != someStructLen {
+		return fmt.Errorf("Got %d, but expected to be %d as a string len", len(value), someStructLen)
 	}
 	return nil
 }

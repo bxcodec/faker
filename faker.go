@@ -240,7 +240,7 @@ var (
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
-	findLenReg, _ = regexp.Compile("len=\\d+")
+	findLenReg, _ = regexp.Compile(`len=\d+`)
 }
 
 // ResetUnique is used to forget generated unique values.
