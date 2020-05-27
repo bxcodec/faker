@@ -19,6 +19,14 @@ const (
 	someStructWithLenAndLangRUS = 15
 )
 
+var (
+	langCorrectTags   = [3]string{"lang=rus", "lang=eng", "lang=chi"}
+	langUncorrectTags = [3]string{"lang=", "lang", "lng=eng"}
+
+	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
+	lenUncorrectTags = [3]string{"len=b", "ln=10", "length=25"}
+)
+
 type SomeInt32 int32
 
 type SomeStruct struct {
@@ -95,6 +103,8 @@ type SomeStructWithLang struct {
 	ValueENG string `faker:"lang=eng"`
 	ValueCHI string `faker:"lang=chi"`
 	ValueRUS string `faker:"lang=rus"`
+
+	ValueWithUndefinedLang string `faker:"lang=und"`
 }
 
 type SomeStructWithLenAndLang struct {
@@ -545,6 +555,50 @@ func TestLang(t *testing.T) {
 	err = isStringLangCorrect(someStruct.ValueCHI, LangCHI)
 	if err != nil {
 		t.Error(err.Error())
+	}
+
+	err = isStringLangCorrect(someStruct.ValueWithUndefinedLang, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestLangWithWrongLang(t *testing.T) {
+	type SomeStruct struct {
+		String string `faker:"lang=undefined"`
+	}
+
+	s := SomeStruct{}
+	err := FakeData(&s)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestExtractingLangFromTag(t *testing.T) {
+	for _, tag := range langCorrectTags {
+		if _, err := extractLangFromTag(tag); err != nil {
+			t.Error(err.Error())
+		}
+	}
+	for _, tag := range langUncorrectTags {
+		if _, err := extractLangFromTag(tag); err == nil {
+			t.Error(err.Error())
+		}
+	}
+}
+
+func TestExtractStringFromTag(t *testing.T) {
+	for _, tag := range lenCorrectTags {
+		if _, err := extractStringFromTag(tag); err != nil {
+			t.Error(err.Error())
+		}
+	}
+	for _, tag := range lenUncorrectTags {
+		if _, err := extractStringFromTag(tag); err == nil {
+			t.Error(err.Error())
+		}
 	}
 }
 
