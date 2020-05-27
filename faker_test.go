@@ -20,11 +20,11 @@ const (
 )
 
 var (
-	langCorrectTags   = [3]string{"lang=rus", "lang=eng", "lang=chi"}
-	langUncorrectTags = [3]string{"lang=", "lang", "lng=eng"}
+	langCorrectTagsMap = map[langRuneBoundary]string{LangENG: "lang=eng", LangCHI: "lang=chi", LangRUS: "lang=rus"}
+	langUncorrectTags  = [3]string{"lang=", "lang", "lng=eng"}
 
 	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
-	lenUncorrectTags = [3]string{"len=b", "ln=10", "length=25"}
+	lenUncorrectTags = [6]string{"len=b", "ln=10", "length=25", "lang=b", "ln=10", "lang=8d,,len=eng"}
 )
 
 type SomeInt32 int32
@@ -537,6 +537,16 @@ func TestBoundaryAndLen(t *testing.T) {
 	}
 }
 
+func TestWrongBoundaryAndLen(t *testing.T) {
+	type SomeStruct struct {
+		Value int `faker:"boundary_start=a, boundary_end=b"`
+	}
+	s := SomeStruct{}
+	if err := FakeData(&s); err == nil {
+		t.Error(err)
+	}
+}
+
 func TestLang(t *testing.T) {
 	someStruct := SomeStructWithLang{}
 	if err := FakeData(&someStruct); err != nil {
@@ -577,9 +587,14 @@ func TestLangWithWrongLang(t *testing.T) {
 }
 
 func TestExtractingLangFromTag(t *testing.T) {
-	for _, tag := range langCorrectTags {
-		if _, err := extractLangFromTag(tag); err != nil {
+	var err error
+	var lng *langRuneBoundary
+	for k, v := range langCorrectTagsMap {
+		if lng, err = extractLangFromTag(v); err != nil {
 			t.Error(err.Error())
+		}
+		if k != *lng {
+			t.Errorf("Got %v lang rune range, but expected %v", lng, k)
 		}
 	}
 	for _, tag := range langUncorrectTags {
@@ -587,9 +602,10 @@ func TestExtractingLangFromTag(t *testing.T) {
 			t.Error(err.Error())
 		}
 	}
+
 }
 
-func TestExtractStringFromTag(t *testing.T) {
+func TestExtractingStringFromTag(t *testing.T) {
 	for _, tag := range lenCorrectTags {
 		if _, err := extractStringFromTag(tag); err != nil {
 			t.Error(err.Error())

@@ -223,7 +223,7 @@ var (
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
-	ErrSmallerThanOne     = "Size:%d is smaller than one."
+	ErrSmallerThanOne      = "Size:%d is smaller than one."
 	ErrUniqueFailure       = "Failed to generate a unique value for field \"%s\""
 
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
@@ -766,10 +766,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		if len(lenParts) != 2 {
 			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 		}
-		strlen, err = strconv.Atoi(lenParts[1])
-		if err != nil {
-			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
-		}
+		strlen, _ = strconv.Atoi(lenParts[1])
 	}
 	if strings.Contains(tag, Language) {
 		strlng, err = extractLangFromTag(tag)
