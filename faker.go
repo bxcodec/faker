@@ -223,6 +223,7 @@ var (
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
+	ErrSmallerThanOne     = "Size:%d is smaller than one."
 	ErrUniqueFailure       = "Failed to generate a unique value for field \"%s\""
 
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
@@ -275,8 +276,8 @@ func SetStringLang(l langRuneBoundary) {
 
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
 func SetRandomMapAndSliceSize(size int) error {
-	if size < 0 {
-		return fmt.Errorf(ErrSmallerThanZero, size)
+	if size < 1 {
+		return fmt.Errorf(ErrSmallerThanOne, size)
 	}
 	randomSize = size
 	return nil
