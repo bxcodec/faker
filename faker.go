@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -31,6 +32,7 @@ var (
 	generateUniqueValues = false
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
+	lang         = LangENG
 )
 
 type numberBoundary struct {
@@ -38,13 +40,27 @@ type numberBoundary struct {
 	end   int
 }
 
+type langRuneBoundary struct {
+	start rune
+	end   rune
+}
+
+// Language rune boundaries here
+var (
+	// LangENG is for english language
+	LangENG = langRuneBoundary{65, 122}
+	// LangCHI is for chinese language
+	LangCHI = langRuneBoundary{19968, 40869}
+	// LangRUS is for russian language
+	LangRUS = langRuneBoundary{1025, 1105}
+)
+
 // Supported tags
 const (
 	letterIdxBits         = 6                    // 6 bits to represent a letter index
 	letterIdxMask         = 1<<letterIdxBits - 1 // All 1-bits, as many as letterIdxBits
 	letterIdxMax          = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 	maxRetry              = 10000                // max number of retry for unique values
-	letterBytes           = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	tagName               = "faker"
 	keep                  = "keep"
 	unique                = "unique"
@@ -91,6 +107,7 @@ const (
 	AmountWithCurrencyTag = "amount_with_currency"
 	SKIP                  = "-"
 	Length                = "len"
+	Language              = "lang"
 	BoundaryStart         = "boundary_start"
 	BoundaryEnd           = "boundary_end"
 	Equals                = "="
@@ -206,7 +223,7 @@ var (
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
-	ErrSmallerThanOne     = "Size:%d is smaller than one."
+	ErrSmallerThanOne      = "Size:%d is smaller than one."
 	ErrUniqueFailure       = "Failed to generate a unique value for field \"%s\""
 
 	ErrStartValueBiggerThanEnd = "Start value can not be bigger than end value."
@@ -215,8 +232,16 @@ var (
 	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
 )
 
+// Compiled regexp
+var (
+	findLangReg *regexp.Regexp
+	findLenReg  *regexp.Regexp
+)
+
 func init() {
 	rand.Seed(time.Now().UnixNano())
+	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
+	findLenReg, _ = regexp.Compile(`len=\d+`)
 }
 
 // ResetUnique is used to forget generated unique values.
@@ -242,6 +267,11 @@ func SetRandomStringLength(size int) error {
 	}
 	randomStringLen = size
 	return nil
+}
+
+// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS)
+func SetStringLang(l langRuneBoundary) {
+	lang = l
 }
 
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
@@ -435,7 +465,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 		}
 
 	case reflect.String:
-		res := randomString(randomStringLen)
+		res := randomString(randomStringLen, &lang)
 		return reflect.ValueOf(res), nil
 	case reflect.Array, reflect.Slice:
 		len := randomSliceAndMapSize()
@@ -565,7 +595,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	switch v.Kind() {
 	case reflect.Ptr:
 		if _, exist := mapperTag[tag]; !exist {
-			return fmt.Errorf(ErrTagNotSupported,tag)
+			return fmt.Errorf(ErrTagNotSupported, tag)
 		}
 		if _, def := defaultTag[tag]; !def {
 			res, err := mapperTag[tag](v)
@@ -597,7 +627,7 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		return userDefinedMap(v, tag)
 	default:
 		if _, exist := mapperTag[tag]; !exist {
-			return fmt.Errorf(ErrTagNotSupported,tag)
+			return fmt.Errorf(ErrTagNotSupported, tag)
 		}
 		res, err := mapperTag[tag](v)
 		if err != nil {
@@ -694,7 +724,7 @@ func userDefinedString(v reflect.Value, tag string) error {
 		}
 	}
 	if res == nil {
-		return fmt.Errorf(ErrTagNotSupported,tag)
+		return fmt.Errorf(ErrTagNotSupported, tag)
 	}
 	val, _ := res.(string)
 	v.SetString(val)
@@ -717,7 +747,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 		}
 	}
 	if res == nil {
-		return fmt.Errorf(ErrTagNotSupported,tag)
+		return fmt.Errorf(ErrTagNotSupported, tag)
 	}
 
 	v.Set(reflect.ValueOf(res))
@@ -725,20 +755,50 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 }
 
 func extractStringFromTag(tag string) (interface{}, error) {
-	if !strings.Contains(tag, Length) {
-		return nil, fmt.Errorf(ErrTagNotSupported,tag)
+	var err error
+	strlen := randomStringLen
+	strlng := &lang
+	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) {
+		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
-	len, err := extractNumberFromText(tag)
-	if err != nil {
-		return nil, err
+	if strings.Contains(tag, Length) {
+		lenParts := strings.SplitN(findLenReg.FindString(tag), Equals, -1)
+		if len(lenParts) != 2 {
+			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+		}
+		strlen, _ = strconv.Atoi(lenParts[1])
 	}
-	res := randomString(len)
+	if strings.Contains(tag, Language) {
+		strlng, err = extractLangFromTag(tag)
+		if err != nil {
+			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+		}
+	}
+	res := randomString(strlen, strlng)
 	return res, nil
+}
+
+func extractLangFromTag(tag string) (*langRuneBoundary, error) {
+	text := findLangReg.FindString(tag)
+	texts := strings.SplitN(text, Equals, -1)
+	if len(texts) != 2 {
+		return nil, fmt.Errorf(ErrWrongFormattedTag, text)
+	}
+	switch strings.ToLower(texts[1]) {
+	case "eng":
+		return &LangENG, nil
+	case "rus":
+		return &LangRUS, nil
+	case "chi":
+		return &LangCHI, nil
+	default:
+		return &LangENG, nil
+	}
 }
 
 func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
-		return nil,fmt.Errorf(ErrTagNotSupported,tag)
+		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
 	valuesStr := strings.SplitN(tag, comma, -1)
 	if len(valuesStr) != 2 {
@@ -788,18 +848,12 @@ func extractNumberFromText(text string) (int, error) {
 	return strconv.Atoi(texts[1])
 }
 
-func randomString(n int) string {
-	b := make([]byte, n)
-	for i, cache, remain := n-1, rand.Int63(), letterIdxMax; i >= 0; {
-		if remain == 0 {
-			cache, remain = rand.Int63(), letterIdxMax
-		}
-		if idx := int(cache & letterIdxMask); idx < len(letterBytes) {
-			b[i] = letterBytes[idx]
-			i--
-		}
-		cache >>= letterIdxBits
-		remain--
+func randomString(n int, lang *langRuneBoundary) string {
+	b := make([]rune, 0)
+	for i := 0; i < n; {
+		randRune := rune(rand.Intn(int(lang.end-lang.start)) + int(lang.start))
+		b = append(b, randRune)
+		i++
 	}
 
 	return string(b)

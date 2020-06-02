@@ -57,7 +57,7 @@ type Networker interface {
 type Internet struct{}
 
 func (internet Internet) email() string {
-	return randomString(7) + "@" + randomString(5) + "." + randomElementFromSliceString(tld)
+	return randomString(7, &LangENG) + "@" + randomString(5, &LangENG) + "." + randomElementFromSliceString(tld)
 }
 
 // Email generates random email id
@@ -95,7 +95,7 @@ func MacAddress() string {
 }
 
 func (internet Internet) domainName() string {
-	return randomString(7) + "." + randomElementFromSliceString(tld)
+	return randomString(7, &LangENG) + "." + randomElementFromSliceString(tld)
 }
 
 // DomainName generates random domain name
@@ -134,7 +134,7 @@ func URL() string {
 }
 
 func (internet Internet) username() string {
-	return randomString(7)
+	return randomString(7, &LangENG)
 }
 
 // UserName generates random username
@@ -195,7 +195,7 @@ func IPv6() string {
 }
 
 func (internet Internet) password() string {
-	return randomString(50)
+	return randomString(50, &LangENG)
 }
 
 // Password returns a hashed password

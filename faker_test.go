@@ -6,12 +6,25 @@ import (
 	"reflect"
 	"testing"
 	"time"
+	"unicode/utf8"
 )
 
 const (
 	someStructLen           = 2
 	someStructBoundaryStart = 5
 	someStructBoundaryEnd   = 10
+
+	someStructWithLenAndLangENG = 5
+	someStructWithLenAndLangCHI = 10
+	someStructWithLenAndLangRUS = 15
+)
+
+var (
+	langCorrectTagsMap = map[langRuneBoundary]string{LangENG: "lang=eng", LangCHI: "lang=chi", LangRUS: "lang=rus"}
+	langUncorrectTags  = [3]string{"lang=", "lang", "lng=eng"}
+
+	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
+	lenUncorrectTags = [6]string{"len=b", "ln=10", "length=25", "lang=b", "ln=10", "lang=8d,,len=eng"}
 )
 
 type SomeInt32 int32
@@ -84,6 +97,20 @@ type SomeStructWithLen struct {
 	SString  string            `faker:"len=2"`
 	MSString map[string]string `faker:"len=2"`
 	MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
+}
+
+type SomeStructWithLang struct {
+	ValueENG string `faker:"lang=eng"`
+	ValueCHI string `faker:"lang=chi"`
+	ValueRUS string `faker:"lang=rus"`
+
+	ValueWithUndefinedLang string `faker:"lang=und"`
+}
+
+type SomeStructWithLenAndLang struct {
+	ValueENG string `faker:"len=5, lang=eng"`
+	ValueCHI string ` faker:"len=10, lang=chi"`
+	ValueRUS string ` faker:"len=15, lang=rus"`
 }
 
 func (s SomeStruct) String() string {
@@ -382,8 +409,16 @@ func TestSetRandomStringLength(t *testing.T) {
 	if err := FakeData(&someStruct); err != nil {
 		t.Error("Fake data generation has failed")
 	}
-	if len(someStruct.StringValue) > strLen {
+	if utfLen(someStruct.StringValue) > strLen {
 		t.Error("SetRandomStringLength did not work.")
+	}
+}
+
+func TestSetStringLang(t *testing.T) {
+	someStruct := SomeStruct{}
+	SetStringLang(LangENG)
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
 	}
 }
 
@@ -500,6 +535,133 @@ func TestBoundaryAndLen(t *testing.T) {
 			}
 		}
 	}
+}
+
+func TestWrongBoundaryAndLen(t *testing.T) {
+	type SomeStruct struct {
+		Value int `faker:"boundary_start=a, boundary_end=b"`
+	}
+	s := SomeStruct{}
+	if err := FakeData(&s); err == nil {
+		t.Error(err)
+	}
+}
+
+func TestLang(t *testing.T) {
+	someStruct := SomeStructWithLang{}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+
+	var err error
+	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = isStringLangCorrect(someStruct.ValueRUS, LangRUS)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	err = isStringLangCorrect(someStruct.ValueCHI, LangCHI)
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = isStringLangCorrect(someStruct.ValueWithUndefinedLang, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestLangWithWrongLang(t *testing.T) {
+	type SomeStruct struct {
+		String string `faker:"lang=undefined"`
+	}
+
+	s := SomeStruct{}
+	err := FakeData(&s)
+
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func TestExtractingLangFromTag(t *testing.T) {
+	var err error
+	var lng *langRuneBoundary
+	for k, v := range langCorrectTagsMap {
+		if lng, err = extractLangFromTag(v); err != nil {
+			t.Error(err.Error())
+		}
+		if k != *lng {
+			t.Errorf("Got %v lang rune range, but expected %v", lng, k)
+		}
+	}
+	for _, tag := range langUncorrectTags {
+		if _, err := extractLangFromTag(tag); err == nil {
+			t.Error(err.Error())
+		}
+	}
+
+}
+
+func TestExtractingStringFromTag(t *testing.T) {
+	for _, tag := range lenCorrectTags {
+		if _, err := extractStringFromTag(tag); err != nil {
+			t.Error(err.Error())
+		}
+	}
+	for _, tag := range lenUncorrectTags {
+		if _, err := extractStringFromTag(tag); err == nil {
+			t.Error(err.Error())
+		}
+	}
+}
+
+func TestLangWithLen(t *testing.T) {
+	someStruct := SomeStructWithLenAndLang{}
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+
+	var err error
+	err = isStringLangCorrect(someStruct.ValueENG, LangENG)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	engLen := utfLen(someStruct.ValueENG)
+	if engLen != someStructWithLenAndLangENG {
+		t.Errorf("Got %d, but expected to be %d as a string len", engLen, someStructWithLenAndLangENG)
+	}
+
+	err = isStringLangCorrect(someStruct.ValueRUS, LangRUS)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	chiLen := utfLen(someStruct.ValueCHI)
+	if chiLen != someStructWithLenAndLangCHI {
+		t.Errorf("Got %d, but expected to be %d as a string len", chiLen, someStructWithLenAndLangCHI)
+	}
+
+	err = isStringLangCorrect(someStruct.ValueCHI, LangCHI)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	rusLen := utfLen(someStruct.ValueRUS)
+	if rusLen != someStructWithLenAndLangRUS {
+		t.Errorf("Got %d, but expected to be %d as a string len", rusLen, someStructWithLenAndLangRUS)
+	}
+}
+
+func isStringLangCorrect(value string, lang langRuneBoundary) error {
+	for i := 0; i < len(value); {
+		r, size := utf8.DecodeLastRuneInString(value[i:])
+		if r < lang.start || r > lang.end {
+			return fmt.Errorf("Symbol is not in selected alphabet: start: %d, end: %d", lang.start, lang.end)
+		}
+		i += size
+	}
+	return nil
 }
 
 func TestExtractNumberFromTagFail(t *testing.T) {
@@ -1027,4 +1189,16 @@ func TestUniqueFailure(t *testing.T) {
 	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
+}
+
+// getStringLen for language independent string length
+func utfLen(value string) int {
+	var r int
+	fmt.Println(len(value))
+	for i := 0; i < len(value); {
+		_, size := utf8.DecodeRuneInString(value[i:])
+		i += size
+		r++
+	}
+	return r
 }
