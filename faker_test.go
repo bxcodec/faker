@@ -972,7 +972,7 @@ func TestExtend(t *testing.T) {
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
-			return make([]byte, 10), nil
+			return []byte{0,1,2,3,4}, nil
 		})
 
 		if err != nil {
@@ -983,6 +983,10 @@ func TestExtend(t *testing.T) {
 
 		if err != nil {
 			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if reflect.DeepEqual(a.UUID, []byte{0,1,2,3,4}) {
+			t.Error("UUID should equal test value")
 		}
 	})
 
