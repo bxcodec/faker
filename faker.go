@@ -622,6 +622,21 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		return userDefinedNumber(v, tag)
 	case reflect.Slice, reflect.Array:
+		/**
+		 * check for added Provider tag first before
+		 * defaulting to userDefinedArray()
+		 * this way the user at least has the
+		 * option of a custom tag working
+		 */
+		_, tagExists := mapperTag[tag]
+		if tagExists {
+			res, err := mapperTag[tag](v)
+			if err != nil {
+				return err
+			}
+			v.Set(reflect.ValueOf(res))
+			return nil
+		}
 		return userDefinedArray(v, tag)
 	case reflect.Map:
 		return userDefinedMap(v, tag)

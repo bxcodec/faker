@@ -13,11 +13,15 @@ type Gondoruwo struct {
 	Locatadata int
 }
 
+// custom type that aliases over slice of byte
+type CustomUUID []byte
+
 // Sample ...
 type Sample struct {
 	ID        int64     `faker:"customIdFaker"`
 	Gondoruwo Gondoruwo `faker:"gondoruwo"`
 	Danger    string    `faker:"danger"`
+	UUID      CustomUUID `faker:"customUUID"`
 }
 
 // CustomGenerator ...
@@ -36,6 +40,13 @@ func CustomGenerator() {
 		}
 		return obj, nil
 	})
+
+	_ = faker.AddProvider("customUUID", func(v reflect.Value) (interface{}, error) {
+		s := []byte {
+			0,8,7,2,3,
+		}
+		return s, nil
+	})
 }
 
 // You can also add your own generator function to your own defined tags.
@@ -45,5 +56,5 @@ func Example_customFaker() {
 	_ = faker.FakeData(&sample)
 	fmt.Printf("%+v", sample)
 	// Output:
-	// {ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger}
+	// {ID:43 Gondoruwo:{Name:Power Locatadata:324} Danger:danger-ranger UUID:[0 8 7 2 3]}
 }

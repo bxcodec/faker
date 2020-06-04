@@ -908,6 +908,11 @@ type School struct {
 	Location string
 }
 
+type CustomTypeOverSlice []byte
+type CustomThatUsesSlice struct {
+	UUID CustomTypeOverSlice `faker:"custom-type-over-slice"`
+}
+
 func TestExtend(t *testing.T) {
 	// This test is to ensure that faker can be extended new providers
 
@@ -958,6 +963,30 @@ func TestExtend(t *testing.T) {
 
 		if a.School.Location != "North Kindom" {
 			t.Error("ID should be equal test value")
+		}
+	})
+
+	/**
+	 * Before updates, this test would fail
+	 */
+	t.Run("test-with-custom-slice-type", func(t *testing.T) {
+		a := CustomThatUsesSlice{}
+		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
+			return []byte{0,1,2,3,4}, nil
+		})
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if reflect.DeepEqual(a.UUID, []byte{0,1,2,3,4}) {
+			t.Error("UUID should equal test value")
 		}
 	})
 
