@@ -787,7 +787,11 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	if strings.Contains(tag, ONEOF) {
 		items := strings.Split(tag, ":")
 		choose := items[1:]
-		return choose[rand.Intn(len(choose))], nil
+		toRet := choose[rand.Intn(len(choose))]
+		if len(toRet) <= 1 {
+			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+		}
+		return toRet, nil
 	}
 	res := randomString(strlen, strlng)
 	return res, nil

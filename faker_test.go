@@ -1275,6 +1275,50 @@ func TestOneOfTag(t *testing.T) {
 			)
 		}
 	})
+
+	type CustomMulti struct {
+		PaymentType string `faker:"oneof:cc:check:paypal:bank account"`
+	}
+	t.Run("creates only one of the desired values from many", func(t *testing.T) {
+		a := CustomMulti{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.PaymentType == "cc"
+		two := a.PaymentType == "paypal"
+		three := a.PaymentType == "check"
+		four := a.PaymentType == "bank account"
+
+		if !one && !two && !three && !four {
+			t.Errorf(
+				"expected either %v or %v or %v or %v but got %v",
+				"cc",
+				"paypal",
+				"check",
+				"bank account",
+				a.PaymentType,
+			)
+		}
+	})
+
+	type CustomOneofWrong struct {
+		PaymentType string `faker:"oneof:"`
+	}
+
+	t.Run("errors when tag is not used correctly", func(t *testing.T) {
+		a := CustomOneofWrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := fmt.Sprintf(ErrWrongFormattedTag, "oneof:")
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
 }
 
 // getStringLen for language independent string length
