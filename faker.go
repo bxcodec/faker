@@ -112,6 +112,7 @@ const (
 	BoundaryEnd           = "boundary_end"
 	Equals                = "="
 	comma                 = ","
+	ONEOF                 = "oneof"
 )
 
 var defaultTag = map[string]string{
@@ -767,7 +768,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	var err error
 	strlen := randomStringLen
 	strlng := &lang
-	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) {
+	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !strings.Contains(tag, ONEOF) {
 		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
 	if strings.Contains(tag, Length) {
@@ -782,6 +783,11 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		if err != nil {
 			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 		}
+	}
+	if strings.Contains(tag, ONEOF) {
+		items := strings.Split(tag, ":")
+		choose := items[1:]
+		return choose[rand.Intn(len(choose))], nil
 	}
 	res := randomString(strlen, strlng)
 	return res, nil

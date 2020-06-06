@@ -969,7 +969,7 @@ func TestExtend(t *testing.T) {
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
-			return []byte{0,1,2,3,4}, nil
+			return []byte{0, 1, 2, 3, 4}, nil
 		})
 
 		if err != nil {
@@ -982,14 +982,14 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		if reflect.DeepEqual(a.UUID, []byte{0,1,2,3,4}) {
+		if reflect.DeepEqual(a.UUID, []byte{0, 1, 2, 3, 4}) {
 			t.Error("UUID should equal test value")
 		}
 	})
 
 	type MyInt int
 	type Sample struct {
-		Value  []MyInt `faker:"myint"`
+		Value []MyInt `faker:"myint"`
 	}
 
 	t.Run("test with type alias for int", func(t *testing.T) {
@@ -1249,6 +1249,32 @@ func TestUniqueFailure(t *testing.T) {
 	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
+}
+
+func TestOneOfTag(t *testing.T) {
+
+	type CustomOne struct {
+		PaymentType string `faker:"oneof:credit card:paypal"`
+	}
+
+	t.Run("creates only one of the desired values", func(t *testing.T) {
+		a := CustomOne{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.PaymentType == "credit card"
+		two := a.PaymentType == "paypal"
+
+		if !one && !two {
+			t.Errorf(
+				"expected either %v or %v but got %v",
+				"credit card",
+				"paypal",
+				a.PaymentType,
+			)
+		}
+	})
 }
 
 // getStringLen for language independent string length
