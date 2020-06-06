@@ -112,6 +112,7 @@ const (
 	BoundaryEnd           = "boundary_end"
 	Equals                = "="
 	comma                 = ","
+	colon                 = ":"
 	ONEOF                 = "oneof"
 )
 
@@ -231,6 +232,7 @@ var (
 	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
 	ErrUnknownType             = "Unknown Type"
 	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
+	ErrUnsupportedTagArguments = "Tag arguments are not compatible with field type."
 )
 
 // Compiled regexp
@@ -785,11 +787,11 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		}
 	}
 	if strings.Contains(tag, ONEOF) {
-		items := strings.Split(tag, ":")
+		items := strings.Split(tag, colon)
 		choose := items[1:]
 		toRet := choose[rand.Intn(len(choose))]
-		if len(toRet) <= 1 {
-			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
+		if len(toRet) <= 1 || strings.Contains(tag, comma) {
+			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
 		return toRet, nil
 	}
@@ -816,9 +818,34 @@ func extractLangFromTag(tag string) (*langRuneBoundary, error) {
 }
 
 func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
-	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
+	hasOneOf := strings.Contains(tag, ONEOF)
+	hasBoundaryStart := strings.Contains(tag, BoundaryStart)
+	hasBoundaryEnd := strings.Contains(tag, BoundaryEnd)
+	usingOneOfTag := hasOneOf && (!hasBoundaryStart && !hasBoundaryEnd)
+	usingBoundariesTags := !hasOneOf && (hasBoundaryStart && hasBoundaryEnd)
+	if !usingOneOfTag && !usingBoundariesTags {
 		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
+
+	// handling oneof tag
+	if usingOneOfTag {
+		values := strings.Split(tag, colon)[1:]
+		if len(values) < 1 || strings.Contains(tag, comma) {
+			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		}
+		var numberValues []int
+		for _, i := range values {
+			j, err := strconv.Atoi(i)
+			if err != nil {
+				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			}
+			numberValues = append(numberValues, j)
+		}
+		toRet := numberValues[rand.Intn(len(numberValues))]
+		return toRet, nil
+	}
+
+	// handling boundary tags
 	valuesStr := strings.SplitN(tag, comma, -1)
 	if len(valuesStr) != 2 {
 		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
