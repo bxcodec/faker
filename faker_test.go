@@ -908,11 +908,6 @@ type School struct {
 	Location string
 }
 
-type CustomTypeOverSlice []byte
-type CustomThatUsesSlice struct {
-	UUID CustomTypeOverSlice `faker:"custom-type-over-slice"`
-}
-
 func TestExtend(t *testing.T) {
 	// This test is to ensure that faker can be extended new providers
 
@@ -966,9 +961,11 @@ func TestExtend(t *testing.T) {
 		}
 	})
 
-	/**
-	 * Before updates, this test would fail
-	 */
+	type CustomTypeOverSlice []byte
+	type CustomThatUsesSlice struct {
+		UUID CustomTypeOverSlice `faker:"custom-type-over-slice"`
+	}
+
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
@@ -988,6 +985,40 @@ func TestExtend(t *testing.T) {
 		if reflect.DeepEqual(a.UUID, []byte{0,1,2,3,4}) {
 			t.Error("UUID should equal test value")
 		}
+	})
+
+	type MyInt int
+	type Sample struct {
+		Value  []MyInt `faker:"myint"`
+	}
+
+	t.Run("test with type alias for int", func(t *testing.T) {
+		a := Sample{}
+		sliceLen := 10
+		err := AddProvider("myint", func(v reflect.Value) (interface{}, error) {
+			s1 := rand.NewSource(time.Now().UnixNano())
+			r1 := rand.New(s1)
+			r := make([]MyInt, sliceLen)
+			for i := range r {
+				r[i] = MyInt(r1.Intn(100))
+			}
+			return r, nil
+		})
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if len(a.Value) != sliceLen {
+			t.Errorf("Expected a slice of length %v but got %v", sliceLen, len(a.Value))
+		}
+
 	})
 
 }
