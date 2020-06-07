@@ -18,9 +18,9 @@ type CustomUUID []byte
 
 // Sample ...
 type Sample struct {
-	ID        int64     `faker:"customIdFaker"`
-	Gondoruwo Gondoruwo `faker:"gondoruwo"`
-	Danger    string    `faker:"danger"`
+	ID        int64      `faker:"customIdFaker"`
+	Gondoruwo Gondoruwo  `faker:"gondoruwo"`
+	Danger    string     `faker:"danger"`
 	UUID      CustomUUID `faker:"customUUID"`
 }
 
@@ -42,8 +42,8 @@ func CustomGenerator() {
 	})
 
 	_ = faker.AddProvider("customUUID", func(v reflect.Value) (interface{}, error) {
-		s := []byte {
-			0,8,7,2,3,
+		s := []byte{
+			0, 8, 7, 2, 3,
 		}
 		return s, nil
 	})

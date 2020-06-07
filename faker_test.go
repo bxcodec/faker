@@ -29,6 +29,8 @@ var (
 
 type SomeInt32 int32
 
+type TArray [16]byte
+
 type SomeStruct struct {
 	Inta    int
 	Int8    int8
@@ -65,6 +67,7 @@ type SomeStruct struct {
 	SFloat64           []float64
 	SBool              []bool
 	Struct             AStruct
+	TArray             TArray
 	Time               time.Time
 	Stime              []time.Time
 	Currency           string  `faker:"currency"`
@@ -972,7 +975,7 @@ func TestExtend(t *testing.T) {
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
-			return []byte{0,1,2,3,4}, nil
+			return []byte{0, 1, 2, 3, 4}, nil
 		})
 
 		if err != nil {
@@ -985,7 +988,7 @@ func TestExtend(t *testing.T) {
 			t.Error("Expected Not Error, But Got: ", err)
 		}
 
-		if reflect.DeepEqual(a.UUID, []byte{0,1,2,3,4}) {
+		if reflect.DeepEqual(a.UUID, []byte{0, 1, 2, 3, 4}) {
 			t.Error("UUID should equal test value")
 		}
 	})
