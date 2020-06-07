@@ -969,7 +969,7 @@ func TestExtend(t *testing.T) {
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
-			return []byte{0, 1, 2, 3, 4}, nil
+			return CustomTypeOverSlice{0, 1, 2, 3, 4}, nil
 		})
 
 		if err != nil {

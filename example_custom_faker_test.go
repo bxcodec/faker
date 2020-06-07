@@ -42,7 +42,7 @@ func CustomGenerator() {
 	})
 
 	_ = faker.AddProvider("customUUID", func(v reflect.Value) (interface{}, error) {
-		s := []byte{
+		s := CustomUUID{
 			0, 8, 7, 2, 3,
 		}
 		return s, nil
