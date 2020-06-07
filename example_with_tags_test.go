@@ -50,8 +50,8 @@ type SomeStructWithTags struct {
 	UUIDHypenated      string  `faker:"uuid_hyphenated"`
 	UUID               string  `faker:"uuid_digit"`
 	Skip               string  `faker:"-"`
-	PaymentMethod      string  `faker:"oneof:cc:paypal:check:money order"` // oneof will randomly pick one of the colon-separated values supplied in the tag
-	AccountID          int     `faker:"oneof:15:27:61"`                    // use colons to separate the values for now. Future support for other separator characters may be added
+	PaymentMethod      string  `faker:"oneof: cc, paypal, check, money order"` // oneof will randomly pick one of the comma-separated values supplied in the tag
+	AccountID          int     `faker:"oneof: 15, 27, 61"`                     // use commas to separate the values for now. Future support for other separator characters may be added
 }
 
 func Example_withTags() {
