@@ -150,7 +150,7 @@ func (s SomeStruct) String() string {
 	SFloat64:%v
 	SBool: %v
 	Struct: %v
-	Time: %v 
+	Time: %v
 	Stime: %v
 	Currency: %v
 	Amount: %v
@@ -159,7 +159,7 @@ func (s SomeStruct) String() string {
 	HyphenatedID: %v
 
 	MapStringString: %v
-	MapStringStruct: %v 
+	MapStringStruct: %v
 	MapStringStructPointer: %v
 	}`, s.Inta, s.Int8, s.Int16, s.Int32,
 		s.Int64, s.Float32, s.Float64, s.UInta,
