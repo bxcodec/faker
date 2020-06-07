@@ -15,6 +15,7 @@ type Dowser interface {
 	FirstNameFemale(v reflect.Value) (interface{}, error)
 	LastName(v reflect.Value) (interface{}, error)
 	Name(v reflect.Value) (interface{}, error)
+	Gender(v reflect.Value) (interface{}, error)
 }
 
 var person Dowser
@@ -107,6 +108,8 @@ var lastNames = []string{
 	"Yost", "Yundt", "Zboncak", "Zemlak", "Ziemann", "Zieme", "Zulauf",
 }
 var randNameFlag = rand.Intn(100)
+
+var genders = []string{"Male", "Female", "Prefer to skip"}
 
 // GetPerson returns a new Dowser interface of Person struct
 func GetPerson() Dowser {
@@ -247,5 +250,22 @@ func Name() string {
 	return singleFakeData(NAME, func() interface{} {
 		p := Person{}
 		return p.name()
+	}).(string)
+}
+
+// Gender returns a random gender
+func (p Person) Gender(v reflect.Value) (interface{}, error) {
+	return p.gender(), nil
+}
+
+func (p Person) gender() string {
+	return randomElementFromSliceString(genders)
+}
+
+// Gender get fake gender
+func Gender() string {
+	return singleFakeData(GENDER, func() interface{} {
+		p := Person{}
+		return p.gender()
 	}).(string)
 }

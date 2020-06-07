@@ -88,6 +88,7 @@ const (
 	FirstNameFemaleTag    = "first_name_female"
 	LastNameTag           = "last_name"
 	NAME                  = "name"
+	GENDER                = "gender"
 	UnixTimeTag           = "unix_time"
 	DATE                  = "date"
 	TIME                  = "time"
@@ -137,6 +138,7 @@ var defaultTag = map[string]string{
 	FirstNameFemaleTag:    FirstNameFemaleTag,
 	LastNameTag:           LastNameTag,
 	NAME:                  NAME,
+	GENDER:                GENDER,
 	UnixTimeTag:           UnixTimeTag,
 	DATE:                  DATE,
 	TIME:                  TimeFormat,
@@ -185,6 +187,7 @@ var mapperTag = map[string]TaggedFunction{
 	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
 	LastNameTag:           GetPerson().LastName,
 	NAME:                  GetPerson().Name,
+	GENDER:                GetPerson().Gender,
 	UnixTimeTag:           GetDateTimer().UnixTime,
 	DATE:                  GetDateTimer().Date,
 	TIME:                  GetDateTimer().Time,
