@@ -113,8 +113,8 @@ const (
 	Equals                = "="
 	comma                 = ","
 	colon                 = ":"
-	period                = "."
 	ONEOF                 = "oneof"
+	// period                = "."
 )
 
 var defaultTag = map[string]string{

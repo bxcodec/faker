@@ -1313,7 +1313,7 @@ func TestOneOfTag(t *testing.T) {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := fmt.Sprintf(ErrUnsupportedTagArguments)
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
@@ -1330,7 +1330,7 @@ func TestOneOfTag(t *testing.T) {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := fmt.Sprintf(ErrUnsupportedTagArguments)
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
@@ -1369,7 +1369,7 @@ func TestOneOfTag(t *testing.T) {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := fmt.Sprintf(ErrUnsupportedTagArguments)
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
@@ -1386,7 +1386,7 @@ func TestOneOfTag(t *testing.T) {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := fmt.Sprintf(ErrUnsupportedTagArguments)
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
@@ -1403,7 +1403,7 @@ func TestOneOfTag(t *testing.T) {
 			t.Fatal("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := fmt.Sprintf(ErrUnsupportedTagArguments)
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
