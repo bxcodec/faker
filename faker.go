@@ -771,7 +771,8 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	var err error
 	strlen := randomStringLen
 	strlng := &lang
-	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !strings.Contains(tag, ONEOF) {
+	isOneOfTag := strings.Contains(tag, ONEOF)
+	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !isOneOfTag {
 		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
 	if strings.Contains(tag, Length) {
@@ -787,7 +788,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 		}
 	}
-	if strings.Contains(tag, ONEOF) {
+	if isOneOfTag {
 		items := strings.Split(tag, colon)
 		choose := items[1:]
 		toRet := choose[rand.Intn(len(choose))]
