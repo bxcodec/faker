@@ -51,7 +51,7 @@ type SomeStructWithTags struct {
 	UUID               string  `faker:"uuid_digit"`
 	Skip               string  `faker:"-"`
 	PaymentMethod      string  `faker:"oneof:cc:paypal:check:money order"` // support for oneof tag
-	AccountID          int     `faker:"oneof:15,27,61"`                    // support for oneof tag
+	AccountID          int     `faker:"oneof:15:27:61"`                    // support for oneof tag
 }
 
 func Example_withTags() {
