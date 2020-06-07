@@ -237,6 +237,8 @@ var (
 	ErrUnknownType             = "Unknown Type"
 	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
 	ErrUnsupportedTagArguments = "Tag arguments are not compatible with field type."
+	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
+	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 )
 
 // Compiled regexp
@@ -804,11 +806,21 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	}
 	if isOneOfTag {
 		items := strings.Split(tag, colon)
-		choose := items[1:]
-		toRet := choose[rand.Intn(len(choose))]
-		if len(toRet) <= 1 || strings.Contains(tag, comma) {
+		if len(items) <= 1 {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
+		argsList := items[1:]
+		if len(argsList) != 1 {
+			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		}
+		if strings.Contains(argsList[0], ",,") {
+			return nil, fmt.Errorf(ErrDuplicateSeparator)
+		}
+		args := strings.Split(argsList[0], comma)
+		if len(args) < 2 {
+			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		}
+		toRet := args[rand.Intn(len(args))]
 		return strings.TrimSpace(toRet), nil
 	}
 	res := randomString(strlen, strlng)
@@ -845,13 +857,21 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 
 	// handling oneof tag
 	if usingOneOfTag {
-		values := strings.Split(tag, colon)[1:]
-		if len(values) < 1 || strings.Contains(tag, comma) {
+		argsList := strings.Split(tag, colon)[1:]
+		if len(argsList) != 1 {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
+		if strings.Contains(argsList[0], ",,") {
+			return nil, fmt.Errorf(ErrDuplicateSeparator)
+		}
+		args := strings.Split(argsList[0], comma)
+		if len(args) < 2 {
+			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		}
 		var numberValues []int
-		for _, i := range values {
-			j, err := strconv.Atoi(strings.TrimSpace(i))
+		for _, i := range args {
+			k := strings.TrimSpace(i)
+			j, err := strconv.Atoi(k)
 			if err != nil {
 				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 			}

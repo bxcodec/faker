@@ -1256,12 +1256,12 @@ func TestUniqueFailure(t *testing.T) {
 
 func TestOneOfTag(t *testing.T) {
 
-	type CustomOne struct {
-		PaymentType string `faker:"oneof:credit card:paypal"`
+	type CustomOneString struct {
+		PaymentType string `faker:"oneof: credit card, paypal"`
 	}
 
-	t.Run("creates only one of the desired values", func(t *testing.T) {
-		a := CustomOne{}
+	t.Run("creates one of the desired string values", func(t *testing.T) {
+		a := CustomOneString{}
 		err := FakeData(&a)
 		if err != nil {
 			t.Errorf("expected no error, but got %v", err)
@@ -1279,11 +1279,11 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
-	type CustomMulti struct {
-		PaymentType string `faker:"oneof: cc: check: paypal: bank account"`
+	type CustomMultiString struct {
+		PaymentType string `faker:"oneof: cc, check, paypal, bank account"`
 	}
-	t.Run("creates only one of the desired values from many", func(t *testing.T) {
-		a := CustomMulti{}
+	t.Run("creates only one of the desired string values from many", func(t *testing.T) {
+		a := CustomMultiString{}
 		err := FakeData(&a)
 		if err != nil {
 			t.Errorf("expected no error, but got %v", err)
@@ -1305,12 +1305,29 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
-	type CustomOneofWrong struct {
+	type CustomOneofWrongString struct {
 		PaymentType string `faker:"oneof:"`
 	}
 
 	t.Run("errors when tag is not used correctly string no args", func(t *testing.T) {
-		a := CustomOneofWrong{}
+		a := CustomOneofWrongString{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofWrongString2 struct {
+		PaymentType string `faker:"oneof: cc: check, bank"`
+	}
+
+	t.Run("errors when tag is not used correctly string invalid argument separator", func(t *testing.T) {
+		a := CustomOneofWrongString2{}
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
@@ -1322,28 +1339,45 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
-	type CustomOneofWrong2 struct {
-		PaymentType string `faker:"oneof:cc:check,bank"`
+	type CustomWrongString3 struct {
+		PaymentType string `faker:"oneof: credit card"`
 	}
 
-	t.Run("errors when tag is not used correctly string bad args", func(t *testing.T) {
-		a := CustomOneofWrong2{}
+	t.Run("errors when tag is not used correctly string only one argument", func(t *testing.T) {
+		a := CustomWrongString3{}
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongString4 struct {
+		PaymentType string `faker:"oneof: ,,,cc, credit card,,"`
+	}
+
+	t.Run("errors when tag is not used correctly string duplicate separator", func(t *testing.T) {
+		a := CustomWrongString4{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
 	})
 
 	type CustomOneofInt1 struct {
-		Age int `faker:"oneof: 16: 18: 21"`
+		Age int `faker:"oneof: 16, 18, 21"`
 	}
 
-	t.Run("should pick one of the numbers", func(t *testing.T) {
+	t.Run("should pick one of the number args", func(t *testing.T) {
 		a := CustomOneofInt1{}
 		err := FakeData(&a)
 		if err != nil {
@@ -1372,17 +1406,17 @@ func TestOneOfTag(t *testing.T) {
 			t.Errorf("expected error, but got no error")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := ErrNotEnoughTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
 	})
 
 	type CustomOneofWrongInt2 struct {
-		Age int `faker:"oneof:15:18,35"`
+		Age int `faker:"oneof: 15: 18, 35"`
 	}
 
-	t.Run("errors when tag is not used correctly bad args int", func(t *testing.T) {
+	t.Run("errors when tag is not used correctly int invalid argument separator", func(t *testing.T) {
 		a := CustomOneofWrongInt2{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1396,10 +1430,10 @@ func TestOneOfTag(t *testing.T) {
 	})
 
 	type CustomOneofWrongInt3 struct {
-		Age int `faker:"oneof:15:18:oops"`
+		Age int `faker:"oneof: 15, 18, oops"`
 	}
 
-	t.Run("errors when tag is not used correctly mixed args int", func(t *testing.T) {
+	t.Run("errors when tag is not used correctly int invalid argument type", func(t *testing.T) {
 		a := CustomOneofWrongInt3{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1407,6 +1441,40 @@ func TestOneOfTag(t *testing.T) {
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongInt4 struct {
+		Age int `faker:"oneof: 15"`
+	}
+
+	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
+		a := CustomWrongInt4{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongInt5 struct {
+		Age int `faker:"oneof: 15,,16,17"`
+	}
+
+	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
+		a := CustomWrongInt5{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
