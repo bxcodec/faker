@@ -88,6 +88,7 @@ const (
 	FirstNameFemaleTag    = "first_name_female"
 	LastNameTag           = "last_name"
 	NAME                  = "name"
+	GENDER                = "gender"
 	UnixTimeTag           = "unix_time"
 	DATE                  = "date"
 	TIME                  = "time"
@@ -140,6 +141,7 @@ var defaultTag = map[string]string{
 	FirstNameFemaleTag:    FirstNameFemaleTag,
 	LastNameTag:           LastNameTag,
 	NAME:                  NAME,
+	GENDER:                GENDER,
 	UnixTimeTag:           UnixTimeTag,
 	DATE:                  DATE,
 	TIME:                  TimeFormat,
@@ -188,6 +190,7 @@ var mapperTag = map[string]TaggedFunction{
 	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
 	LastNameTag:           GetPerson().LastName,
 	NAME:                  GetPerson().Name,
+	GENDER:                GetPerson().Gender,
 	UnixTimeTag:           GetDateTimer().UnixTime,
 	DATE:                  GetDateTimer().Date,
 	TIME:                  GetDateTimer().Time,
@@ -471,12 +474,23 @@ func getValue(a interface{}) (reflect.Value, error) {
 	case reflect.String:
 		res := randomString(randomStringLen, &lang)
 		return reflect.ValueOf(res), nil
-	case reflect.Array, reflect.Slice:
+	case reflect.Slice:
 		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeSlice(t, len, len)
+		for i := 0; i < v.Len(); i++ {
+			val, err := getValue(v.Index(i).Interface())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			val = val.Convert(v.Index(i).Type())
+			v.Index(i).Set(val)
+		}
+		return v, nil
+	case reflect.Array:
+		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
 			val, err := getValue(v.Index(i).Interface())
 			if err != nil {

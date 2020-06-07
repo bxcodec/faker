@@ -29,6 +29,8 @@ var (
 
 type SomeInt32 int32
 
+type TArray [16]byte
+
 type SomeStruct struct {
 	Inta    int
 	Int8    int8
@@ -65,6 +67,7 @@ type SomeStruct struct {
 	SFloat64           []float64
 	SBool              []bool
 	Struct             AStruct
+	TArray             TArray
 	Time               time.Time
 	Stime              []time.Time
 	Currency           string  `faker:"currency"`
