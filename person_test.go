@@ -158,3 +158,10 @@ func TestFakeGender(t *testing.T) {
 		t.Error("Expected value from variable genders in function Gender")
 	}
 }
+
+func TestFakeGenderPublicFunction(t *testing.T) {
+	gender := Gender()
+	if !slice.Contains(genders, gender) {
+		t.Error("Expected value from variable genders in function Gender")
+	}
+}
