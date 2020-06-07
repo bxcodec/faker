@@ -113,6 +113,7 @@ const (
 	Equals                = "="
 	comma                 = ","
 	colon                 = ":"
+	period                = "."
 	ONEOF                 = "oneof"
 )
 
