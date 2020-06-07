@@ -806,9 +806,6 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	}
 	if isOneOfTag {
 		items := strings.Split(tag, colon)
-		if len(items) <= 1 {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-		}
 		argsList := items[1:]
 		if len(argsList) != 1 {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
