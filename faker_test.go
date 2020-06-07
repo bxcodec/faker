@@ -1277,7 +1277,7 @@ func TestOneOfTag(t *testing.T) {
 	})
 
 	type CustomMulti struct {
-		PaymentType string `faker:"oneof:cc:check:paypal:bank account"`
+		PaymentType string `faker:"oneof: cc: check: paypal: bank account"`
 	}
 	t.Run("creates only one of the desired values from many", func(t *testing.T) {
 		a := CustomMulti{}
@@ -1337,7 +1337,7 @@ func TestOneOfTag(t *testing.T) {
 	})
 
 	type CustomOneofInt1 struct {
-		Age int `faker:"oneof:16:18:21"`
+		Age int `faker:"oneof: 16: 18: 21"`
 	}
 
 	t.Run("should pick one of the numbers", func(t *testing.T) {

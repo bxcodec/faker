@@ -794,7 +794,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		if len(toRet) <= 1 || strings.Contains(tag, comma) {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
-		return toRet, nil
+		return strings.TrimSpace(toRet), nil
 	}
 	res := randomString(strlen, strlng)
 	return res, nil
@@ -836,7 +836,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		}
 		var numberValues []int
 		for _, i := range values {
-			j, err := strconv.Atoi(i)
+			j, err := strconv.Atoi(strings.TrimSpace(i))
 			if err != nil {
 				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 			}

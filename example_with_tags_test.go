@@ -50,8 +50,8 @@ type SomeStructWithTags struct {
 	UUIDHypenated      string  `faker:"uuid_hyphenated"`
 	UUID               string  `faker:"uuid_digit"`
 	Skip               string  `faker:"-"`
-	PaymentMethod      string  `faker:"oneof:cc:paypal:check:money order"`
-	AccountID          int     `faker:"oneof:15,27,61"`
+	PaymentMethod      string  `faker:"oneof:cc:paypal:check:money order"` // support for oneof tag
+	AccountID          int     `faker:"oneof:15,27,61"`                    // support for oneof tag
 }
 
 func Example_withTags() {
