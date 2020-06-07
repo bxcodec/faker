@@ -470,12 +470,23 @@ func getValue(a interface{}) (reflect.Value, error) {
 	case reflect.String:
 		res := randomString(randomStringLen, &lang)
 		return reflect.ValueOf(res), nil
-	case reflect.Array, reflect.Slice:
+	case reflect.Slice:
 		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeSlice(t, len, len)
+		for i := 0; i < v.Len(); i++ {
+			val, err := getValue(v.Index(i).Interface())
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			val = val.Convert(v.Index(i).Type())
+			v.Index(i).Set(val)
+		}
+		return v, nil
+	case reflect.Array:
+		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
 			val, err := getValue(v.Index(i).Interface())
 			if err != nil {
@@ -625,6 +636,21 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		return userDefinedNumber(v, tag)
 	case reflect.Slice, reflect.Array:
+		/**
+		 * check for added Provider tag first before
+		 * defaulting to userDefinedArray()
+		 * this way the user at least has the
+		 * option of a custom tag working
+		 */
+		_, tagExists := mapperTag[tag]
+		if tagExists {
+			res, err := mapperTag[tag](v)
+			if err != nil {
+				return err
+			}
+			v.Set(reflect.ValueOf(res))
+			return nil
+		}
 		return userDefinedArray(v, tag)
 	case reflect.Map:
 		return userDefinedMap(v, tag)
