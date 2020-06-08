@@ -153,7 +153,7 @@ func (s SomeStruct) String() string {
 	SFloat64:%v
 	SBool: %v
 	Struct: %v
-	Time: %v 
+	Time: %v
 	Stime: %v
 	Currency: %v
 	Amount: %v
@@ -162,7 +162,7 @@ func (s SomeStruct) String() string {
 	HyphenatedID: %v
 
 	MapStringString: %v
-	MapStringStruct: %v 
+	MapStringStruct: %v
 	MapStringStructPointer: %v
 	}`, s.Inta, s.Int8, s.Int16, s.Int32,
 		s.Int64, s.Float32, s.Float64, s.UInta,
@@ -911,11 +911,6 @@ type School struct {
 	Location string
 }
 
-type CustomTypeOverSlice []byte
-type CustomThatUsesSlice struct {
-	UUID CustomTypeOverSlice `faker:"custom-type-over-slice"`
-}
-
 func TestExtend(t *testing.T) {
 	// This test is to ensure that faker can be extended new providers
 
@@ -969,13 +964,15 @@ func TestExtend(t *testing.T) {
 		}
 	})
 
-	/**
-	 * Before updates, this test would fail
-	 */
+	type CustomTypeOverSlice []byte
+	type CustomThatUsesSlice struct {
+		UUID CustomTypeOverSlice `faker:"custom-type-over-slice"`
+	}
+
 	t.Run("test-with-custom-slice-type", func(t *testing.T) {
 		a := CustomThatUsesSlice{}
 		err := AddProvider("custom-type-over-slice", func(v reflect.Value) (interface{}, error) {
-			return []byte{0, 1, 2, 3, 4}, nil
+			return CustomTypeOverSlice{0, 1, 2, 3, 4}, nil
 		})
 
 		if err != nil {
@@ -991,6 +988,40 @@ func TestExtend(t *testing.T) {
 		if reflect.DeepEqual(a.UUID, []byte{0, 1, 2, 3, 4}) {
 			t.Error("UUID should equal test value")
 		}
+	})
+
+	type MyInt int
+	type Sample struct {
+		Value []MyInt `faker:"myint"`
+	}
+
+	t.Run("test with type alias for int", func(t *testing.T) {
+		a := Sample{}
+		sliceLen := 10
+		err := AddProvider("myint", func(v reflect.Value) (interface{}, error) {
+			s1 := rand.NewSource(time.Now().UnixNano())
+			r1 := rand.New(s1)
+			r := make([]MyInt, sliceLen)
+			for i := range r {
+				r[i] = MyInt(r1.Intn(100))
+			}
+			return r, nil
+		})
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		err = FakeData(&a)
+
+		if err != nil {
+			t.Error("Expected Not Error, But Got: ", err)
+		}
+
+		if len(a.Value) != sliceLen {
+			t.Errorf("Expected a slice of length %v but got %v", sliceLen, len(a.Value))
+		}
+
 	})
 
 }
@@ -1221,6 +1252,234 @@ func TestUniqueFailure(t *testing.T) {
 	if !hasError {
 		t.Errorf("expected error, but got nil")
 	}
+}
+
+func TestOneOfTag(t *testing.T) {
+
+	type CustomOneString struct {
+		PaymentType string `faker:"oneof: credit card, paypal"`
+	}
+
+	t.Run("creates one of the desired string values", func(t *testing.T) {
+		a := CustomOneString{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.PaymentType == "credit card"
+		two := a.PaymentType == "paypal"
+
+		if !one && !two {
+			t.Errorf(
+				"expected either %v or %v but got %v",
+				"credit card",
+				"paypal",
+				a.PaymentType,
+			)
+		}
+	})
+
+	type CustomMultiString struct {
+		PaymentType string `faker:"oneof: cc, check, paypal, bank account"`
+	}
+	t.Run("creates only one of the desired string values from many", func(t *testing.T) {
+		a := CustomMultiString{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.PaymentType == "cc"
+		two := a.PaymentType == "paypal"
+		three := a.PaymentType == "check"
+		four := a.PaymentType == "bank account"
+
+		if !one && !two && !three && !four {
+			t.Errorf(
+				"expected either %v or %v or %v or %v but got %v",
+				"cc",
+				"paypal",
+				"check",
+				"bank account",
+				a.PaymentType,
+			)
+		}
+	})
+
+	type CustomOneofWrongString struct {
+		PaymentType string `faker:"oneof:"`
+	}
+
+	t.Run("errors when tag is not used correctly string no args", func(t *testing.T) {
+		a := CustomOneofWrongString{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofWrongString2 struct {
+		PaymentType string `faker:"oneof: cc: check, bank"`
+	}
+
+	t.Run("errors when tag is not used correctly string invalid argument separator", func(t *testing.T) {
+		a := CustomOneofWrongString2{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongString3 struct {
+		PaymentType string `faker:"oneof: credit card"`
+	}
+
+	t.Run("errors when tag is not used correctly string only one argument", func(t *testing.T) {
+		a := CustomWrongString3{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongString4 struct {
+		PaymentType string `faker:"oneof: ,,,cc, credit card,,"`
+	}
+
+	t.Run("errors when tag is not used correctly string duplicate separator", func(t *testing.T) {
+		a := CustomWrongString4{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofInt1 struct {
+		Age int `faker:"oneof: 16, 18, 21"`
+	}
+
+	t.Run("should pick one of the number args", func(t *testing.T) {
+		a := CustomOneofInt1{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.Age == 16
+		two := a.Age == 18
+		three := a.Age == 21
+		actual := a.Age
+		if !one && !two && !three {
+			t.Errorf(
+				"expected either %v, %v, or %v, but got %v",
+				16, 18, 21, actual,
+			)
+		}
+	})
+
+	type CustomOneofWrongInt struct {
+		Age int `faker:"oneof:"`
+	}
+
+	t.Run("errors when tag is not used correctly no args int", func(t *testing.T) {
+		a := CustomOneofWrongInt{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofWrongInt2 struct {
+		Age int `faker:"oneof: 15: 18, 35"`
+	}
+
+	t.Run("errors when tag is not used correctly int invalid argument separator", func(t *testing.T) {
+		a := CustomOneofWrongInt2{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofWrongInt3 struct {
+		Age int `faker:"oneof: 15, 18, oops"`
+	}
+
+	t.Run("errors when tag is not used correctly int invalid argument type", func(t *testing.T) {
+		a := CustomOneofWrongInt3{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongInt4 struct {
+		Age int `faker:"oneof: 15"`
+	}
+
+	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
+		a := CustomWrongInt4{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongInt5 struct {
+		Age int `faker:"oneof: 15,,16,17"`
+	}
+
+	t.Run("errors when tag is not used correctly int only one argument", func(t *testing.T) {
+		a := CustomWrongInt5{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
 }
 
 // getStringLen for language independent string length

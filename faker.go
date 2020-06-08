@@ -113,6 +113,9 @@ const (
 	BoundaryEnd           = "boundary_end"
 	Equals                = "="
 	comma                 = ","
+	colon                 = ":"
+	ONEOF                 = "oneof"
+	// period                = "."
 )
 
 var defaultTag = map[string]string{
@@ -233,6 +236,9 @@ var (
 	ErrWrongFormattedTag       = "Tag \"%s\" is not written properly"
 	ErrUnknownType             = "Unknown Type"
 	ErrNotSupportedTypeForTag  = "Type is not supported by tag."
+	ErrUnsupportedTagArguments = "Tag arguments are not compatible with field type."
+	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
+	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 )
 
 // Compiled regexp
@@ -636,21 +642,6 @@ func setDataWithTag(v reflect.Value, tag string) error {
 		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		return userDefinedNumber(v, tag)
 	case reflect.Slice, reflect.Array:
-		/**
-		 * check for added Provider tag first before
-		 * defaulting to userDefinedArray()
-		 * this way the user at least has the
-		 * option of a custom tag working
-		 */
-		_, tagExists := mapperTag[tag]
-		if tagExists {
-			res, err := mapperTag[tag](v)
-			if err != nil {
-				return err
-			}
-			v.Set(reflect.ValueOf(res))
-			return nil
-		}
 		return userDefinedArray(v, tag)
 	case reflect.Map:
 		return userDefinedMap(v, tag)
@@ -720,6 +711,15 @@ func getValueWithTag(t reflect.Type, tag string) (interface{}, error) {
 }
 
 func userDefinedArray(v reflect.Value, tag string) error {
+	_, tagExists := mapperTag[tag]
+	if tagExists {
+		res, err := mapperTag[tag](v)
+		if err != nil {
+			return err
+		}
+		v.Set(reflect.ValueOf(res))
+		return nil
+	}
 	len := randomSliceAndMapSize()
 	if shouldSetNil && len == 0 {
 		v.Set(reflect.Zero(v.Type()))
@@ -787,7 +787,8 @@ func extractStringFromTag(tag string) (interface{}, error) {
 	var err error
 	strlen := randomStringLen
 	strlng := &lang
-	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) {
+	isOneOfTag := strings.Contains(tag, ONEOF)
+	if !strings.Contains(tag, Length) && !strings.Contains(tag, Language) && !isOneOfTag {
 		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
 	if strings.Contains(tag, Length) {
@@ -802,6 +803,22 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		if err != nil {
 			return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 		}
+	}
+	if isOneOfTag {
+		items := strings.Split(tag, colon)
+		argsList := items[1:]
+		if len(argsList) != 1 {
+			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		}
+		if strings.Contains(argsList[0], ",,") {
+			return nil, fmt.Errorf(ErrDuplicateSeparator)
+		}
+		args := strings.Split(argsList[0], comma)
+		if len(args) < 2 {
+			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		}
+		toRet := args[rand.Intn(len(args))]
+		return strings.TrimSpace(toRet), nil
 	}
 	res := randomString(strlen, strlng)
 	return res, nil
@@ -826,9 +843,42 @@ func extractLangFromTag(tag string) (*langRuneBoundary, error) {
 }
 
 func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
-	if !strings.Contains(tag, BoundaryStart) || !strings.Contains(tag, BoundaryEnd) {
+	hasOneOf := strings.Contains(tag, ONEOF)
+	hasBoundaryStart := strings.Contains(tag, BoundaryStart)
+	hasBoundaryEnd := strings.Contains(tag, BoundaryEnd)
+	usingOneOfTag := hasOneOf && (!hasBoundaryStart && !hasBoundaryEnd)
+	usingBoundariesTags := !hasOneOf && (hasBoundaryStart && hasBoundaryEnd)
+	if !usingOneOfTag && !usingBoundariesTags {
 		return nil, fmt.Errorf(ErrTagNotSupported, tag)
 	}
+
+	// handling oneof tag
+	if usingOneOfTag {
+		argsList := strings.Split(tag, colon)[1:]
+		if len(argsList) != 1 {
+			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		}
+		if strings.Contains(argsList[0], ",,") {
+			return nil, fmt.Errorf(ErrDuplicateSeparator)
+		}
+		args := strings.Split(argsList[0], comma)
+		if len(args) < 2 {
+			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		}
+		var numberValues []int
+		for _, i := range args {
+			k := strings.TrimSpace(i)
+			j, err := strconv.Atoi(k)
+			if err != nil {
+				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			}
+			numberValues = append(numberValues, j)
+		}
+		toRet := numberValues[rand.Intn(len(numberValues))]
+		return toRet, nil
+	}
+
+	// handling boundary tags
 	valuesStr := strings.SplitN(tag, comma, -1)
 	if len(valuesStr) != 2 {
 		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)

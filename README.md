@@ -12,7 +12,7 @@ Faker will generate you a fake data based on your Struct.
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
 [![GoDoc](https://godoc.org/github.com/bxcodec/faker?status.svg)](https://godoc.org/github.com/bxcodec/faker)
 [![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/bxcodec/faker/v3?tab=doc)
- 
+
 ## Index
 
 * [Support](#support)
@@ -38,8 +38,8 @@ go get -u github.com/bxcodec/faker/v3
 # Example
 
 ---
- 
- - Using Struct's tag: 
+
+ - Using Struct's tag:
    - [basic tags: example_with_tags_test.go](/example_with_tags_test.go)
    - [length and bounds: example_with_tags_lenbounds_test.go](/example_with_tags_lenbounds_test.go)
    - [language: example_with_tags_lang_test.go](/example_with_tags_lang_test.go)
@@ -47,7 +47,7 @@ go get -u github.com/bxcodec/faker/v3
  - Custom Struct's tag (define your own faker data): [example_custom_faker_test.go](/example_custom_faker_test.go)
  - Without struct's tag: [example_without_tag_test.go](/example_without_tag_test.go)
  - Single Fake Data Function: [example_single_fake_data_test.go](/example_single_fake_data_test.go)
- 
+
 ## DEMO
 
 ---
@@ -94,6 +94,7 @@ Unfortunately this library has some limitation
 * It does not support the `map[interface{}]interface{}`, `map[any_type]interface{}` & `map[interface{}]any_type` data types. Once again, we cannot generate values for an unknown data type.
 * Custom types are not fully supported. However some custom types are already supported: we are still investigating how to do this the correct way. For now, if you use `faker`, it's safer not to use any custom types in order to avoid panics.
 * Some extra custom types can be supported IF AND ONLY IF extended with [AddProvider()](https://github.com/bxcodec/faker/blob/9169c33ae9926e5b8f8732909790ee20b10b736a/faker.go#L320) please see [example](example_custom_faker_test.go#L46)
+* The `oneof` tag currently only supports `string` & `int`. Further support is coming soon. See [example](example_with_tags_test.go#L53) for usage.
 
 ## Contribution
 
