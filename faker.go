@@ -115,7 +115,7 @@ const (
 	comma                 = ","
 	colon                 = ":"
 	ONEOF                 = "oneof"
-	// period                = "."
+	//period                = "."
 )
 
 var defaultTag = map[string]string{
@@ -239,6 +239,7 @@ var (
 	ErrUnsupportedTagArguments = "Tag arguments are not compatible with field type."
 	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
+	ErrUnsupportedNumberType   = "Unsupported Number type."
 )
 
 // Compiled regexp
@@ -865,17 +866,57 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		if len(args) < 2 {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}
-		var numberValues []int
-		for _, i := range args {
-			k := strings.TrimSpace(i)
-			j, err := strconv.Atoi(k)
-			if err != nil {
-				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		switch t.Kind() {
+		case reflect.Float32:
+			{
+				bytes := 32
+				var floatValues []float32
+				for _, i := range args {
+					k := strings.TrimSpace(i)
+					j, err := strconv.ParseFloat(k, bytes)
+					if err != nil {
+						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+					}
+					floatValues = append(floatValues, float32(j))
+				}
+				toRet := floatValues[rand.Intn(len(floatValues))]
+				return toRet, nil
 			}
-			numberValues = append(numberValues, j)
+		case reflect.Float64:
+			{
+				bytes := 64
+				var floatValues []float64
+				for _, i := range args {
+					k := strings.TrimSpace(i)
+					j, err := strconv.ParseFloat(k, bytes)
+					if err != nil {
+						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+					}
+					floatValues = append(floatValues, j)
+				}
+				toRet := floatValues[rand.Intn(len(floatValues))]
+				return toRet, nil
+			}
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
+			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			{
+				var numberValues []int
+				for _, i := range args {
+					k := strings.TrimSpace(i)
+					j, err := strconv.Atoi(k)
+					if err != nil {
+						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+					}
+					numberValues = append(numberValues, j)
+				}
+				toRet := numberValues[rand.Intn(len(numberValues))]
+				return toRet, nil
+			}
+		default:
+			{
+				return nil, fmt.Errorf(ErrUnsupportedNumberType)
+			}
 		}
-		toRet := numberValues[rand.Intn(len(numberValues))]
-		return toRet, nil
 	}
 
 	// handling boundary tags
