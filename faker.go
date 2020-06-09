@@ -116,6 +116,7 @@ const (
 	colon                 = ":"
 	ONEOF                 = "oneof"
 	//period                = "."
+	hyphen = "-"
 )
 
 var defaultTag = map[string]string{
@@ -240,6 +241,7 @@ var (
 	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 	ErrUnsupportedNumberType   = "Unsupported Number type."
+	ErrMixedSignedWithUnsigned = "Passed signed int to unsigned type."
 )
 
 // Compiled regexp
@@ -903,6 +905,14 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 				var numberValues []int
 				for _, i := range args {
 					k := strings.TrimSpace(i)
+					switch t.Kind() {
+					case reflect.Uint64, reflect.Uint32, reflect.Uint16, reflect.Uint8, reflect.Uint:
+						{
+							if strings.Contains(k, hyphen) {
+								return nil, fmt.Errorf(ErrMixedSignedWithUnsigned)
+							}
+						}
+					}
 					j, err := strconv.Atoi(k)
 					if err != nil {
 						return nil, fmt.Errorf(ErrUnsupportedTagArguments)

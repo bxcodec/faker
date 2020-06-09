@@ -1710,6 +1710,23 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
+	type CustomTypeNegativeUnsigned struct {
+		Age uint `faker:"oneof: -45, -42"`
+	}
+
+	t.Run("passing a negative int to an unsigned int should cause error", func(t *testing.T) {
+		a := CustomTypeNegativeUnsigned{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrMixedSignedWithUnsigned
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
 }
 
 func TestFakeData3(t *testing.T) {
