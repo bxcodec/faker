@@ -55,9 +55,9 @@ type SomeStructWithTags struct {
 	Price32            float32 `faker:"oneof: 4.95, 9.99, 31997.97"`
 	Price64            float64 `faker:"oneof: 47463.9463525, 993747.95662529, 11131997.978767990"`
 	NumS64             int64   `faker:"oneof: 1, 2"`
-	NumS32             int32   `faker:"oneof: 3, 4"`
-	NumS16             int16   `faker:"oneof: 5, 6"`
-	NumS8              int8    `faker:"oneof: 7, 8"`
+	NumS32             int32   `faker:"oneof: -3, 4"`
+	NumS16             int16   `faker:"oneof: -5, 6"`
+	NumS8              int8    `faker:"oneof: 7, -8"`
 	NumU64             uint64  `faker:"oneof: 9, 10"`
 	NumU32             uint32  `faker:"oneof: 11, 12"`
 	NumU16             uint16  `faker:"oneof: 13, 14"`
@@ -122,9 +122,9 @@ func Example_withTags() {
 			Price32: 4.95,
 			Price64: 993747.95662529
 			NumS64:	1
-			NumS32:	3
+			NumS32:	-3
 			NumS16:	5
-			NumS8:	7
+			NumS8:	-8
 			NumU64:	9
 			NumU32:	11
 			NumU16:	13
