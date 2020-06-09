@@ -52,6 +52,8 @@ type SomeStructWithTags struct {
 	Skip               string  `faker:"-"`
 	PaymentMethod      string  `faker:"oneof: cc, paypal, check, money order"` // oneof will randomly pick one of the comma-separated values supplied in the tag
 	AccountID          int     `faker:"oneof: 15, 27, 61"`                     // use commas to separate the values for now. Future support for other separator characters may be added
+	Price32            float32 `faker:"oneof: 4.95, 9.99, 31997.97"`
+	Price64            float64 `faker:"oneof: 47463.9463525, 993747.95662529, 11131997.978767990"`
 }
 
 func Example_withTags() {
@@ -107,7 +109,9 @@ func Example_withTags() {
 			UUIDHypenated: 8f8e4463-9560-4a38-9b0c-ef24481e4e27,
 			UUID: 90ea6479fd0e4940af741f0a87596b73,
 			PaymentMethod: paypal,
-			AccountID: 61
+			AccountID: 61,
+			Price32: 4.95,
+			Price64: 993747.95662529
 			Skip:
 		}
 	*/
