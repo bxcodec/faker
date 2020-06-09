@@ -1689,6 +1689,27 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
+	type CustomTypeLotsOfInts struct {
+		Age1 int64  `faker:"oneof: 1, 2"`
+		Age2 int32  `faker:"oneof: 3, 5"`
+		Age3 int16  `faker:"oneof: 8, 13"`
+		Age4 int8   `faker:"oneof: 21, 34"`
+		Age5 int    `faker:"oneof: 55, 89"`
+		Age6 uint64 `faker:"oneof: 2, 4"`
+		Age7 uint32 `faker:"oneof: 6, 8"`
+		Age8 uint16 `faker:"oneof: 10, 12"`
+		Age9 uint8  `faker:"oneof: 3, 5"`
+		Age0 uint   `faker:"oneof: 7, 9"`
+	}
+
+	t.Run("Should support all the int types", func(t *testing.T) {
+		a := CustomTypeLotsOfInts{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+	})
+
 }
 
 func TestFakeData3(t *testing.T) {

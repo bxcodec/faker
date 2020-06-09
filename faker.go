@@ -910,7 +910,48 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 					numberValues = append(numberValues, j)
 				}
 				toRet := numberValues[rand.Intn(len(numberValues))]
-				return toRet, nil
+				switch t.Kind() {
+				case reflect.Int64:
+					{
+						return int64(toRet), nil
+					}
+				case reflect.Int32:
+					{
+						return int32(toRet), nil
+					}
+				case reflect.Int16:
+					{
+						return int16(toRet), nil
+					}
+				case reflect.Int8:
+					{
+						return int8(toRet), nil
+					}
+				case reflect.Uint64:
+					{
+						return uint64(toRet), nil
+					}
+				case reflect.Uint32:
+					{
+						return uint32(toRet), nil
+					}
+				case reflect.Uint16:
+					{
+						return uint16(toRet), nil
+					}
+				case reflect.Uint8:
+					{
+						return uint8(toRet), nil
+					}
+				case reflect.Uint:
+					{
+						return uint(toRet), nil
+					}
+				default:
+					{
+						return toRet, nil
+					}
+				}
 			}
 		default:
 			{
