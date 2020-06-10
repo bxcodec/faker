@@ -868,105 +868,101 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}
 		switch t.Kind() {
-		case reflect.Float32:
-			{
-				bytes := 32
-				var floatValues []float32
-				for _, i := range args {
-					k := strings.TrimSpace(i)
-					j, err := strconv.ParseFloat(k, bytes)
-					if err != nil {
-						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-					}
-					floatValues = append(floatValues, float32(j))
-				}
-				toRet := floatValues[rand.Intn(len(floatValues))]
-				return toRet, nil
-			}
 		case reflect.Float64:
 			{
-				bytes := 64
-				var floatValues []float64
-				for _, i := range args {
-					k := strings.TrimSpace(i)
-					j, err := strconv.ParseFloat(k, bytes)
-					if err != nil {
-						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-					}
-					floatValues = append(floatValues, j)
+				toRet, err := extractFloat64FromTagArgs(args)
+				if err != nil {
+					return nil, err
 				}
-				toRet := floatValues[rand.Intn(len(floatValues))]
-				return toRet, nil
+				return toRet.(float64), nil
 			}
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		case reflect.Float32:
 			{
-				var numberValues []int
-				for _, i := range args {
-					k := strings.TrimSpace(i)
-					j, err := strconv.Atoi(k)
-					if err != nil {
-						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-					}
-					numberValues = append(numberValues, j)
+				toRet, err := extractFloat32FromTagArgs(args)
+				if err != nil {
+					return nil, err
 				}
-				toRet := numberValues[rand.Intn(len(numberValues))]
-				switch t.Kind() {
-				case reflect.Int64:
-					{
-						return int64(toRet), nil
-					}
-				case reflect.Int32:
-					{
-						return int32(toRet), nil
-					}
-				case reflect.Int16:
-					{
-						return int16(toRet), nil
-					}
-				case reflect.Int8:
-					{
-						return int8(toRet), nil
-					}
-				default:
-					{
-						return toRet, nil
-					}
-				}
+				return toRet.(float32), nil
 			}
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		case reflect.Int64:
 			{
-				var numberValues []uint
-				for _, i := range args {
-					k := strings.TrimSpace(i)
-					j, err := strconv.ParseUint(k, 10, 0)
-					if err != nil {
-						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-					}
-					numberValues = append(numberValues, uint(j))
+				toRet, err := extractInt64FromTagArgs(args)
+				if err != nil {
+					return nil, err
 				}
-				toRet := numberValues[rand.Intn(len(numberValues))]
-				switch t.Kind() {
-				case reflect.Uint64:
-					{
-						return uint64(toRet), nil
-					}
-				case reflect.Uint32:
-					{
-						return uint32(toRet), nil
-					}
-				case reflect.Uint16:
-					{
-						return uint16(toRet), nil
-					}
-				case reflect.Uint8:
-					{
-						return uint8(toRet), nil
-					}
-				default:
-					{
-						return toRet, nil
-					}
+				return toRet.(int64), nil
+			}
+		case reflect.Int32:
+			{
+				toRet, err := extractInt32FromTagArgs(args)
+				if err != nil {
+					return nil, err
 				}
+				return toRet.(int32), nil
+			}
+		case reflect.Int16:
+			{
+				toRet, err := extractInt16FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int16), nil
+			}
+		case reflect.Int8:
+			{
+				toRet, err := extractInt8FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int8), nil
+			}
+		case reflect.Int:
+			{
+				toRet, err := extractIntFromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int), nil
+			}
+		case reflect.Uint64:
+			{
+				toRet, err := extractUint64FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint64), nil
+			}
+		case reflect.Uint32:
+			{
+				toRet, err := extractUint32FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint32), nil
+			}
+		case reflect.Uint16:
+			{
+				toRet, err := extractUint16FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint16), nil
+			}
+		case reflect.Uint8:
+			{
+				toRet, err := extractUint8FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint8), nil
+			}
+		case reflect.Uint:
+			{
+				toRet, err := extractUintFromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint), nil
 			}
 		default:
 			{
