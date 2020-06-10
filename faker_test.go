@@ -1720,7 +1720,7 @@ func TestOneOfTag(t *testing.T) {
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
-		expected := ErrMixedSignedWithUnsigned
+		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
 		if expected != actual {
 			t.Errorf("expected %v but got %v", expected, actual)

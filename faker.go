@@ -116,7 +116,7 @@ const (
 	colon                 = ":"
 	ONEOF                 = "oneof"
 	//period                = "."
-	hyphen = "-"
+	//hyphen = "-"
 )
 
 var defaultTag = map[string]string{
@@ -241,7 +241,6 @@ var (
 	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
 	ErrUnsupportedNumberType   = "Unsupported Number type."
-	ErrMixedSignedWithUnsigned = "Passed signed int to unsigned type."
 )
 
 // Compiled regexp
@@ -899,20 +898,11 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 				toRet := floatValues[rand.Intn(len(floatValues))]
 				return toRet, nil
 			}
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-			reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 			{
 				var numberValues []int
 				for _, i := range args {
 					k := strings.TrimSpace(i)
-					switch t.Kind() {
-					case reflect.Uint64, reflect.Uint32, reflect.Uint16, reflect.Uint8, reflect.Uint:
-						{
-							if strings.Contains(k, hyphen) {
-								return nil, fmt.Errorf(ErrMixedSignedWithUnsigned)
-							}
-						}
-					}
 					j, err := strconv.Atoi(k)
 					if err != nil {
 						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
@@ -937,6 +927,25 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 					{
 						return int8(toRet), nil
 					}
+				default:
+					{
+						return toRet, nil
+					}
+				}
+			}
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			{
+				var numberValues []uint
+				for _, i := range args {
+					k := strings.TrimSpace(i)
+					j, err := strconv.ParseUint(k, 10, 0)
+					if err != nil {
+						return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+					}
+					numberValues = append(numberValues, uint(j))
+				}
+				toRet := numberValues[rand.Intn(len(numberValues))]
+				switch t.Kind() {
 				case reflect.Uint64:
 					{
 						return uint64(toRet), nil
@@ -952,10 +961,6 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 				case reflect.Uint8:
 					{
 						return uint8(toRet), nil
-					}
-				case reflect.Uint:
-					{
-						return uint(toRet), nil
 					}
 				default:
 					{
