@@ -212,8 +212,8 @@ func TestExtractInt32(t *testing.T) {
 func TestExtractInt16(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-		const f1 int16 = -19474
-		const f2 int16 = 5047
+		const f1 = -19474
+		const f2 = 5047
 		args := []string{
 			fmt.Sprintf("%v", f1),
 			fmt.Sprintf("%v", f2),
@@ -281,8 +281,8 @@ func TestExtractInt16(t *testing.T) {
 func TestExtractInt8(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-		const f1 int8 = -81
-		const f2 int8 = 104
+		const f1 = -81
+		const f2 = 104
 		args := []string{
 			fmt.Sprintf("%v", f1),
 			fmt.Sprintf("%v", f2),
@@ -345,8 +345,8 @@ func TestExtractInt8(t *testing.T) {
 func TestExtractInt(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-		const f1 int = -17575
-		const f2 int = 10467463
+		const f1 = -17575
+		const f2 = 10467463
 		args := []string{
 			fmt.Sprintf("%v", f1),
 			fmt.Sprintf("%v", f2),
@@ -391,11 +391,58 @@ func TestExtractInt(t *testing.T) {
 func TestExtractUint64(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-
+		const f1 = 1658584
+		const f2 = 10467463
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		res, err := extractUint64FromTagArgs(args)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		res, ok := res.(uint64)
+		if !ok {
+			t.Errorf("expected a uint64, but got something else")
+		}
+		one := res == uint64(f1)
+		two := res == uint64(f2)
+		if !one && !two {
+			t.Errorf(
+				"expected %v or %v but got %v",
+				f1,
+				f2,
+				res,
+			)
+		}
 	})
 
-	t.Run("error path", func(t *testing.T) {
+	t.Run("ErrUnsupportedTagArguments", func(t *testing.T) {
+		const f1 = 175757
+		const f2 = 727473474
+		const f3 = "oops"
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+			fmt.Sprintf("%v", f3),
+		}
+		_, err := extractUint64FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+	})
 
+	t.Run("negatives", func(t *testing.T) {
+		const f1 = -1757665
+		const f2 = 727473474
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		_, err := extractUint64FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
 	})
 
 }
@@ -403,11 +450,58 @@ func TestExtractUint64(t *testing.T) {
 func TestExtractUint32(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-
+		const f1 = 1658584
+		const f2 = 10467463
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		res, err := extractUint32FromTagArgs(args)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		res, ok := res.(uint32)
+		if !ok {
+			t.Errorf("expected a uint32, but got something else")
+		}
+		one := res == uint32(f1)
+		two := res == uint32(f2)
+		if !one && !two {
+			t.Errorf(
+				"expected %v or %v but got %v",
+				f1,
+				f2,
+				res,
+			)
+		}
 	})
 
-	t.Run("error path", func(t *testing.T) {
+	t.Run("ErrUnsupportedTagArguments", func(t *testing.T) {
+		const f1 = 175757
+		const f2 = 727473474
+		const f3 = "oops"
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+			fmt.Sprintf("%v", f3),
+		}
+		_, err := extractUint32FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+	})
 
+	t.Run("negatives", func(t *testing.T) {
+		const f1 = -175757
+		const f2 = 727473474
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		_, err := extractUint32FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
 	})
 
 }
@@ -415,11 +509,58 @@ func TestExtractUint32(t *testing.T) {
 func TestExtractUint16(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-
+		const f1 = 16580
+		const f2 = 10467
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		res, err := extractUint16FromTagArgs(args)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		res, ok := res.(uint16)
+		if !ok {
+			t.Errorf("expected a uint16, but got something else")
+		}
+		one := res == uint16(f1)
+		two := res == uint16(f2)
+		if !one && !two {
+			t.Errorf(
+				"expected %v or %v but got %v",
+				f1,
+				f2,
+				res,
+			)
+		}
 	})
 
-	t.Run("error path", func(t *testing.T) {
+	t.Run("ErrUnsupportedTagArguments", func(t *testing.T) {
+		const f1 = 175757
+		const f2 = 727473474
+		const f3 = "oops"
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+			fmt.Sprintf("%v", f3),
+		}
+		_, err := extractUint16FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+	})
 
+	t.Run("negatives", func(t *testing.T) {
+		const f1 = -1757
+		const f2 = 2747
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		_, err := extractUint16FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
 	})
 
 }
@@ -427,11 +568,58 @@ func TestExtractUint16(t *testing.T) {
 func TestExtractUint8(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-
+		const f1 = 254
+		const f2 = 107
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		res, err := extractUint8FromTagArgs(args)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		res, ok := res.(uint8)
+		if !ok {
+			t.Errorf("expected a uint8, but got something else")
+		}
+		one := res == uint8(f1)
+		two := res == uint8(f2)
+		if !one && !two {
+			t.Errorf(
+				"expected %v or %v but got %v",
+				f1,
+				f2,
+				res,
+			)
+		}
 	})
 
-	t.Run("error path", func(t *testing.T) {
+	t.Run("ErrUnsupportedTagArguments", func(t *testing.T) {
+		const f1 = 175
+		const f2 = 227
+		const f3 = "oops"
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+			fmt.Sprintf("%v", f3),
+		}
+		_, err := extractUint8FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+	})
 
+	t.Run("negatives", func(t *testing.T) {
+		const f1 = -175
+		const f2 = 204
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		_, err := extractUint8FromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
 	})
 
 }
@@ -439,11 +627,58 @@ func TestExtractUint8(t *testing.T) {
 func TestExtractUint(t *testing.T) {
 
 	t.Run("happy path", func(t *testing.T) {
-
+		const f1 = 25467565
+		const f2 = 1072562460
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		res, err := extractUintFromTagArgs(args)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		res, ok := res.(uint)
+		if !ok {
+			t.Errorf("expected a uint, but got something else")
+		}
+		one := res == uint(f1)
+		two := res == uint(f2)
+		if !one && !two {
+			t.Errorf(
+				"expected %v or %v but got %v",
+				f1,
+				f2,
+				res,
+			)
+		}
 	})
 
-	t.Run("error path", func(t *testing.T) {
+	t.Run("ErrUnsupportedTagArguments", func(t *testing.T) {
+		const f1 = 175774290
+		const f2 = 2270064663
+		const f3 = "oops"
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+			fmt.Sprintf("%v", f3),
+		}
+		_, err := extractUintFromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+	})
 
+	t.Run("negatives", func(t *testing.T) {
+		const f1 = -1756746346
+		const f2 = 204466272
+		args := []string{
+			fmt.Sprintf("%v", f1),
+			fmt.Sprintf("%v", f2),
+		}
+		_, err := extractUintFromTagArgs(args)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
 	})
 
 }
