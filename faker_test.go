@@ -1323,6 +1323,23 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
+	type CustomOneofWrongString1 struct {
+		PaymentType string `faker:"oneof"`
+	}
+
+	t.Run("errors when tag is not used correctly string no args or even colon separator", func(t *testing.T) {
+		a := CustomOneofWrongString1{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
 	type CustomOneofWrongString2 struct {
 		PaymentType string `faker:"oneof: cc: check, bank"`
 	}
@@ -1743,6 +1760,10 @@ func TestFakeData3(t *testing.T) {
 			t.Errorf("expected %v to contain %v & %v", actual, expected1, expected2)
 		}
 	})
+}
+
+func TestGetValueWithTag(t *testing.T) {
+
 }
 
 // getStringLen for language independent string length
