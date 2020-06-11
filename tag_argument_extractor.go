@@ -42,7 +42,7 @@ func extractInt64FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []int64
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseInt(k, 0, bytes)
+		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -57,7 +57,7 @@ func extractInt32FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []int32
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseInt(k, 0, bytes)
+		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -72,7 +72,7 @@ func extractInt16FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []int16
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseInt(k, 0, bytes)
+		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -87,7 +87,7 @@ func extractInt8FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []int8
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseInt(k, 0, bytes)
+		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -102,7 +102,7 @@ func extractIntFromTagArgs(args []string) (interface{}, error) {
 	var floatValues []int
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseInt(k, 0, bytes)
+		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -117,7 +117,7 @@ func extractUint64FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []uint64
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseUint(k, 0, bytes)
+		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -132,7 +132,7 @@ func extractUint32FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []uint32
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseUint(k, 0, bytes)
+		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -147,7 +147,7 @@ func extractUint16FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []uint16
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseUint(k, 0, bytes)
+		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -162,7 +162,7 @@ func extractUint8FromTagArgs(args []string) (interface{}, error) {
 	var floatValues []uint8
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseUint(k, 0, bytes)
+		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
@@ -177,7 +177,7 @@ func extractUintFromTagArgs(args []string) (interface{}, error) {
 	var floatValues []uint
 	for _, i := range args {
 		k := strings.TrimSpace(i)
-		j, err := strconv.ParseUint(k, 0, bytes)
+		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
 			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
 		}
