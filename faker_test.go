@@ -1658,7 +1658,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age int64 `faker:"oneof: 1_000_000, oops"`
 	}
 
-	t.Run("should error for int64", func(t *testing.T) {
+	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt64Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1675,7 +1675,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age int32 `faker:"oneof: 1_000_000, oops"`
 	}
 
-	t.Run("should error for int32", func(t *testing.T) {
+	t.Run("should error for int32 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt32Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1692,7 +1692,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age int16 `faker:"oneof: 1_000, oops"`
 	}
 
-	t.Run("should error for int16", func(t *testing.T) {
+	t.Run("should error for int16 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt16Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1709,7 +1709,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age int8 `faker:"oneof: 250, oops"`
 	}
 
-	t.Run("should error for int8", func(t *testing.T) {
+	t.Run("should error for int8 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt8Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1726,7 +1726,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age uint64 `faker:"oneof: 250_000_000, oops"`
 	}
 
-	t.Run("should error for uint64", func(t *testing.T) {
+	t.Run("should error for uint64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint64Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1743,7 +1743,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age uint32 `faker:"oneof: 2_000_000, oops"`
 	}
 
-	t.Run("should error for uint32", func(t *testing.T) {
+	t.Run("should error for uint32 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint32Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1760,7 +1760,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age uint16 `faker:"oneof: 2_000, oops"`
 	}
 
-	t.Run("should error for uint16", func(t *testing.T) {
+	t.Run("should error for uint16 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint16Wrong{}
 		err := FakeData(&a)
 		if err == nil {
@@ -1777,7 +1777,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		Age uint8 `faker:"oneof: 400, oops"`
 	}
 
-	t.Run("should error for uint8", func(t *testing.T) {
+	t.Run("should error for uint8 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeUint8Wrong{}
 		err := FakeData(&a)
 		if err == nil {
