@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math/rand"
 	"reflect"
+	"strings"
 	"testing"
 	"time"
 	"unicode/utf8"
@@ -1254,7 +1255,7 @@ func TestUniqueFailure(t *testing.T) {
 	}
 }
 
-func TestOneOfTag(t *testing.T) {
+func TestOneOfTag__GoodInputs(t *testing.T) {
 
 	type CustomOneString struct {
 		PaymentType string `faker:"oneof: credit card, paypal"`
@@ -1305,6 +1306,265 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
+	type CustomOneofInt1 struct {
+		Age int `faker:"oneof: 16, 18, 21"`
+	}
+
+	t.Run("should pick one of the number args", func(t *testing.T) {
+		a := CustomOneofInt1{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error, but got %v", err)
+		}
+		one := a.Age == 16
+		two := a.Age == 18
+		three := a.Age == 21
+		actual := a.Age
+		if !one && !two && !three {
+			t.Errorf(
+				"expected either %v, %v, or %v, but got %v",
+				16, 18, 21, actual,
+			)
+		}
+	})
+
+	type CustomFloat1 struct {
+		Price float32 `faker:"oneof: 3.14, 15.92"`
+	}
+
+	t.Run("correctly picks one of the float32s", func(t *testing.T) {
+		a := CustomFloat1{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Error("expected no error but got ", err)
+		}
+		one := a.Price == 3.14
+		two := a.Price == 15.92
+
+		if !one && !two {
+			t.Errorf("expected either %v or %v but got %v", 3.14, 15.92, a.Price)
+		}
+	})
+
+	type CustomFloat6 struct {
+		Price float64 `faker:"oneof: 34566872.57446732, 969525372.57563314"`
+	}
+
+	t.Run("correctly picks one of the float64s", func(t *testing.T) {
+		a := CustomFloat6{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Error("expected no error but got ", err)
+		}
+		const first = 34566872.57446732
+		const second = 969525372.57563314
+		one := a.Price == first
+		two := a.Price == second
+
+		if !one && !two {
+			t.Errorf("expected either %v or %v but got %v", first, second, a.Price)
+		}
+	})
+
+	type CustomTypeLotsOfInts struct {
+		Age1 int64  `faker:"oneof: 1, 2"`
+		Age2 int32  `faker:"oneof: 3, 5"`
+		Age3 int16  `faker:"oneof: 8, 13"`
+		Age4 int8   `faker:"oneof: 21, 34"`
+		Age5 int    `faker:"oneof: 55, 89"`
+		Age6 uint64 `faker:"oneof: 2, 4"`
+		Age7 uint32 `faker:"oneof: 6, 8"`
+		Age8 uint16 `faker:"oneof: 10, 12"`
+		Age9 uint8  `faker:"oneof: 3, 5"`
+		Age0 uint   `faker:"oneof: 7, 9"`
+	}
+
+	t.Run("Should support all the int types", func(t *testing.T) {
+		a := CustomTypeLotsOfInts{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+	})
+
+}
+
+func TestOneOfTag__BadInputsForFloats(t *testing.T) {
+
+	type CustomWrongFloat1 struct {
+		Price float32 `faker:"oneof:"`
+	}
+
+	t.Run("errors when tag is not used correctly no args float32", func(t *testing.T) {
+		a := CustomWrongFloat1{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat2 struct {
+		Price float32 `faker:"oneof: 15.5: 18.9, 35.4747"`
+	}
+
+	t.Run("errors when tag is not used correctly float32 invalid argument separator", func(t *testing.T) {
+		a := CustomWrongFloat2{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat3 struct {
+		Price float32 `faker:"oneof: 1648.4564673, 894572.997376, oops"`
+	}
+
+	t.Run("errors when tag is not used correctly float32 invalid argument type", func(t *testing.T) {
+		a := CustomWrongFloat3{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat4 struct {
+		Price float32 `faker:"oneof: 1848205.48483727"`
+	}
+
+	t.Run("errors when tag is not used correctly float32 only one argument", func(t *testing.T) {
+		a := CustomWrongFloat4{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat5 struct {
+		Price float32 `faker:"oneof: 15,,16,17"`
+	}
+
+	t.Run("errors when tag is not used correctly float32 only one argument", func(t *testing.T) {
+		a := CustomWrongFloat5{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat7 struct {
+		Price float64 `faker:"oneof:"`
+	}
+
+	t.Run("errors when tag is not used correctly no args float64", func(t *testing.T) {
+		a := CustomWrongFloat7{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat8 struct {
+		Price float64 `faker:"oneof: 157285.842725: 184028.474729, 3574626.4747"`
+	}
+
+	t.Run("errors when tag is not used correctly float64 invalid argument separator", func(t *testing.T) {
+		a := CustomWrongFloat8{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat9 struct {
+		Price float64 `faker:"oneof: 1648.4564673, 894572.997376, oops"`
+	}
+
+	t.Run("errors when tag is not used correctly float64 invalid argument type", func(t *testing.T) {
+		a := CustomWrongFloat9{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat10 struct {
+		Price float64 `faker:"oneof: 1848205.48483727"`
+	}
+
+	t.Run("errors when tag is not used correctly float64 only one argument", func(t *testing.T) {
+		a := CustomWrongFloat10{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomWrongFloat11 struct {
+		Price float64 `faker:"oneof: 15,,16,17"`
+	}
+
+	t.Run("errors when tag is not used correctly float64 only one argument", func(t *testing.T) {
+		a := CustomWrongFloat11{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Fatal("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrDuplicateSeparator
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+}
+
+func TestOneOfTag__BadInputsForStrings(t *testing.T) {
+
 	type CustomOneofWrongString struct {
 		PaymentType string `faker:"oneof:"`
 	}
@@ -1317,6 +1577,23 @@ func TestOneOfTag(t *testing.T) {
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
+		if actual != expected {
+			t.Errorf("expected %v, but got %v", expected, actual)
+		}
+	})
+
+	type CustomOneofWrongString1 struct {
+		PaymentType string `faker:"oneof"`
+	}
+
+	t.Run("errors when tag is not used correctly string no args or even colon separator", func(t *testing.T) {
+		a := CustomOneofWrongString1{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error, but got no error")
+		}
+		actual := err.Error()
+		expected := ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v, but got %v", expected, actual)
 		}
@@ -1373,25 +1650,143 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
-	type CustomOneofInt1 struct {
-		Age int `faker:"oneof: 16, 18, 21"`
+}
+
+func TestOneOfTag__BadInputsForInts(t *testing.T) {
+
+	type CustomTypeInt64Wrong struct {
+		Age int64 `faker:"oneof: 1_000_000, oops"`
 	}
 
-	t.Run("should pick one of the number args", func(t *testing.T) {
-		a := CustomOneofInt1{}
+	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeInt64Wrong{}
 		err := FakeData(&a)
-		if err != nil {
-			t.Errorf("expected no error, but got %v", err)
+		if err == nil {
+			t.Errorf("expected error but got nil")
 		}
-		one := a.Age == 16
-		two := a.Age == 18
-		three := a.Age == 21
-		actual := a.Age
-		if !one && !two && !three {
-			t.Errorf(
-				"expected either %v, %v, or %v, but got %v",
-				16, 18, 21, actual,
-			)
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeInt32Wrong struct {
+		Age int32 `faker:"oneof: 1_000_000, oops"`
+	}
+
+	t.Run("should error for int32 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeInt32Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeInt16Wrong struct {
+		Age int16 `faker:"oneof: 1_000, oops"`
+	}
+
+	t.Run("should error for int16 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeInt16Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeInt8Wrong struct {
+		Age int8 `faker:"oneof: 250, oops"`
+	}
+
+	t.Run("should error for int8 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeInt8Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeUint64Wrong struct {
+		Age uint64 `faker:"oneof: 250_000_000, oops"`
+	}
+
+	t.Run("should error for uint64 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeUint64Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeUint32Wrong struct {
+		Age uint32 `faker:"oneof: 2_000_000, oops"`
+	}
+
+	t.Run("should error for uint32 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeUint32Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeUint16Wrong struct {
+		Age uint16 `faker:"oneof: 2_000, oops"`
+	}
+
+	t.Run("should error for uint16 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeUint16Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+	type CustomTypeUint8Wrong struct {
+		Age uint8 `faker:"oneof: 400, oops"`
+	}
+
+	t.Run("should error for uint8 with bad tag arguments", func(t *testing.T) {
+		a := CustomTypeUint8Wrong{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
 		}
 	})
 
@@ -1480,6 +1875,39 @@ func TestOneOfTag(t *testing.T) {
 		}
 	})
 
+	type CustomTypeNegativeUnsigned struct {
+		Age uint `faker:"oneof: -45, -42"`
+	}
+
+	t.Run("passing a negative int to an unsigned int should cause error", func(t *testing.T) {
+		a := CustomTypeNegativeUnsigned{}
+		err := FakeData(&a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		expected := ErrUnsupportedTagArguments
+		actual := err.Error()
+		if expected != actual {
+			t.Errorf("expected %v but got %v", expected, actual)
+		}
+	})
+
+}
+
+func TestFakeData3(t *testing.T) {
+	t.Run("test nil pointer", func(t *testing.T) {
+		var a *int
+		err := FakeData(a)
+		if err == nil {
+			t.Errorf("expected error but got nil")
+		}
+		actual := err.Error()
+		expected1 := "Use sample:=new"
+		expected2 := "faker.FakeData(sample) instead"
+		if !strings.Contains(actual, expected1) && !strings.Contains(actual, expected2) {
+			t.Errorf("expected %v to contain %v & %v", actual, expected1, expected2)
+		}
+	})
 }
 
 // getStringLen for language independent string length

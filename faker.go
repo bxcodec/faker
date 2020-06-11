@@ -115,7 +115,8 @@ const (
 	comma                 = ","
 	colon                 = ":"
 	ONEOF                 = "oneof"
-	// period                = "."
+	//period                = "."
+	//hyphen = "-"
 )
 
 var defaultTag = map[string]string{
@@ -239,6 +240,7 @@ var (
 	ErrUnsupportedTagArguments = "Tag arguments are not compatible with field type."
 	ErrDuplicateSeparator      = "Duplicate separator for tag arguments."
 	ErrNotEnoughTagArguments   = "Not enough arguments for tag."
+	ErrUnsupportedNumberType   = "Unsupported Number type."
 )
 
 // Compiled regexp
@@ -865,17 +867,108 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		if len(args) < 2 {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}
-		var numberValues []int
-		for _, i := range args {
-			k := strings.TrimSpace(i)
-			j, err := strconv.Atoi(k)
-			if err != nil {
-				return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+		switch t.Kind() {
+		case reflect.Float64:
+			{
+				toRet, err := extractFloat64FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(float64), nil
 			}
-			numberValues = append(numberValues, j)
+		case reflect.Float32:
+			{
+				toRet, err := extractFloat32FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(float32), nil
+			}
+		case reflect.Int64:
+			{
+				toRet, err := extractInt64FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int64), nil
+			}
+		case reflect.Int32:
+			{
+				toRet, err := extractInt32FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int32), nil
+			}
+		case reflect.Int16:
+			{
+				toRet, err := extractInt16FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int16), nil
+			}
+		case reflect.Int8:
+			{
+				toRet, err := extractInt8FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int8), nil
+			}
+		case reflect.Int:
+			{
+				toRet, err := extractIntFromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(int), nil
+			}
+		case reflect.Uint64:
+			{
+				toRet, err := extractUint64FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint64), nil
+			}
+		case reflect.Uint32:
+			{
+				toRet, err := extractUint32FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint32), nil
+			}
+		case reflect.Uint16:
+			{
+				toRet, err := extractUint16FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint16), nil
+			}
+		case reflect.Uint8:
+			{
+				toRet, err := extractUint8FromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint8), nil
+			}
+		case reflect.Uint:
+			{
+				toRet, err := extractUintFromTagArgs(args)
+				if err != nil {
+					return nil, err
+				}
+				return toRet.(uint), nil
+			}
+		default:
+			{
+				return nil, fmt.Errorf(ErrUnsupportedNumberType)
+			}
 		}
-		toRet := numberValues[rand.Intn(len(numberValues))]
-		return toRet, nil
 	}
 
 	// handling boundary tags
