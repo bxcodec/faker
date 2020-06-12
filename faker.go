@@ -108,6 +108,7 @@ const (
 	AmountWithCurrencyTag = "amount_with_currency"
 	SKIP                  = "-"
 	Length                = "len"
+	SliceLength           = "slice_len"
 	Language              = "lang"
 	BoundaryStart         = "boundary_start"
 	BoundaryEnd           = "boundary_end"
@@ -722,13 +723,16 @@ func userDefinedArray(v reflect.Value, tag string) error {
 		v.Set(reflect.ValueOf(res))
 		return nil
 	}
-	len := randomSliceAndMapSize()
-	if shouldSetNil && len == 0 {
+	sliceLen, err := extractSliceLengthFromTag(tag)
+	if err != nil {
+		return err
+	}
+	if shouldSetNil && sliceLen == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
-	array := reflect.MakeSlice(v.Type(), len, len)
-	for i := 0; i < len; i++ {
+	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	for i := 0; i < sliceLen; i++ {
 		res, err := getValueWithTag(v.Type().Elem(), tag)
 		if err != nil {
 			return err
@@ -783,6 +787,20 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 
 	v.Set(reflect.ValueOf(res))
 	return nil
+}
+
+//extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
+func extractSliceLengthFromTag(tag string) (int, error) {
+	if strings.Contains(tag, SliceLength) {
+		lenParts := strings.SplitN(findLenReg.FindString(tag), Equals, -1)
+		if len(lenParts) != 2 {
+			return 0, fmt.Errorf(ErrWrongFormattedTag, tag)
+		}
+		sliceLen, _ := strconv.Atoi(lenParts[1])
+		return sliceLen, nil
+	}
+
+	return randomSliceAndMapSize(), nil //Returns random slice length if the sliceLength tag isn't set
 }
 
 func extractStringFromTag(tag string) (interface{}, error) {
