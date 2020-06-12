@@ -248,12 +248,14 @@ var (
 var (
 	findLangReg *regexp.Regexp
 	findLenReg  *regexp.Regexp
+	findSliceLenReg  *regexp.Regexp
 )
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
+	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
 }
 
 // ResetUnique is used to forget generated unique values.
@@ -792,11 +794,17 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 //extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
 func extractSliceLengthFromTag(tag string) (int, error) {
 	if strings.Contains(tag, SliceLength) {
-		lenParts := strings.SplitN(findLenReg.FindString(tag), Equals, -1)
+		lenParts := strings.SplitN(findSliceLenReg.FindString(tag), Equals, -1)
 		if len(lenParts) != 2 {
 			return 0, fmt.Errorf(ErrWrongFormattedTag, tag)
 		}
-		sliceLen, _ := strconv.Atoi(lenParts[1])
+		sliceLen, err := strconv.Atoi(lenParts[1])
+		if err != nil {
+			return 0, fmt.Errorf("the given sliceLength has to be numeric, tag: %s", tag)
+		}
+		if sliceLen < 0 {
+			return 0, fmt.Errorf("slice length can not be negative, tag: %s", tag)
+		}
 		return sliceLen, nil
 	}
 
