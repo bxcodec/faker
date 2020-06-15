@@ -5,6 +5,7 @@ package faker
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"reflect"
 	"regexp"
@@ -32,7 +33,10 @@ var (
 	generateUniqueValues = false
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
-	lang         = LangENG
+	// Lang is selected language for random string generator
+	lang = LangENG
+	// How much tries for generating random string
+	maxGenerateStringRetries = 1000000
 )
 
 type numberBoundary struct {
@@ -41,18 +45,19 @@ type numberBoundary struct {
 }
 
 type langRuneBoundary struct {
-	start rune
-	end   rune
+	start   rune
+	end     rune
+	exclude []rune
 }
 
 // Language rune boundaries here
 var (
 	// LangENG is for english language
-	LangENG = langRuneBoundary{65, 122}
+	LangENG = langRuneBoundary{65, 122, []rune{91, 92, 93, 94, 95, 96}}
 	// LangCHI is for chinese language
-	LangCHI = langRuneBoundary{19968, 40869}
+	LangCHI = langRuneBoundary{19968, 40869, nil}
 	// LangRUS is for russian language
-	LangRUS = langRuneBoundary{1025, 1105}
+	LangRUS = langRuneBoundary{1025, 1105, nil}
 )
 
 // Supported tags
@@ -246,9 +251,9 @@ var (
 
 // Compiled regexp
 var (
-	findLangReg *regexp.Regexp
-	findLenReg  *regexp.Regexp
-	findSliceLenReg  *regexp.Regexp
+	findLangReg     *regexp.Regexp
+	findLenReg      *regexp.Regexp
+	findSliceLenReg *regexp.Regexp
 )
 
 func init() {
@@ -1048,13 +1053,32 @@ func extractNumberFromText(text string) (int, error) {
 
 func randomString(n int, lang *langRuneBoundary) string {
 	b := make([]rune, 0)
+	set := make(map[rune]struct{})
+	if lang.exclude != nil {
+		for _, s := range lang.exclude {
+			set[s] = struct{}{}
+		}
+	}
+
+	counter := 0
 	for i := 0; i < n; {
 		randRune := rune(rand.Intn(int(lang.end-lang.start)) + int(lang.start))
+		for slice.ContainsRune(set, randRune) {
+			if counter++; counter >= maxGenerateStringRetries {
+				log.Fatal("Can't generate random sequence with exluded letters")
+			}
+			randRune = rune(rand.Intn(int(lang.end-lang.start)) + int(lang.start))
+			_, ok := set[randRune]
+			if !ok {
+				break
+			}
+		}
 		b = append(b, randRune)
 		i++
 	}
 
-	return string(b)
+	k := string(b)
+	return k
 }
 
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
