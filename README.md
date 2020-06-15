@@ -44,6 +44,7 @@ go get -u github.com/bxcodec/faker/v3
    - [length and bounds: example_with_tags_lenbounds_test.go](/example_with_tags_lenbounds_test.go)
    - [language: example_with_tags_lang_test.go](/example_with_tags_lang_test.go)
    - [unique: example_with_tags_unique_test.go](example_with_tags_unique_test.go)
+   - [slice length: example_with_tags_slicelength_test.go](example_with_tags_slicelength_test.go)
  - Custom Struct's tag (define your own faker data): [example_custom_faker_test.go](/example_custom_faker_test.go)
  - Without struct's tag: [example_without_tag_test.go](/example_without_tag_test.go)
  - Single Fake Data Function: [example_single_fake_data_test.go](/example_single_fake_data_test.go)

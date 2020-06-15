@@ -108,6 +108,7 @@ const (
 	AmountWithCurrencyTag = "amount_with_currency"
 	SKIP                  = "-"
 	Length                = "len"
+	SliceLength           = "slice_len"
 	Language              = "lang"
 	BoundaryStart         = "boundary_start"
 	BoundaryEnd           = "boundary_end"
@@ -247,12 +248,14 @@ var (
 var (
 	findLangReg *regexp.Regexp
 	findLenReg  *regexp.Regexp
+	findSliceLenReg  *regexp.Regexp
 )
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
+	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
 }
 
 // ResetUnique is used to forget generated unique values.
@@ -722,13 +725,16 @@ func userDefinedArray(v reflect.Value, tag string) error {
 		v.Set(reflect.ValueOf(res))
 		return nil
 	}
-	len := randomSliceAndMapSize()
-	if shouldSetNil && len == 0 {
+	sliceLen, err := extractSliceLengthFromTag(tag)
+	if err != nil {
+		return err
+	}
+	if shouldSetNil && sliceLen == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
-	array := reflect.MakeSlice(v.Type(), len, len)
-	for i := 0; i < len; i++ {
+	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
+	for i := 0; i < sliceLen; i++ {
 		res, err := getValueWithTag(v.Type().Elem(), tag)
 		if err != nil {
 			return err
@@ -783,6 +789,26 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 
 	v.Set(reflect.ValueOf(res))
 	return nil
+}
+
+//extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
+func extractSliceLengthFromTag(tag string) (int, error) {
+	if strings.Contains(tag, SliceLength) {
+		lenParts := strings.SplitN(findSliceLenReg.FindString(tag), Equals, -1)
+		if len(lenParts) != 2 {
+			return 0, fmt.Errorf(ErrWrongFormattedTag, tag)
+		}
+		sliceLen, err := strconv.Atoi(lenParts[1])
+		if err != nil {
+			return 0, fmt.Errorf("the given sliceLength has to be numeric, tag: %s", tag)
+		}
+		if sliceLen < 0 {
+			return 0, fmt.Errorf("slice length can not be negative, tag: %s", tag)
+		}
+		return sliceLen, nil
+	}
+
+	return randomSliceAndMapSize(), nil //Returns random slice length if the sliceLength tag isn't set
 }
 
 func extractStringFromTag(tag string) (interface{}, error) {

@@ -26,6 +26,9 @@ var (
 
 	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
 	lenUncorrectTags = [6]string{"len=b", "ln=10", "length=25", "lang=b", "ln=10", "lang=8d,,len=eng"}
+
+	sliceLenCorrectTags   = [4]string{"slice_len=0", "slice_len=4", "slice_len=5", "slice_len=10"}
+	sliceLenIncorrectTags = [3]string{"slice_len=b", "slice_len=-1", "slice_len=-10"}
 )
 
 type SomeInt32 int32
@@ -618,6 +621,54 @@ func TestExtractingStringFromTag(t *testing.T) {
 	for _, tag := range lenUncorrectTags {
 		if _, err := extractStringFromTag(tag); err == nil {
 			t.Error(err.Error())
+		}
+	}
+}
+
+func TestSliceLen(t *testing.T) {
+	type SomeStruct struct {
+		String1 []string `faker:"slice_len=0"`
+		String2 []string `faker:"slice_len=5"`
+		String3 []string `faker:"slice_len=10"`
+	}
+	var someStruct SomeStruct
+	if err := FakeData(&someStruct); err != nil {
+		t.Error("Fake data generation has failed")
+	}
+
+	if len(someStruct.String1) != 0 {
+		t.Errorf("Wrong slice length based on slice_len tag, got %d, wanted 0", len(someStruct.String1))
+	}
+	if len(someStruct.String2) != 5 {
+		t.Errorf("Wrong slice length based on slice_len tag, got %d, wanted 5", len(someStruct.String2))
+	}
+	if len(someStruct.String3) != 10 {
+		t.Errorf("Wrong slice length based on slice_len tag, got %d, wanted 10", len(someStruct.String3))
+	}
+}
+
+func TestWrongSliceLen(t *testing.T) {
+	type SomeStruct struct {
+		String []string `faker:"slice_len=bla"`
+	}
+
+	s := SomeStruct{}
+	err := FakeData(&s)
+
+	if err == nil {
+		t.Error("An error should be thrown for the wrong slice_len")
+	}
+}
+
+func TestExtractingSliceLenFromTag(t *testing.T) {
+	for _, tag := range sliceLenCorrectTags {
+		if _, err := extractSliceLengthFromTag(tag); err != nil {
+			t.Error(err.Error())
+		}
+	}
+	for _, tag := range sliceLenIncorrectTags {
+		if _, err := extractSliceLengthFromTag(tag); err == nil {
+			t.Errorf("Extracting should have thrown an error for tag %s", tag)
 		}
 	}
 }
