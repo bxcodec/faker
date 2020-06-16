@@ -5,7 +5,6 @@ package faker
 import (
 	"errors"
 	"fmt"
-	"log"
 	"math/rand"
 	"reflect"
 	"regexp"
@@ -484,8 +483,8 @@ func getValue(a interface{}) (reflect.Value, error) {
 		}
 
 	case reflect.String:
-		res := randomString(randomStringLen, &lang)
-		return reflect.ValueOf(res), nil
+		res, err := randomString(randomStringLen, &lang)
+		return reflect.ValueOf(res), err
 	case reflect.Slice:
 		len := randomSliceAndMapSize()
 		if shouldSetNil && len == 0 {
@@ -853,8 +852,8 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		toRet := args[rand.Intn(len(args))]
 		return strings.TrimSpace(toRet), nil
 	}
-	res := randomString(strlen, strlng)
-	return res, nil
+	res, err := randomString(strlen, strlng)
+	return res, err
 }
 
 func extractLangFromTag(tag string) (*langRuneBoundary, error) {
@@ -1051,7 +1050,7 @@ func extractNumberFromText(text string) (int, error) {
 	return strconv.Atoi(texts[1])
 }
 
-func randomString(n int, lang *langRuneBoundary) string {
+func randomString(n int, lang *langRuneBoundary) (string, error) {
 	b := make([]rune, 0)
 	set := make(map[rune]struct{})
 	if lang.exclude != nil {
@@ -1065,7 +1064,7 @@ func randomString(n int, lang *langRuneBoundary) string {
 		randRune := rune(rand.Intn(int(lang.end-lang.start)) + int(lang.start))
 		for slice.ContainsRune(set, randRune) {
 			if counter++; counter >= maxGenerateStringRetries {
-				log.Fatal("Can't generate random sequence with exluded letters")
+				return "", errors.New("Max number of string generation retries exhausted")
 			}
 			randRune = rune(rand.Intn(int(lang.end-lang.start)) + int(lang.start))
 			_, ok := set[randRune]
@@ -1078,7 +1077,7 @@ func randomString(n int, lang *langRuneBoundary) string {
 	}
 
 	k := string(b)
-	return k
+	return k, nil
 }
 
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)

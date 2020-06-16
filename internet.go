@@ -56,20 +56,29 @@ type Networker interface {
 // Internet struct
 type Internet struct{}
 
-func (internet Internet) email() string {
-	return randomString(7, &LangENG) + "@" + randomString(5, &LangENG) + "." + randomElementFromSliceString(tld)
+func (internet Internet) email() (string, error) {
+	var err error
+	var emailName, emailDomain string
+	if emailName, err = randomString(7, &LangENG); err != nil {
+		return "", err
+	}
+	if emailDomain, err = randomString(7, &LangENG); err != nil {
+		return "", err
+	}
+	return (emailName + "@" + emailDomain + "." + randomElementFromSliceString(tld)), nil
 }
 
 // Email generates random email id
 func (internet Internet) Email(v reflect.Value) (interface{}, error) {
-	return internet.email(), nil
+	return internet.email()
 }
 
 // Email get email randomly in string
 func Email() string {
 	return singleFakeData(EmailTag, func() interface{} {
 		i := Internet{}
-		return i.email()
+		e, _ := i.email()
+		return e
 	}).(string)
 }
 
@@ -94,30 +103,37 @@ func MacAddress() string {
 	}).(string)
 }
 
-func (internet Internet) domainName() string {
-	return randomString(7, &LangENG) + "." + randomElementFromSliceString(tld)
+func (internet Internet) domainName() (string, error) {
+	domainPart, err := randomString(7, &LangENG)
+	if err != nil {
+		return "", err
+	}
+	return (domainPart + "." + randomElementFromSliceString(tld)), nil
 }
 
 // DomainName generates random domain name
 func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
-	return internet.domainName(), nil
+	return internet.domainName()
 }
 
 // DomainName get email domain name in string
 func DomainName() string {
 	return singleFakeData(DomainNameTag, func() interface{} {
 		i := Internet{}
-		return i.domainName()
+		d, _ := i.domainName()
+		return d
 	}).(string)
 }
 
 func (internet Internet) url() string {
 	format := randomElementFromSliceString(urlFormats)
 	countVerbs := strings.Count(format, "%s")
+	d, _ := internet.domainName()
 	if countVerbs == 1 {
-		return fmt.Sprintf(format, internet.domainName())
+		return fmt.Sprintf(format, d)
 	}
-	return fmt.Sprintf(format, internet.domainName(), internet.username())
+	u, _ := internet.username()
+	return fmt.Sprintf(format, d, u)
 }
 
 // URL generates random URL standardized in urlFormats const
@@ -133,20 +149,21 @@ func URL() string {
 	}).(string)
 }
 
-func (internet Internet) username() string {
+func (internet Internet) username() (string, error) {
 	return randomString(7, &LangENG)
 }
 
 // UserName generates random username
 func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
-	return internet.username(), nil
+	return internet.username()
 }
 
 // Username get username randomly in string
 func Username() string {
 	return singleFakeData(UserNameTag, func() interface{} {
 		i := Internet{}
-		return i.username()
+		u, _ := i.username()
+		return u
 	}).(string)
 }
 
@@ -194,19 +211,20 @@ func IPv6() string {
 	}).(string)
 }
 
-func (internet Internet) password() string {
+func (internet Internet) password() (string, error) {
 	return randomString(50, &LangENG)
 }
 
 // Password returns a hashed password
 func (internet Internet) Password(v reflect.Value) (interface{}, error) {
-	return internet.password(), nil
+	return internet.password()
 }
 
 // Password get password randomly in string
 func Password() string {
 	return singleFakeData(PASSWORD, func() interface{} {
 		i := Internet{}
-		return i.password()
+		p, _ := i.password()
+		return p
 	}).(string)
 }
