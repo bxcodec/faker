@@ -77,8 +77,11 @@ func (internet Internet) Email(v reflect.Value) (interface{}, error) {
 func Email() string {
 	return singleFakeData(EmailTag, func() interface{} {
 		i := Internet{}
-		e, _ := i.email()
-		return e
+		r, err := i.email()
+		if err != nil {
+			panic(err.Error())
+		}
+		return r
 	}).(string)
 }
 
@@ -120,32 +123,45 @@ func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
 func DomainName() string {
 	return singleFakeData(DomainNameTag, func() interface{} {
 		i := Internet{}
-		d, _ := i.domainName()
+		d, err := i.domainName()
+		if err != nil {
+			panic(err.Error())
+		}
 		return d
 	}).(string)
 }
 
-func (internet Internet) url() string {
+func (internet Internet) url() (string, error) {
 	format := randomElementFromSliceString(urlFormats)
 	countVerbs := strings.Count(format, "%s")
-	d, _ := internet.domainName()
-	if countVerbs == 1 {
-		return fmt.Sprintf(format, d)
+	d, err := internet.domainName()
+	if err != nil {
+		return "", nil
 	}
-	u, _ := internet.username()
-	return fmt.Sprintf(format, d, u)
+	if countVerbs == 1 {
+		return fmt.Sprintf(format, d), nil
+	}
+	u, err := internet.username()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf(format, d, u), nil
 }
 
 // URL generates random URL standardized in urlFormats const
 func (internet Internet) URL(v reflect.Value) (interface{}, error) {
-	return internet.url(), nil
+	return internet.url()
 }
 
 // URL get Url randomly in string
 func URL() string {
 	return singleFakeData(URLTag, func() interface{} {
 		i := Internet{}
-		return i.url()
+		u, err := i.url()
+		if err != nil {
+			panic(err.Error())
+		}
+		return u
 	}).(string)
 }
 
@@ -224,7 +240,10 @@ func (internet Internet) Password(v reflect.Value) (interface{}, error) {
 func Password() string {
 	return singleFakeData(PASSWORD, func() interface{} {
 		i := Internet{}
-		p, _ := i.password()
+		p, err := i.password()
+		if err != nil {
+			panic(err.Error())
+		}
 		return p
 	}).(string)
 }
