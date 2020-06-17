@@ -178,7 +178,10 @@ func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
 func Username() string {
 	return singleFakeData(UserNameTag, func() interface{} {
 		i := Internet{}
-		u, _ := i.username()
+		u, err := i.username()
+		if err != nil {
+			panic(err.Error())
+		}
 		return u
 	}).(string)
 }
