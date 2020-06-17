@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	langCorrectTagsMap = map[langRuneBoundary]string{LangENG: "lang=eng", LangCHI: "lang=chi", LangRUS: "lang=rus"}
+	langCorrectTagsMap = map[string]langRuneBoundary{"lang=eng": LangENG, "lang=chi": LangCHI, "lang=rus": LangRUS}
 	langUncorrectTags  = [3]string{"lang=", "lang", "lng=eng"}
 
 	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
@@ -597,10 +597,10 @@ func TestExtractingLangFromTag(t *testing.T) {
 	var err error
 	var lng *langRuneBoundary
 	for k, v := range langCorrectTagsMap {
-		if lng, err = extractLangFromTag(v); err != nil {
+		if lng, err = extractLangFromTag(k); err != nil {
 			t.Error(err.Error())
 		}
-		if k != *lng {
+		if !reflect.DeepEqual(v, *lng) {
 			t.Errorf("Got %v lang rune range, but expected %v", lng, k)
 		}
 	}

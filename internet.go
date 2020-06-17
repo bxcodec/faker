@@ -56,20 +56,32 @@ type Networker interface {
 // Internet struct
 type Internet struct{}
 
-func (internet Internet) email() string {
-	return randomString(7, &LangENG) + "@" + randomString(5, &LangENG) + "." + randomElementFromSliceString(tld)
+func (internet Internet) email() (string, error) {
+	var err error
+	var emailName, emailDomain string
+	if emailName, err = randomString(7, &LangENG); err != nil {
+		return "", err
+	}
+	if emailDomain, err = randomString(7, &LangENG); err != nil {
+		return "", err
+	}
+	return (emailName + "@" + emailDomain + "." + randomElementFromSliceString(tld)), nil
 }
 
 // Email generates random email id
 func (internet Internet) Email(v reflect.Value) (interface{}, error) {
-	return internet.email(), nil
+	return internet.email()
 }
 
 // Email get email randomly in string
 func Email() string {
 	return singleFakeData(EmailTag, func() interface{} {
 		i := Internet{}
-		return i.email()
+		r, err := i.email()
+		if err != nil {
+			panic(err.Error())
+		}
+		return r
 	}).(string)
 }
 
@@ -94,59 +106,83 @@ func MacAddress() string {
 	}).(string)
 }
 
-func (internet Internet) domainName() string {
-	return randomString(7, &LangENG) + "." + randomElementFromSliceString(tld)
+func (internet Internet) domainName() (string, error) {
+	domainPart, err := randomString(7, &LangENG)
+	if err != nil {
+		return "", err
+	}
+	return (domainPart + "." + randomElementFromSliceString(tld)), nil
 }
 
 // DomainName generates random domain name
 func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
-	return internet.domainName(), nil
+	return internet.domainName()
 }
 
 // DomainName get email domain name in string
 func DomainName() string {
 	return singleFakeData(DomainNameTag, func() interface{} {
 		i := Internet{}
-		return i.domainName()
+		d, err := i.domainName()
+		if err != nil {
+			panic(err.Error())
+		}
+		return d
 	}).(string)
 }
 
-func (internet Internet) url() string {
+func (internet Internet) url() (string, error) {
 	format := randomElementFromSliceString(urlFormats)
 	countVerbs := strings.Count(format, "%s")
-	if countVerbs == 1 {
-		return fmt.Sprintf(format, internet.domainName())
+	d, err := internet.domainName()
+	if err != nil {
+		return "", nil
 	}
-	return fmt.Sprintf(format, internet.domainName(), internet.username())
+	if countVerbs == 1 {
+		return fmt.Sprintf(format, d), nil
+	}
+	u, err := internet.username()
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf(format, d, u), nil
 }
 
 // URL generates random URL standardized in urlFormats const
 func (internet Internet) URL(v reflect.Value) (interface{}, error) {
-	return internet.url(), nil
+	return internet.url()
 }
 
 // URL get Url randomly in string
 func URL() string {
 	return singleFakeData(URLTag, func() interface{} {
 		i := Internet{}
-		return i.url()
+		u, err := i.url()
+		if err != nil {
+			panic(err.Error())
+		}
+		return u
 	}).(string)
 }
 
-func (internet Internet) username() string {
+func (internet Internet) username() (string, error) {
 	return randomString(7, &LangENG)
 }
 
 // UserName generates random username
 func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
-	return internet.username(), nil
+	return internet.username()
 }
 
 // Username get username randomly in string
 func Username() string {
 	return singleFakeData(UserNameTag, func() interface{} {
 		i := Internet{}
-		return i.username()
+		u, err := i.username()
+		if err != nil {
+			panic(err.Error())
+		}
+		return u
 	}).(string)
 }
 
@@ -194,19 +230,23 @@ func IPv6() string {
 	}).(string)
 }
 
-func (internet Internet) password() string {
+func (internet Internet) password() (string, error) {
 	return randomString(50, &LangENG)
 }
 
 // Password returns a hashed password
 func (internet Internet) Password(v reflect.Value) (interface{}, error) {
-	return internet.password(), nil
+	return internet.password()
 }
 
 // Password get password randomly in string
 func Password() string {
 	return singleFakeData(PASSWORD, func() interface{} {
 		i := Internet{}
-		return i.password()
+		p, err := i.password()
+		if err != nil {
+			panic(err.Error())
+		}
+		return p
 	}).(string)
 }
