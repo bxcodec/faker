@@ -17,6 +17,7 @@ type SomeStructWithTags struct {
 	IPV4               string  `faker:"ipv4"`
 	IPV6               string  `faker:"ipv6"`
 	Password           string  `faker:"password"`
+	Jwt                string  `faker:"jwt"`
 	PhoneNumber        string  `faker:"phone_number"`
 	MacAddress         string  `faker:"mac_address"`
 	URL                string  `faker:"url"`
@@ -73,6 +74,7 @@ func Example_withTags() {
 		fmt.Println(err)
 	}
 	fmt.Printf("%+v", a)
+	fmt.Println("hello")
 	/*
 		Result:
 		{
@@ -85,6 +87,7 @@ func Example_withTags() {
 			IPV4: 99.23.42.63
 			IPV6: 975c:fb2c:2133:fbdd:beda:282e:1e0a:ec7d
 			Password: dfJdyHGuVkHBgnHLQQgpINApynzexnRpgIKBpiIjpTPOmNyMFb
+			Jwt: HDMNSOKhEIYkPIuHcVjfCtHlKkaqLGrUEqjKVkgR.HDMNSOKhEIYkPIuHcVjfCtHlKkaqLGrUEqjKVkgR.HDMNSOKhEIYkPIuHcVjfCtHlKkaqLGrUEqjKVkgR
 			PhoneNumber: 792-153-4861
 			MacAddress: cd:65:e1:d4:76:c6
 			URL: https://www.oEuqqAY.org/QgqfOhd
