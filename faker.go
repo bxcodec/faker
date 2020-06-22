@@ -224,6 +224,7 @@ var mapperTag = map[string]TaggedFunction{
 // 		ErrValueNotPtr: Error when value is not pointer
 // 		ErrTagNotSupported: Error when tag is not supported
 // 		ErrTagAlreadyExists: Error when tag exists and call AddProvider
+// 		ErrTagDoesNotExist: Error when tag does not exist and call RemoveProvider
 // 		ErrMoreArguments: Error on passing more arguments
 // 		ErrNotSupportedPointer: Error when passing unsupported pointer
 var (
@@ -232,6 +233,7 @@ var (
 	ErrValueNotPtr         = "Not a pointer value"
 	ErrTagNotSupported     = "Tag unsupported: %s"
 	ErrTagAlreadyExists    = "Tag exists"
+	ErrTagDoesNotExist     = "Tag does not exist"
 	ErrMoreArguments       = "Passed more arguments than is possible : (%d)"
 	ErrNotSupportedPointer = "Use sample:=new(%s)\n faker.FakeData(sample) instead"
 	ErrSmallerThanZero     = "Size:%d is smaller than zero."
@@ -384,6 +386,17 @@ func AddProvider(tag string, provider TaggedFunction) error {
 	}
 
 	mapperTag[tag] = provider
+
+	return nil
+}
+
+// RemoveProvider removes existing customization added with AddProvider
+func RemoveProvider(tag string) error {
+	if _, ok := mapperTag[tag]; !ok {
+		return errors.New(ErrTagDoesNotExist)
+	}
+
+	delete(mapperTag, tag)
 
 	return nil
 }

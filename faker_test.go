@@ -1090,6 +1090,25 @@ func TestTagAlreadyExists(t *testing.T) {
 	}
 }
 
+func TestRemoveProvider(t *testing.T) {
+	AddProvider("test", func(v reflect.Value) (interface{}, error) {
+		return "test", nil
+	})
+
+	err := RemoveProvider("test")
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
+}
+
+func TestTagDoesNotExist(t *testing.T) {
+	err := RemoveProvider("not_existing_test_tag")
+
+	if err == nil || err.Error() != ErrTagDoesNotExist {
+		t.Error("Expected ErrTagDoesNotExist Error,  But Got: ", err)
+	}
+}
+
 func TestTagWithPointer(t *testing.T) {
 
 	type TestStruct struct {
