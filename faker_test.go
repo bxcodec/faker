@@ -1091,11 +1091,14 @@ func TestTagAlreadyExists(t *testing.T) {
 }
 
 func TestRemoveProvider(t *testing.T) {
-	AddProvider("test", func(v reflect.Value) (interface{}, error) {
+	err := AddProvider("new_test_tag", func(v reflect.Value) (interface{}, error) {
 		return "test", nil
 	})
+	if err != nil {
+		t.Error("Expected Not Error, But Got: ", err)
+	}
 
-	err := RemoveProvider("test")
+	err = RemoveProvider("new_test_tag")
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
