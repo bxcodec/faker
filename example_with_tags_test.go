@@ -74,7 +74,6 @@ func Example_withTags() {
 		fmt.Println(err)
 	}
 	fmt.Printf("%+v", a)
-	fmt.Println("hello")
 	/*
 		Result:
 		{
