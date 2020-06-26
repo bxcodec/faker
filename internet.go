@@ -51,6 +51,7 @@ type Networker interface {
 	IPv4(v reflect.Value) (interface{}, error)
 	IPv6(v reflect.Value) (interface{}, error)
 	Password(v reflect.Value) (interface{}, error)
+	Jwt(v reflect.Value) (interface{}, error)
 }
 
 // Internet struct
@@ -244,6 +245,32 @@ func Password() string {
 	return singleFakeData(PASSWORD, func() interface{} {
 		i := Internet{}
 		p, err := i.password()
+		if err != nil {
+			panic(err.Error())
+		}
+		return p
+	}).(string)
+}
+
+func (internet Internet) jwt() (string, error) {
+	element, err := randomString(40, &LangENG)
+	sl := element[:]
+	if err != nil {
+		return "", err
+	}
+	return strings.Join([]string{sl, sl, sl}, "."), nil
+}
+
+// Jwt returns a jwt-like random string in xxxx.yyyy.zzzz style
+func (internet Internet) Jwt(v reflect.Value) (interface{}, error) {
+	return internet.jwt()
+}
+
+// Jwt get jwt-like string
+func Jwt() string {
+	return singleFakeData(JWT, func() interface{} {
+		i := Internet{}
+		p, err := i.jwt()
 		if err != nil {
 			panic(err.Error())
 		}
