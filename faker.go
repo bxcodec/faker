@@ -78,6 +78,7 @@ const (
 	IPV4Tag               = "ipv4"
 	IPV6Tag               = "ipv6"
 	PASSWORD              = "password"
+	JWT                   = "jwt"
 	LATITUDE              = "lat"
 	LONGITUDE             = "long"
 	CreditCardNumber      = "cc_number"
@@ -133,6 +134,7 @@ var defaultTag = map[string]string{
 	IPV4Tag:               IPV4Tag,
 	IPV6Tag:               IPV6Tag,
 	PASSWORD:              PASSWORD,
+	JWT:                   JWT,
 	CreditCardType:        CreditCardType,
 	CreditCardNumber:      CreditCardNumber,
 	LATITUDE:              LATITUDE,
@@ -182,6 +184,7 @@ var mapperTag = map[string]TaggedFunction{
 	IPV4Tag:               GetNetworker().IPv4,
 	IPV6Tag:               GetNetworker().IPv6,
 	PASSWORD:              GetNetworker().Password,
+	JWT:                   GetNetworker().Jwt,
 	CreditCardType:        GetPayment().CreditCardType,
 	CreditCardNumber:      GetPayment().CreditCardNumber,
 	LATITUDE:              GetAddress().Latitude,
