@@ -1,3 +1,3 @@
-module github.com/bxcodec/faker/v3
+module github.com/irridia/faker
 
-go 1.12
+go 1.15
