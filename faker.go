@@ -30,6 +30,8 @@ var (
 	randomSize = 100
 	// Sets the single fake data generator to generate unique values
 	generateUniqueValues = false
+	// Sets whether interface{}s should be ignored.
+	ignoreInterface = false
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 	// Lang is selected language for random string generator
@@ -273,6 +275,11 @@ func SetGenerateUniqueValues(unique bool) {
 	generateUniqueValues = unique
 }
 
+// SetIgnoreInterface allows to set a flag to ignore found interface{}s.
+func SetIgnoreInterface(ignore bool) {
+	ignoreInterface = ignore
+}
+
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
@@ -391,6 +398,9 @@ func AddProvider(tag string, provider TaggedFunction) error {
 func getValue(a interface{}) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
+		if ignoreInterface {
+			return reflect.New(reflect.TypeOf(reflect.Struct)), nil
+		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
 	k := t.Kind()
