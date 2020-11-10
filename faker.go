@@ -1092,12 +1092,16 @@ func randomString(n int, lang *langRuneBoundary) (string, error) {
 
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
 func randomIntegerWithBoundary(boundary numberBoundary) int {
-	return rand.Intn(boundary.end-boundary.start) + boundary.start
+	span := boundary.end - boundary.start
+	if span <= 0 {
+		return boundary.start
+	}
+	return rand.Intn(span) + boundary.start
 }
 
 // randomInteger returns a random integer between start and end boundary. [start, end)
 func randomInteger() int {
-	return rand.Intn(nBoundary.end-nBoundary.start) + nBoundary.start
+	return randomIntegerWithBoundary(nBoundary)
 }
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
