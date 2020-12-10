@@ -41,6 +41,7 @@ var (
 type numberBoundary struct {
 	start int
 	end   int
+	step  int
 }
 
 type langRuneBoundary struct {
@@ -117,6 +118,7 @@ const (
 	Language              = "lang"
 	BoundaryStart         = "boundary_start"
 	BoundaryEnd           = "boundary_end"
+	BoundaryStep          = "boundary_step"
 	Equals                = "="
 	comma                 = ","
 	colon                 = ":"
@@ -1019,7 +1021,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 
 	// handling boundary tags
 	valuesStr := strings.SplitN(tag, comma, -1)
-	if len(valuesStr) != 2 {
+	if len(valuesStr) < 2 {
 		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 	}
 	startBoundary, err := extractNumberFromText(valuesStr[0])
@@ -1030,31 +1032,70 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	boundary := numberBoundary{start: startBoundary, end: endBoundary}
-	switch t.Kind() {
-	case reflect.Uint:
-		return uint(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint8:
-		return uint8(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint16:
-		return uint16(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint32:
-		return uint32(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint64:
-		return uint64(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int:
-		return randomIntegerWithBoundary(boundary), nil
-	case reflect.Int8:
-		return int8(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int16:
-		return int16(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int32:
-		return int32(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int64:
-		return int64(randomIntegerWithBoundary(boundary)), nil
-	default:
-		return nil, errors.New(ErrNotSupportedTypeForTag)
+
+	// for incr/decr
+	if len(valuesStr) == 3 {
+		boundaryStep, err := extractNumberFromText(valuesStr[2])
+		if err != nil {
+			return nil, err
+		}
+		boundary := numberBoundary{start: startBoundary, end: endBoundary, step: boundaryStep}
+		stepInt, err := stepIntegerWithBoundary(boundary)
+		if err != nil {
+			return nil, err
+		}
+		switch t.Kind() {
+		case reflect.Uint:
+			return uint(stepInt), nil
+		case reflect.Uint8:
+			return uint8(stepInt), nil
+		case reflect.Uint16:
+			return uint16(stepInt), nil
+		case reflect.Uint32:
+			return uint32(stepInt), nil
+		case reflect.Uint64:
+			return uint64(stepInt), nil
+		case reflect.Int:
+			return stepInt, nil
+		case reflect.Int8:
+			return int8(stepInt), nil
+		case reflect.Int16:
+			return int16(stepInt), nil
+		case reflect.Int32:
+			return int32(stepInt), nil
+		case reflect.Int64:
+			return int64(stepInt), nil
+		default:
+			return nil, errors.New(ErrNotSupportedTypeForTag)
+		}
+	} else {
+		boundary := numberBoundary{start: startBoundary, end: endBoundary}
+		switch t.Kind() {
+		case reflect.Uint:
+			return uint(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Uint8:
+			return uint8(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Uint16:
+			return uint16(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Uint32:
+			return uint32(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Uint64:
+			return uint64(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Int:
+			return randomIntegerWithBoundary(boundary), nil
+		case reflect.Int8:
+			return int8(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Int16:
+			return int16(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Int32:
+			return int32(randomIntegerWithBoundary(boundary)), nil
+		case reflect.Int64:
+			return int64(randomIntegerWithBoundary(boundary)), nil
+		default:
+			return nil, errors.New(ErrNotSupportedTypeForTag)
+		}
 	}
+
 }
 
 func extractNumberFromText(text string) (int, error) {
@@ -1099,6 +1140,23 @@ func randomString(n int, lang *langRuneBoundary) (string, error) {
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
 func randomIntegerWithBoundary(boundary numberBoundary) int {
 	return rand.Intn(boundary.end-boundary.start) + boundary.start
+}
+
+var boundaryCurrentNumber int = 0
+
+// stepIntegerWithBoundary returns an integer increment/decrement from start to end boundary. [start, end)
+func stepIntegerWithBoundary(boundary numberBoundary) (int, error) {
+	// init
+	if boundaryCurrentNumber == 0 {
+		boundaryCurrentNumber = boundary.start
+	} else {
+		boundaryCurrentNumber = boundaryCurrentNumber + boundary.step
+		if boundaryCurrentNumber > boundary.end {
+			return 0, fmt.Errorf("boundary number now is %d > boundary_end %d", boundaryCurrentNumber, boundary.end)
+		}
+	}
+
+	return boundaryCurrentNumber, nil
 }
 
 // randomInteger returns a random integer between start and end boundary. [start, end)
