@@ -318,7 +318,12 @@ func SetRandomNumberBoundaries(start, end int) error {
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
+	return FakeDataWithOpts(DefaultOpts(), a)
+}
 
+// FakeDataWithOpts fake data with options let a use specify the amount of cycles
+// which should be generated
+func FakeDataWithOpts(opts Opts, a interface{}) error {
 	reflectType := reflect.TypeOf(a)
 
 	if reflectType.Kind() != reflect.Ptr {
@@ -331,13 +336,46 @@ func FakeData(a interface{}) error {
 
 	rval := reflect.ValueOf(a)
 
-	finalValue, err := getValue(a)
+	g := newGenerator(opts)
+
+	finalValue, err := g.getValue(a)
 	if err != nil {
 		return err
 	}
 
 	rval.Elem().Set(finalValue.Elem().Convert(reflectType.Elem()))
 	return nil
+}
+
+// DefaultOpts default options halt after detecting 1 cycles
+func DefaultOpts() Opts {
+	return Opts{
+		Depth: 1,
+	}
+}
+
+// Opts generator options
+type Opts struct {
+	Depth int
+}
+
+// newGenerator creates a new generator for given options
+func newGenerator(opts Opts) *generator {
+	return &generator{
+		CycleDetector: make(map[reflect.Type]int),
+		Opts:          opts,
+	}
+}
+
+// generator the generator for creating fake values
+type generator struct {
+	CycleDetector map[reflect.Type]int
+	Opts          Opts
+}
+
+// shouldHalt checks if the generator should halt
+func (g *generator) shouldHalt(counter int) bool {
+	return counter >= g.Opts.Depth
 }
 
 // AddProvider extend faker with tag to generate fake data with specified custom algorithm
@@ -404,12 +442,22 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-func getValue(a interface{}) (reflect.Value, error) {
+func (g *generator) getValue(a interface{}) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
 	k := t.Kind()
+	if k == reflect.Struct {
+		// Get amount of times we encountered given struct type
+		amount := g.CycleDetector[t]
+		// Increase counted
+		g.CycleDetector[t]++
+		// Check if should halt
+		if g.shouldHalt(amount) {
+			return reflect.ValueOf(a), nil
+		}
+	}
 
 	switch k {
 	case reflect.Ptr:
@@ -417,12 +465,12 @@ func getValue(a interface{}) (reflect.Value, error) {
 		var val reflect.Value
 		var err error
 		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
-			val, err = getValue(reflect.ValueOf(a).Elem().Interface())
+			val, err = g.getValue(reflect.ValueOf(a).Elem().Interface())
 			if err != nil {
 				return reflect.Value{}, err
 			}
 		} else {
-			val, err = getValue(v.Elem().Interface())
+			val, err = g.getValue(v.Elem().Interface())
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -458,7 +506,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 					}
 					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
-					val, err := getValue(v.Field(i).Interface())
+					val, err := g.getValue(v.Field(i).Interface())
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -508,7 +556,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface())
+			val, err := g.getValue(v.Index(i).Interface())
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -519,7 +567,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 	case reflect.Array:
 		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface())
+			val, err := g.getValue(v.Index(i).Interface())
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -568,13 +616,13 @@ func getValue(a interface{}) (reflect.Value, error) {
 		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
-			key, err := getValue(keyInstance)
+			key, err := g.getValue(keyInstance)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 
 			valueInstance := reflect.New(t.Elem()).Elem().Interface()
-			val, err := getValue(valueInstance)
+			val, err := g.getValue(valueInstance)
 			if err != nil {
 				return reflect.Value{}, err
 			}
