@@ -2009,3 +2009,59 @@ func utfLen(value string) int {
 	}
 	return r
 }
+
+func TestRandomMaxMinMapSliceSize(t *testing.T) {
+	type SliceMap struct {
+		Slice []int
+		Map   map[string]int
+	}
+
+	orimax, orimin := randomMaxSize, randomMinSize
+	defer SetRandomMapAndSliceMaxSize(orimax)
+	defer SetRandomMapAndSliceMinSize(orimin)
+
+	for _, c := range []struct {
+		max, min, expect int
+	}{
+		{2, 1, 1}, // [1,2) => always 1
+		{2, 2, 2},
+		{2, 3, 3}, // if min >= max, result will always be min
+	} {
+		SetRandomMapAndSliceMaxSize(c.max)
+		SetRandomMapAndSliceMinSize(c.min)
+		s := SliceMap{}
+		FakeData(&s)
+
+		if len(s.Map) != c.expect {
+			t.Errorf("map (len:%d) not expect length with test case %+v\n", len(s.Map), c)
+		}
+
+		if len(s.Slice) != c.expect {
+			t.Errorf("slice (len:%d) not expect length with test case %+v\n", len(s.Slice), c)
+		}
+	}
+}
+
+func TestRandomMapSliceSize(t *testing.T) {
+	// test if old func behaves the same
+	type SliceMap struct {
+		Slice []int
+		Map   map[string]int
+	}
+	expect := 5
+	orimax := randomMaxSize
+	defer SetRandomMapAndSliceSize(orimax)
+	SetRandomMapAndSliceSize(expect)
+	for i := 0; i < 10; i++ {
+		s := SliceMap{}
+		FakeData(&s)
+
+		if len(s.Map) >= 5 {
+			t.Errorf("map (len:%d) is greater than expected length %d", len(s.Map), expect)
+		}
+
+		if len(s.Slice) >= expect {
+			t.Errorf("slice (len:%d) not expect length with test case %+v\n", len(s.Slice), expect)
+		}
+	}
+}
