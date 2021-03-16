@@ -36,6 +36,8 @@ var (
 	lang = LangENG
 	// How much tries for generating random string
 	maxGenerateStringRetries = 1000000
+	// record the current number for stepIntegerWithBoundary()
+	boundaryCurrentNumber = 0
 )
 
 type numberBoundary struct {
@@ -1142,10 +1144,10 @@ func randomIntegerWithBoundary(boundary numberBoundary) int {
 	return rand.Intn(boundary.end-boundary.start) + boundary.start
 }
 
-var boundaryCurrentNumber int = 0
-
 // stepIntegerWithBoundary returns an integer increment/decrement from start to end boundary. [start, end)
 func stepIntegerWithBoundary(boundary numberBoundary) (int, error) {
+	mu.Lock()
+	defer mu.Unlock()
 	// init
 	if boundaryCurrentNumber == 0 {
 		boundaryCurrentNumber = boundary.start

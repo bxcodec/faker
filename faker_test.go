@@ -448,6 +448,23 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	}
 }
 
+func TestStepBoundaries(t *testing.T) {
+	boundary := numberBoundary{start: 10, end: 100, step: 3}
+	type StepStruct struct {
+		Inta int `faker:"boundary_start=10, boundary_end=100, boundary_step=3"`
+	}
+	step := StepStruct{}
+
+	for i := boundary.start; i < boundary.end; i += boundary.step {
+		if err := FakeData(&step); err != nil {
+			t.Error("Fake data generation has failed")
+		}
+		if step.Inta != i {
+			t.Errorf("step error: expected: %d actual %d", i, step.Inta)
+		}
+	}
+}
+
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
 	if err := SetRandomMapAndSliceSize(-1); err == nil {
