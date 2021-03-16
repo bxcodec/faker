@@ -499,6 +499,19 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 	testRandZero = false
 }
 
+func TestSetIgnoreInterface(t *testing.T) {
+	SetIgnoreInterface(false)
+	var someInterface interface{}
+	if err := FakeData(&someInterface); err == nil {
+		t.Error("Fake data generation didn't fail on interface{}")
+	}
+	SetIgnoreInterface(true)
+	if err := FakeData(&someInterface); err != nil {
+		t.Error("Fake data generation fail on interface{} with SetIgnoreInterface(true)")
+	}
+	SetIgnoreInterface(false)
+}
+
 func TestBoundaryAndLen(t *testing.T) {
 	iterate := 10
 	someStruct := SomeStructWithLen{}

@@ -30,6 +30,8 @@ var (
 	randomSize = 100
 	// Sets the single fake data generator to generate unique values
 	generateUniqueValues = false
+	// Sets whether interface{}s should be ignored.
+	ignoreInterface = false
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 	// Lang is selected language for random string generator
@@ -282,6 +284,11 @@ func SetGenerateUniqueValues(unique bool) {
 	generateUniqueValues = unique
 }
 
+// SetIgnoreInterface allows to set a flag to ignore found interface{}s.
+func SetIgnoreInterface(ignore bool) {
+	ignoreInterface = ignore
+}
+
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
@@ -411,6 +418,9 @@ func RemoveProvider(tag string) error {
 func getValue(a interface{}) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
+		if ignoreInterface {
+			return reflect.New(reflect.TypeOf(reflect.Struct)), nil
+		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
 	k := t.Kind()
@@ -1141,7 +1151,11 @@ func randomString(n int, lang *langRuneBoundary) (string, error) {
 
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
 func randomIntegerWithBoundary(boundary numberBoundary) int {
-	return rand.Intn(boundary.end-boundary.start) + boundary.start
+	span := boundary.end - boundary.start
+	if span <= 0 {
+		return boundary.start
+	}
+	return rand.Intn(span) + boundary.start
 }
 
 // stepIntegerWithBoundary returns an integer increment/decrement from start to end boundary. [start, end)
@@ -1163,7 +1177,7 @@ func stepIntegerWithBoundary(boundary numberBoundary) (int, error) {
 
 // randomInteger returns a random integer between start and end boundary. [start, end)
 func randomInteger() int {
-	return rand.Intn(nBoundary.end-nBoundary.start) + nBoundary.start
+	return randomIntegerWithBoundary(nBoundary)
 }
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
