@@ -40,6 +40,8 @@ var (
 	maxGenerateStringRetries = 1000000
 	// record the current number for stepIntegerWithBoundary()
 	boundaryCurrentNumber = 0
+	// record the current faker
+	currentFaker interface{}
 )
 
 type numberBoundary struct {
@@ -329,6 +331,11 @@ func SetRandomNumberBoundaries(start, end int) error {
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}) error {
+	// if parameter != pre-parameter reset stateful data
+	if a != currentFaker {
+		currentFaker = a
+		boundaryCurrentNumber = 0
+	}
 
 	reflectType := reflect.TypeOf(a)
 
@@ -1058,11 +1065,10 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 			return nil, err
 		}
 		return intToKind(stepInt, t.Kind())
-	} else {
-		boundary := numberBoundary{start: startBoundary, end: endBoundary}
-		return intToKind(randomIntegerWithBoundary(boundary), t.Kind())
 	}
 
+	boundary := numberBoundary{start: startBoundary, end: endBoundary}
+	return intToKind(randomIntegerWithBoundary(boundary), t.Kind())
 }
 
 func intToKind(i int, kind reflect.Kind) (interface{}, error) {
@@ -1149,7 +1155,7 @@ func stepIntegerWithBoundary(boundary numberBoundary) (int, error) {
 		boundaryCurrentNumber = boundary.start
 	} else {
 		boundaryCurrentNumber = boundaryCurrentNumber + boundary.step
-		if boundaryCurrentNumber > boundary.end {
+		if boundaryCurrentNumber >= boundary.end {
 			return 0, fmt.Errorf("boundary number now is %d > boundary_end %d", boundaryCurrentNumber, boundary.end)
 		}
 	}
