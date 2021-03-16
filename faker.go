@@ -898,6 +898,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	hasOneOf := strings.Contains(tag, ONEOF)
 	hasBoundaryStart := strings.Contains(tag, BoundaryStart)
 	hasBoundaryEnd := strings.Contains(tag, BoundaryEnd)
+	hasBoundaryStep := strings.Contains(tag, BoundaryStep)
 	usingOneOfTag := hasOneOf && (!hasBoundaryStart && !hasBoundaryEnd)
 	usingBoundariesTags := !hasOneOf && (hasBoundaryStart && hasBoundaryEnd)
 	if !usingOneOfTag && !usingBoundariesTags {
@@ -1036,7 +1037,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	}
 
 	// for incr/decr
-	if len(valuesStr) == 3 {
+	if hasBoundaryStep {
 		boundaryStep, err := extractNumberFromText(valuesStr[2])
 		if err != nil {
 			return nil, err
@@ -1046,58 +1047,39 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		switch t.Kind() {
-		case reflect.Uint:
-			return uint(stepInt), nil
-		case reflect.Uint8:
-			return uint8(stepInt), nil
-		case reflect.Uint16:
-			return uint16(stepInt), nil
-		case reflect.Uint32:
-			return uint32(stepInt), nil
-		case reflect.Uint64:
-			return uint64(stepInt), nil
-		case reflect.Int:
-			return stepInt, nil
-		case reflect.Int8:
-			return int8(stepInt), nil
-		case reflect.Int16:
-			return int16(stepInt), nil
-		case reflect.Int32:
-			return int32(stepInt), nil
-		case reflect.Int64:
-			return int64(stepInt), nil
-		default:
-			return nil, errors.New(ErrNotSupportedTypeForTag)
-		}
+		return intToKind(stepInt, t.Kind())
 	} else {
 		boundary := numberBoundary{start: startBoundary, end: endBoundary}
-		switch t.Kind() {
-		case reflect.Uint:
-			return uint(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Uint8:
-			return uint8(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Uint16:
-			return uint16(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Uint32:
-			return uint32(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Uint64:
-			return uint64(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Int:
-			return randomIntegerWithBoundary(boundary), nil
-		case reflect.Int8:
-			return int8(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Int16:
-			return int16(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Int32:
-			return int32(randomIntegerWithBoundary(boundary)), nil
-		case reflect.Int64:
-			return int64(randomIntegerWithBoundary(boundary)), nil
-		default:
-			return nil, errors.New(ErrNotSupportedTypeForTag)
-		}
+		return intToKind(randomIntegerWithBoundary(boundary), t.Kind())
 	}
 
+}
+
+func intToKind(i int, kind reflect.Kind) (interface{}, error) {
+	switch kind {
+	case reflect.Uint:
+		return uint(i), nil
+	case reflect.Uint8:
+		return uint8(i), nil
+	case reflect.Uint16:
+		return uint16(i), nil
+	case reflect.Uint32:
+		return uint32(i), nil
+	case reflect.Uint64:
+		return uint64(i), nil
+	case reflect.Int:
+		return i, nil
+	case reflect.Int8:
+		return int8(i), nil
+	case reflect.Int16:
+		return int16(i), nil
+	case reflect.Int32:
+		return int32(i), nil
+	case reflect.Int64:
+		return int64(i), nil
+	default:
+		return nil, errors.New(ErrNotSupportedTypeForTag)
+	}
 }
 
 func extractNumberFromText(text string) (int, error) {
