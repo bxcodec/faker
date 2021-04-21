@@ -1,6 +1,6 @@
 package faker_test
 
-import "github.com/bxcodec/faker/v3"
+import "github.com/cloudquery/faker/v3"
 
 // Single fake function can be used for retrieving particular values.
 func Example_singleFakeData() {

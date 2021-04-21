@@ -3,7 +3,7 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/cloudquery/faker/v3"
 )
 
 // You can set length for your random strings also set boundary for your integers.

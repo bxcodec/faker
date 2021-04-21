@@ -3,7 +3,7 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/cloudquery/faker/v3"
 )
 
 // SomeStructWithTags ...
