@@ -13,7 +13,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/cloudquery/faker/v3/support/slice"
 )
 
 var (
@@ -643,6 +643,13 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			continue
 		}
 		res = append(res, tag)
+	}
+	if typ.Field(i).Tag.Get("json") == SKIP {
+		return structTag{
+			fieldType:    SKIP,
+			unique:       uni,
+			keepOriginal: keepOriginal,
+		}
 	}
 
 	return structTag{
