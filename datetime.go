@@ -2,7 +2,6 @@ package faker
 
 import (
 	"fmt"
-	"math/rand"
 	"reflect"
 	"time"
 )
