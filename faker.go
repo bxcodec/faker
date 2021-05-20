@@ -889,7 +889,7 @@ func extractStringFromTag(tag string) (interface{}, error) {
 			return nil, fmt.Errorf(ErrDuplicateSeparator)
 		}
 		args := strings.Split(argsList[0], comma)
-		if len(args) < 2 {
+		if len(args) < 1 {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}
 		toRet := args[rand.Intn(len(args))]
