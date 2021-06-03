@@ -646,7 +646,7 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			res = append(res, tag)
 		}
 	}
-
+	fmt.Println("TAGS:", tags)
 	return structTag{
 		fieldType:    strings.Join(res, ","),
 		unique:       uni,
