@@ -36,6 +36,7 @@ type Coupon struct {
 	BrokerCode string   `json:"broker_code" xorm:"broker_code"`
 	IgetUid    int      `json:"iget_uid" xorm:"iget_uid"`
 	CreateTime string   `json:"create_time" xorm:"create_time"`
+	Name       string   `json:"name" faker:"name"`
 	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
 }
 
@@ -49,6 +50,7 @@ func TestPLen(t *testing.T) {
 	if len(coupon.AdNames[0]) != 10 {
 		t.Fatal("slice len is error")
 	}
+	t.Logf("%+v", coupon)
 }
 
 type SomeInt32 int32
