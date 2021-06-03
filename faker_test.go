@@ -32,14 +32,14 @@ var (
 )
 
 type Coupon struct {
-	Id         int    `json:"id" xorm:"id"`
-	BrokerCode string `json:"broker_code" xorm:"broker_code"`
-	IgetUid    int    `json:"iget_uid" xorm:"iget_uid"`
-	CreateTime string `json:"create_time" xorm:"create_time"`
-	//CFirstName string   `json:"chinese_first_name" faker:"chinese_first_name"`
-	//CLsstName  string   `json:"chinese_last_name" faker:"chinese_last_name"`
-	CName   string   `json:"name" faker:"name"`
-	AdNames []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
+	Id         int      `json:"id" xorm:"id"`
+	BrokerCode string   `json:"broker_code" xorm:"broker_code"`
+	IgetUid    int      `json:"iget_uid" xorm:"iget_uid"`
+	CreateTime string   `json:"create_time" xorm:"create_time"`
+	CFirstName string   `json:"chinese_first_name" faker:"chinese_first_name"`
+	CLsstName  string   `json:"chinese_last_name" faker:"chinese_last_name"`
+	CName      string   `json:"name" faker:"chinese_name"`
+	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
 }
 
 func TestPLen(t *testing.T) {

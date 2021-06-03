@@ -130,6 +130,14 @@ const (
 	//hyphen = "-"
 )
 
+var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNameTag, UserNameTag, URLTag, IPV4Tag,
+	IPV6Tag, PASSWORD, JWT, LATITUDE, LONGITUDE, CreditCardNumber, CreditCardType, PhoneNumber, TollFreeNumber,
+	E164PhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
+	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
+	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
+	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF,
+}
+
 var defaultTag = map[string]string{
 	EmailTag:              EmailTag,
 	MacAddressTag:         MacAddressTag,
@@ -619,8 +627,6 @@ func isZero(field reflect.Value) (bool, error) {
 	}
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
-
-var PriorityTags = []string{"len", "slice_len"}
 
 func decodeTags(typ reflect.Type, i int) structTag {
 	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
