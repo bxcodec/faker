@@ -610,13 +610,14 @@ func isZero(field reflect.Value) (bool, error) {
 	}
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
-
+var PriorityTags = []string{"len","slice_len"}
 func decodeTags(typ reflect.Type, i int) structTag {
 	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
 
 	keepOriginal := false
 	uni := false
 	res := make([]string, 0)
+	pMap:= make(map[string]string,0)
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
@@ -625,7 +626,14 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			uni = true
 			continue
 		}
-		res = append(res, tag)
+		// res = append(res, tag)
+		pMap[strings.ToLower(strings.Trim(strings.Split(tag,"=")[0]," "))] = tag
+	}
+	// Priority
+	for _,ptag:=range PriorityTags {
+		if tag,ok:=pMap[ptag];ok {
+			res = append(res, tag)
+		}
 	}
 
 	return structTag{
