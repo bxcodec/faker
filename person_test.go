@@ -147,6 +147,7 @@ func TestFakeNameFemale(t *testing.T) {
 	if name == "" {
 		t.Error("Expected from function name string get empty string")
 	}
+	t.Log(name)
 }
 
 func TestFakeGender(t *testing.T) {
@@ -173,7 +174,7 @@ func TestChineseFirstName(t *testing.T) {
 	}
 	t.Log(firstname)
 	if !slice.Contains(chineseFirstNames, firstname.(string)) {
-		t.Error("Expected value from either chineseFirstNames in function FirstName")
+		t.Error("Expected value from either chineseFirstNames in function ChineseFirstName")
 	}
 }
 
@@ -184,6 +185,14 @@ func TestChineseLastName(t *testing.T) {
 	}
 	t.Log(firstname)
 	if !slice.Contains(chineseLastNames, firstname.(string)) {
-		t.Error("Expected value from either chineseLastNames in function FirstName")
+		t.Error("Expected value from either chineseLastNames in function ChineseLastName")
 	}
+}
+
+func TestChineseName(t *testing.T) {
+	firstname, err := GetPerson().ChineseName(reflect.Value{})
+	if err != nil {
+		t.Error("Expected  not error, got err", err)
+	}
+	t.Log(firstname)
 }

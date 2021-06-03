@@ -363,7 +363,7 @@ func ChineseLastName() string {
 
 // ChineseName returns a random nhinese name
 func (p Person) ChineseName(v reflect.Value) (interface{}, error) {
-	return p.gender(), nil
+	return p.chineseName(), nil
 }
 
 func (p Person) chineseName() string {
