@@ -95,6 +95,9 @@ const (
 	FirstNameFemaleTag    = "first_name_female"
 	LastNameTag           = "last_name"
 	NAME                  = "name"
+	ChineseFirstNameTag   = "chinese_first_name"
+	ChineseLastNameTag    = "chinese_last_name"
+	ChineseNameTag        = "chinese_name"
 	GENDER                = "gender"
 	UnixTimeTag           = "unix_time"
 	DATE                  = "date"
@@ -151,6 +154,9 @@ var defaultTag = map[string]string{
 	FirstNameFemaleTag:    FirstNameFemaleTag,
 	LastNameTag:           LastNameTag,
 	NAME:                  NAME,
+	ChineseFirstNameTag:   ChineseFirstNameTag,
+	ChineseLastNameTag:    ChineseLastNameTag,
+	ChineseNameTag:        ChineseNameTag,
 	GENDER:                GENDER,
 	UnixTimeTag:           UnixTimeTag,
 	DATE:                  DATE,
@@ -201,6 +207,9 @@ var mapperTag = map[string]TaggedFunction{
 	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
 	LastNameTag:           GetPerson().LastName,
 	NAME:                  GetPerson().Name,
+	ChineseFirstNameTag:   GetPerson().ChineseFirstName,
+	ChineseLastNameTag:    GetPerson().ChineseLastName,
+	ChineseNameTag:        GetPerson().ChineseName,
 	GENDER:                GetPerson().Gender,
 	UnixTimeTag:           GetDateTimer().UnixTime,
 	DATE:                  GetDateTimer().Date,
@@ -610,14 +619,16 @@ func isZero(field reflect.Value) (bool, error) {
 	}
 	return reflect.Zero(field.Type()).Interface() == field.Interface(), nil
 }
-var PriorityTags = []string{"len","slice_len"}
+
+var PriorityTags = []string{"len", "slice_len"}
+
 func decodeTags(typ reflect.Type, i int) structTag {
 	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
 
 	keepOriginal := false
 	uni := false
 	res := make([]string, 0)
-	pMap:= make(map[string]string,0)
+	pMap := make(map[string]string, 0)
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
@@ -627,11 +638,11 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			continue
 		}
 		// res = append(res, tag)
-		pMap[strings.ToLower(strings.Trim(strings.Split(tag,"=")[0]," "))] = tag
+		pMap[strings.ToLower(strings.Trim(strings.Split(tag, "=")[0], " "))] = tag
 	}
 	// Priority
-	for _,ptag:=range PriorityTags {
-		if tag,ok:=pMap[ptag];ok {
+	for _, ptag := range PriorityTags {
+		if tag, ok := pMap[ptag]; ok {
 			res = append(res, tag)
 		}
 	}
