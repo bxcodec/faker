@@ -30,27 +30,26 @@ var (
 	sliceLenCorrectTags   = [4]string{"slice_len=0", "slice_len=4", "slice_len=5", "slice_len=10"}
 	sliceLenIncorrectTags = [3]string{"slice_len=b", "slice_len=-1", "slice_len=-10"}
 )
+
 type Coupon struct {
-	Id int `json:"id" xorm:"id"`
-	BrokerCode string `json:"broker_code" xorm:"broker_code"`
-	IgetUid int `json:"iget_uid" xorm:"iget_uid"`
-	CreateTime string `json:"create_time" xorm:"create_time"`
-	AdCode string `json:"ad_code" xorm:"ad_code" faker:"keep"`
-	AdNames []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
+	Id         int      `json:"id" xorm:"id"`
+	BrokerCode string   `json:"broker_code" xorm:"broker_code"`
+	IgetUid    int      `json:"iget_uid" xorm:"iget_uid"`
+	CreateTime string   `json:"create_time" xorm:"create_time"`
+	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
 }
 
 func TestPLen(t *testing.T) {
-	coupon:=Coupon{}
-	err:=FakeData(&coupon)
+	coupon := Coupon{}
+	err := FakeData(&coupon)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	if len(coupon.AdNames[0])!=10 {
+	if len(coupon.AdNames[0]) != 10 {
 		t.Fatal("slice len is error")
 	}
 }
-
 
 type SomeInt32 int32
 
