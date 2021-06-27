@@ -28,7 +28,7 @@ func Example_withTagsLengthAndBoundary() {
 		MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
 	}
 
-	_ = faker.SetRandomMapAndSliceSize(20) // Random generated map or array size wont exceed 20...
+	_ = faker.SetRandomMapAndSliceSize(1, 20) // Random generated map or array size wont exceed 20...
 	a := SomeStruct{}
 	_ = faker.FakeData(&a)
 	fmt.Printf("%+v", a)

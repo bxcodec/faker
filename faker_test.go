@@ -450,11 +450,11 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
-	if err := SetRandomMapAndSliceSize(-1); err == nil {
+	if err := SetRandomMapAndSliceSize(0, -1); err == nil {
 		t.Error("Random Map and Slice must not accept lower than 0 as a size")
 	}
 	size := 5
-	if err := SetRandomMapAndSliceSize(size); err != nil {
+	if err := SetRandomMapAndSliceSize(1, size); err != nil {
 		t.Error("SetRandomMapAndSliceSize method is corrupted.")
 	}
 	if err := FakeData(&someStruct); err != nil {

@@ -27,7 +27,7 @@ var (
 	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
 	nBoundary = numberBoundary{start: 0, end: 100}
 	//Sets the random size for slices and maps.
-	randomSize = 100
+	randomSize = numberBoundary{start: 0, end: 100}
 	// Sets the single fake data generator to generate unique values
 	generateUniqueValues = false
 	// Sets whether interface{}s should be ignored.
@@ -305,11 +305,14 @@ func SetStringLang(l langRuneBoundary) {
 }
 
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
-func SetRandomMapAndSliceSize(size int) error {
-	if size < 1 {
-		return fmt.Errorf(ErrSmallerThanOne, size)
+func SetRandomMapAndSliceSize(start, end int) error {
+	if start > end {
+		return errors.New(ErrStartValueBiggerThanEnd)
 	}
-	randomSize = size
+	if start < 1 {
+		return fmt.Errorf(ErrSmallerThanOne, start)
+	}
+	randomSize = numberBoundary{start: start, end: end}
 	return nil
 }
 
@@ -1126,7 +1129,7 @@ func randomSliceAndMapSize() int {
 	if testRandZero {
 		return 0
 	}
-	return rand.Intn(randomSize)
+	return randomIntegerWithBoundary(nBoundary)
 }
 
 func randomElementFromSliceString(s []string) string {
