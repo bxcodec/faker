@@ -1,7 +1,6 @@
 package faker
 
 import (
-	"crypto/rand"
 	"fmt"
 	"io"
 	"reflect"
@@ -32,7 +31,7 @@ type UUID struct{}
 // createUUID returns a 16 byte slice with random values
 func createUUID() ([]byte, error) {
 	b := make([]byte, 16)
-	_, err := io.ReadFull(rand.Reader, b)
+	_, err := io.ReadFull(crypto, b)
 	if err != nil {
 		return b, err
 	}
