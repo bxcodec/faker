@@ -3,7 +3,6 @@ package faker
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"reflect"
 )
 

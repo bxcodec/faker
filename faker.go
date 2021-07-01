@@ -3,9 +3,10 @@ package faker
 // Faker is a simple fake data generator for your own struct.
 // Save your time, and Fake your data for your testing now.
 import (
+	cryptorand "crypto/rand"
 	"errors"
 	"fmt"
-	"math/rand"
+	mathrand "math/rand"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -263,10 +264,16 @@ var (
 )
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	rand = mathrand.New(NewSafeSource(mathrand.NewSource(time.Now().UnixNano())))
+	crypto = cryptorand.Reader
+}
+
+func init() {
 	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
 	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
+
+	randNameFlag = rand.Intn(100) // for person
 }
 
 // ResetUnique is used to forget generated unique values.
