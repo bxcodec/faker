@@ -2,7 +2,6 @@ package faker
 
 import (
 	"fmt"
-	"math/rand"
 	"reflect"
 )
 
@@ -110,7 +109,8 @@ var lastNames = []string{
 	"Ullrich", "Upton", "Vandervort", "Veum", "Volkman", "Von", "VonRueden", "Waelchi", "Walker", "Walsh", "Walter", "Ward", "Waters", "Watsica", "Weber", "Wehner", "Weimann", "Weissnat", "Welch", "West", "White", "Wiegand", "Wilderman", "Wilkinson", "Will", "Williamson", "Willms", "Windler", "Wintheiser", "Wisoky", "Wisozk", "Witting", "Wiza", "Wolf", "Wolff", "Wuckert", "Wunsch", "Wyman",
 	"Yost", "Yundt", "Zboncak", "Zemlak", "Ziemann", "Zieme", "Zulauf",
 }
-var randNameFlag = rand.Intn(100)
+
+var randNameFlag int
 
 var genders = []string{"Male", "Female", "Prefer to skip"}
 
