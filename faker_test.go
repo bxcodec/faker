@@ -40,7 +40,7 @@ type Coupon struct {
 	CLsstName  string   `json:"chinese_last_name" faker:"chinese_last_name"`
 	CName      string   `json:"name" faker:"chinese_name"`
 	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
-	CdNames    []string `json:"ad_name" xorm:"ad_name" faker:"len=10,slice_len=5"` //
+	CdNames    []string `json:"cd_name" xorm:"cd_name" faker:"len=10,slice_len=5"` //
 }
 
 func TestPLen(t *testing.T) {
@@ -1795,7 +1795,7 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	type CustomTypeInt64Wrong struct {
 		Age int64 `faker:"oneof: 1_000_000, oops"`
-		Avg int64 `faker:"boundary_start=31, boundary_end=88""`
+		Avg int64 `faker:"boundary_start=31, boundary_end=88"`
 	}
 
 	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
