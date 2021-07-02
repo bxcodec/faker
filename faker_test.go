@@ -2,7 +2,7 @@ package faker
 
 import (
 	"fmt"
-	"math/rand"
+	mathrand "math/rand"
 	"reflect"
 	"strings"
 	"testing"
@@ -1093,8 +1093,7 @@ func TestExtend(t *testing.T) {
 		a := Sample{}
 		sliceLen := 10
 		err := AddProvider("myint", func(v reflect.Value) (interface{}, error) {
-			s1 := rand.NewSource(time.Now().UnixNano())
-			r1 := rand.New(s1)
+			r1 := mathrand.New(NewSafeSource(mathrand.NewSource(time.Now().UnixNano())))
 			r := make([]MyInt, sliceLen)
 			for i := range r {
 				r[i] = MyInt(r1.Intn(100))
