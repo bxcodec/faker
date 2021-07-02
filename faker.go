@@ -96,6 +96,9 @@ const (
 	FirstNameFemaleTag    = "first_name_female"
 	LastNameTag           = "last_name"
 	NAME                  = "name"
+	ChineseFirstNameTag   = "chinese_first_name"
+	ChineseLastNameTag    = "chinese_last_name"
+	ChineseNameTag        = "chinese_name"
 	GENDER                = "gender"
 	UnixTimeTag           = "unix_time"
 	DATE                  = "date"
@@ -128,6 +131,15 @@ const (
 	//hyphen = "-"
 )
 
+// PriorityTags define the priority order of the tag
+var PriorityTags = []string{ID, HyphenatedID, EmailTag, MacAddressTag, DomainNameTag, UserNameTag, URLTag, IPV4Tag,
+	IPV6Tag, PASSWORD, JWT, LATITUDE, LONGITUDE, CreditCardNumber, CreditCardType, PhoneNumber, TollFreeNumber,
+	E164PhoneNumberTag, TitleMaleTag, TitleFemaleTag, FirstNameTag, FirstNameMaleTag, FirstNameFemaleTag, LastNameTag,
+	NAME, ChineseFirstNameTag, ChineseLastNameTag, ChineseNameTag, GENDER, UnixTimeTag, DATE, TIME, MonthNameTag,
+	YEAR, DayOfWeekTag, DayOfMonthTag, TIMESTAMP, CENTURY, TIMEZONE, TimePeriodTag, WORD, SENTENCE, PARAGRAPH,
+	CurrencyTag, AmountTag, AmountWithCurrencyTag, SKIP, Length, SliceLength, Language, BoundaryStart, BoundaryEnd, ONEOF,
+}
+
 var defaultTag = map[string]string{
 	EmailTag:              EmailTag,
 	MacAddressTag:         MacAddressTag,
@@ -152,6 +164,9 @@ var defaultTag = map[string]string{
 	FirstNameFemaleTag:    FirstNameFemaleTag,
 	LastNameTag:           LastNameTag,
 	NAME:                  NAME,
+	ChineseFirstNameTag:   ChineseFirstNameTag,
+	ChineseLastNameTag:    ChineseLastNameTag,
+	ChineseNameTag:        ChineseNameTag,
 	GENDER:                GENDER,
 	UnixTimeTag:           UnixTimeTag,
 	DATE:                  DATE,
@@ -202,6 +217,9 @@ var mapperTag = map[string]TaggedFunction{
 	FirstNameFemaleTag:    GetPerson().FirstNameFemale,
 	LastNameTag:           GetPerson().LastName,
 	NAME:                  GetPerson().Name,
+	ChineseFirstNameTag:   GetPerson().ChineseFirstName,
+	ChineseLastNameTag:    GetPerson().ChineseLastName,
+	ChineseNameTag:        GetPerson().ChineseName,
 	GENDER:                GetPerson().Gender,
 	UnixTimeTag:           GetDateTimer().UnixTime,
 	DATE:                  GetDateTimer().Date,
@@ -401,7 +419,7 @@ func AddProvider(tag string, provider TaggedFunction) error {
 	if _, ok := mapperTag[tag]; ok {
 		return errors.New(ErrTagAlreadyExists)
 	}
-
+	PriorityTags = append(PriorityTags, tag)
 	mapperTag[tag] = provider
 
 	return nil
@@ -619,11 +637,13 @@ func isZero(field reflect.Value) (bool, error) {
 }
 
 func decodeTags(typ reflect.Type, i int) structTag {
-	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
+	tagField := typ.Field(i).Tag.Get(tagName)
+	tags := strings.Split(tagField, ",")
 
 	keepOriginal := false
 	uni := false
 	res := make([]string, 0)
+	pMap := make(map[string]string)
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
@@ -632,9 +652,31 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			uni = true
 			continue
 		}
-		res = append(res, tag)
+		// res = append(res, tag)
+		ptag := strings.ToLower(strings.Trim(strings.Split(tag, "=")[0], " "))
+		pMap[ptag] = tag
+		ptag = strings.ToLower(strings.Trim(strings.Split(tag, ":")[0], " "))
+		pMap[ptag] = tag
+	}
+	// Priority
+	for _, ptag := range PriorityTags {
+		if tag, ok := pMap[ptag]; ok {
+			if ptag == ONEOF {
+				res = append(res, tags...)
+			} else {
+				res = append(res, tag)
+			}
+			delete(pMap, ptag)
+		}
+	}
+	// custom,keep,unique
+	if len(res) < 1 {
+		if !keepOriginal && !uni {
+			res = append(res, tags...)
+		}
 	}
 
+	// fmt.Println("++TAGS:", tags, res)
 	return structTag{
 		fieldType:    strings.Join(res, ","),
 		unique:       uni,
@@ -927,6 +969,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 			return nil, fmt.Errorf(ErrDuplicateSeparator)
 		}
 		args := strings.Split(argsList[0], comma)
+
 		if len(args) < 2 {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}
