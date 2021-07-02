@@ -353,7 +353,7 @@ func (p Person) chineseLastName() string {
 	return randomElementFromSliceString(chineseLastNames)
 }
 
-// ChineseFirstName get chinese lsst name
+// ChineseLastName get chinese lsst name
 func ChineseLastName() string {
 	return singleFakeData(ChineseLastNameTag, func() interface{} {
 		p := Person{}
