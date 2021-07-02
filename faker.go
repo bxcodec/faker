@@ -642,7 +642,7 @@ func decodeTags(typ reflect.Type, i int) structTag {
 	keepOriginal := false
 	uni := false
 	res := make([]string, 0)
-	pMap := make(map[string]string, 0)
+	pMap := make(map[string]string)
 	for _, tag := range tags {
 		if tag == keep {
 			keepOriginal = true
