@@ -887,17 +887,10 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		}
 	}
 	if isOneOfTag {
-		items := strings.Split(tag, colon)
-		argsList := items[1:]
-		if len(argsList) != 1 {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-		}
-		if strings.Contains(argsList[0], ",,") {
-			return nil, fmt.Errorf(ErrDuplicateSeparator)
-		}
-		args := strings.Split(argsList[0], comma)
-		if len(args) < 1 {
-			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		var args []string
+		args, err = fetchOneOfArgsFromTag(tag)
+		if err != nil {
+			return nil, err
 		}
 		toRet := args[rand.Intn(len(args))]
 		return strings.TrimSpace(toRet), nil
@@ -936,16 +929,9 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 
 	// handling oneof tag
 	if usingOneOfTag {
-		argsList := strings.Split(tag, colon)[1:]
-		if len(argsList) != 1 {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-		}
-		if strings.Contains(argsList[0], ",,") {
-			return nil, fmt.Errorf(ErrDuplicateSeparator)
-		}
-		args := strings.Split(argsList[0], comma)
-		if len(args) < 2 {
-			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		args, err := fetchOneOfArgsFromTag(tag)
+		if err != nil {
+			return nil, err
 		}
 		switch t.Kind() {
 		case reflect.Float64:
@@ -1098,6 +1084,26 @@ func extractNumberFromText(text string) (int, error) {
 		return 0, fmt.Errorf(ErrWrongFormattedTag, text)
 	}
 	return strconv.Atoi(texts[1])
+}
+
+func fetchOneOfArgsFromTag(tag string) ([]string, error) {
+	items := strings.Split(tag, colon)
+	argsList := items[1:]
+	if len(argsList) != 1 {
+		return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+	}
+	if strings.Contains(argsList[0], ",,") {
+		return nil, fmt.Errorf(ErrDuplicateSeparator)
+	}
+	fmt.Printf("argsList(%v)\n", argsList[0])
+	if argsList[0] == "" {
+		return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+	}
+	args := strings.Split(argsList[0], comma)
+	if len(args) < 1 {
+		return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+	}
+	return args, nil
 }
 
 func randomString(n int, lang *langRuneBoundary) (string, error) {
