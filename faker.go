@@ -419,7 +419,7 @@ func AddProvider(tag string, provider TaggedFunction) error {
 	if _, ok := mapperTag[tag]; ok {
 		return errors.New(ErrTagAlreadyExists)
 	}
-
+	PriorityTags = append(PriorityTags, tag)
 	mapperTag[tag] = provider
 
 	return nil
@@ -637,7 +637,8 @@ func isZero(field reflect.Value) (bool, error) {
 }
 
 func decodeTags(typ reflect.Type, i int) structTag {
-	tags := strings.Split(typ.Field(i).Tag.Get(tagName), ",")
+	tagField := typ.Field(i).Tag.Get(tagName)
+	tags := strings.Split(tagField, ",")
 
 	keepOriginal := false
 	uni := false
@@ -652,15 +653,30 @@ func decodeTags(typ reflect.Type, i int) structTag {
 			continue
 		}
 		// res = append(res, tag)
-		pMap[strings.ToLower(strings.Trim(strings.Split(tag, "=")[0], " "))] = tag
+		ptag := strings.ToLower(strings.Trim(strings.Split(tag, "=")[0], " "))
+		pMap[ptag] = tag
+		ptag = strings.ToLower(strings.Trim(strings.Split(tag, ":")[0], " "))
+		pMap[ptag] = tag
 	}
 	// Priority
 	for _, ptag := range PriorityTags {
 		if tag, ok := pMap[ptag]; ok {
-			res = append(res, tag)
+			if ptag == ONEOF {
+				res = append(res, tags...)
+			} else {
+				res = append(res, tag)
+			}
+			delete(pMap, ptag)
 		}
 	}
-	fmt.Println("TAGS:", tags)
+	// custom,keep,unique
+	if len(res) < 1 {
+		if !keepOriginal && !uni {
+			res = append(res, tags...)
+		}
+	}
+
+	// fmt.Println("++TAGS:", tags, res)
 	return structTag{
 		fieldType:    strings.Join(res, ","),
 		unique:       uni,
@@ -953,6 +969,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 			return nil, fmt.Errorf(ErrDuplicateSeparator)
 		}
 		args := strings.Split(argsList[0], comma)
+
 		if len(args) < 2 {
 			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 		}

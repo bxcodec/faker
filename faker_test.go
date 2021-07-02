@@ -40,6 +40,7 @@ type Coupon struct {
 	CLsstName  string   `json:"chinese_last_name" faker:"chinese_last_name"`
 	CName      string   `json:"name" faker:"chinese_name"`
 	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
+	CdNames    []string `json:"ad_name" xorm:"ad_name" faker:"len=10,slice_len=5"` //
 }
 
 func TestPLen(t *testing.T) {
@@ -49,7 +50,10 @@ func TestPLen(t *testing.T) {
 		t.Fatal(err)
 		return
 	}
-	if len(coupon.AdNames[0]) != 10 {
+	if len(coupon.AdNames[0]) != 10 || len(coupon.AdNames) != 5 {
+		t.Fatal("slice len is error")
+	}
+	if len(coupon.CdNames[0]) != 10 || len(coupon.CdNames) != 5 {
 		t.Fatal("slice len is error")
 	}
 	t.Logf("%+v\n", coupon)
@@ -415,19 +419,28 @@ func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 
 func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 	temp := &struct {
-		Test string `faker:"test"`
+		Test string `faker:"test_no_exist"`
 	}{}
-	fmt.Printf("%+v ", temp)
-	if err := FakeData(temp); err == nil {
-		t.Error("Exptected error Unsupported tag, but got nil")
+	for idx, tag := range PriorityTags {
+		if tag == "test_no_exist" {
+			PriorityTags[idx] = ""
+		}
 	}
+	if err := FakeData(temp); err == nil {
+		t.Error("Exptected error Unsupported tag, but got nil", temp, err)
+	}
+
 }
 
 func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	temp := &struct {
-		Test int `faker:"test"`
+		Test int `faker:"test_no_exist"`
 	}{}
-
+	for idx, tag := range PriorityTags {
+		if tag == "test_no_exist" {
+			PriorityTags[idx] = ""
+		}
+	}
 	if err := FakeData(temp); err == nil {
 		t.Error("Expected error Unsupported tag, but got nil")
 	}
@@ -1782,11 +1795,13 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	type CustomTypeInt64Wrong struct {
 		Age int64 `faker:"oneof: 1_000_000, oops"`
+		Avg int64 `faker:"boundary_start=31, boundary_end=88""`
 	}
 
 	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt64Wrong{}
 		err := FakeData(&a)
+		t.Log(a.Age, a.Avg)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 			return
