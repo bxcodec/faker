@@ -364,6 +364,33 @@ func FakeData(a interface{}) error {
 	return nil
 }
 
+func FakeDataSkipFields(a interface{}, fieldsToSkip []string) error {
+	reflectType := reflect.TypeOf(a)
+
+	if reflectType.Kind() != reflect.Ptr {
+		return errors.New(ErrValueNotPtr)
+	}
+
+	skipMap := make(map[string]struct{})
+	for _, s := range fieldsToSkip {
+		skipMap[s] = struct{}{}
+	}
+	v := reflect.ValueOf(a)
+	ind := reflect.Indirect(v)
+	s := ind.Type()
+
+	for i := 0; i < s.NumField(); i++ {
+		if _, ok := skipMap[s.Field(i).Name]; !ok {
+			ifc := ind.Field(i).Interface()
+			if err := FakeData(&ifc); err != nil {
+				return err
+			}
+			ind.Field(i).Set(reflect.ValueOf(ifc))
+		}
+	}
+	return nil
+}
+
 // AddProvider extend faker with tag to generate fake data with specified custom algorithm
 // Example:
 // 		type Gondoruwo struct {
