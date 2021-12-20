@@ -60,8 +60,8 @@ var (
 	LangCHI = langRuneBoundary{19968, 40869, nil}
 	// LangRUS is for russian language
 	LangRUS = langRuneBoundary{1025, 1105, nil}
-	// LangJA is for japanese Hiragana Katakana language
-	LangJA = langRuneBoundary{12353, 12538, []rune{12439,12440,12441,12442,12443,12444,12445,12446,12447,12448}}
+	// LangJPN is for japanese Hiragana Katakana language
+	LangJPN = langRuneBoundary{12353, 12538, []rune{12439,12440,12441,12442,12443,12444,12445,12446,12447,12448}}
 )
 
 // Supported tags
@@ -271,7 +271,7 @@ func init() {
 }
 
 func init() {
-	findLangReg, _ = regexp.Compile("lang=[a-z]{2,3}")
+	findLangReg, _ = regexp.Compile("lang=[a-z]{3}")
 	findLenReg, _ = regexp.Compile(`len=\d+`)
 	findSliceLenReg, _ = regexp.Compile(`slice_len=\d+`)
 
@@ -308,7 +308,7 @@ func SetRandomStringLength(size int) error {
 	return nil
 }
 
-// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJA)
+// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN)
 func SetStringLang(l langRuneBoundary) {
 	lang = l
 }
@@ -904,8 +904,8 @@ func extractLangFromTag(tag string) (*langRuneBoundary, error) {
 		return &LangRUS, nil
 	case "chi":
 		return &LangCHI, nil
-	case "ja":
-		return &LangJA, nil
+	case "jpn":
+		return &LangJPN, nil
 	default:
 		return &LangENG, nil
 	}
