@@ -733,9 +733,9 @@ func TestLangWithLen(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
-	jaLen := utfLen(someStruct.ValueJPN)
-	if jaLen != someStructWithLenAndLangJPN {
-		t.Errorf("Got %d, but expected to be %d as a string len", rusLen, someStructWithLenAndLangJPN)
+	jpnLen := utfLen(someStruct.ValueJPN)
+	if jpnLen != someStructWithLenAndLangJPN {
+		t.Errorf("Got %d, but expected to be %d as a string len", jpnLen, someStructWithLenAndLangJPN)
 	}
 }
 
