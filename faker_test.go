@@ -857,6 +857,25 @@ func TestRandomIntOnlySecondParameters(t *testing.T) {
 	}
 }
 
+func TestRandomIntThreeParameters(t *testing.T) {
+	first := rand.Intn(50)
+	second := rand.Intn(100) + first
+	third := rand.Intn(5)
+	res, _ := RandomInt(first, second, third)
+	if len(res) != (third) {
+		t.Errorf("Incorrect number of results returned. Expected %v. Got %v.", third, len(res))
+	}
+
+	for _, v := range res {
+		if v < first {
+			t.Errorf("Found value %v below minimum %v.", v, first)
+		}
+		if v > second {
+			t.Errorf("Found value %v above maximum %v.", v, second)
+		}
+	}
+}
+
 func TestRandomIntOnlyError(t *testing.T) {
 	arguments := []int{1, 3, 4, 5, 6}
 	_, err := RandomInt(arguments...)
