@@ -60,6 +60,8 @@ var (
 	LangCHI = langRuneBoundary{19968, 40869, nil}
 	// LangRUS is for russian language
 	LangRUS = langRuneBoundary{1025, 1105, nil}
+	// LangJPN is for japanese Hiragana Katakana language
+	LangJPN = langRuneBoundary{12353, 12534, []rune{12436, 12437, 12438, 12439, 12440, 12441, 12442, 12443, 12444, 12445, 12446, 12447, 12448}}
 )
 
 // Supported tags
@@ -306,7 +308,7 @@ func SetRandomStringLength(size int) error {
 	return nil
 }
 
-// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS)
+// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN)
 func SetStringLang(l langRuneBoundary) {
 	lang = l
 }
@@ -902,6 +904,8 @@ func extractLangFromTag(tag string) (*langRuneBoundary, error) {
 		return &LangRUS, nil
 	case "chi":
 		return &LangCHI, nil
+	case "jpn":
+		return &LangJPN, nil
 	default:
 		return &LangENG, nil
 	}
