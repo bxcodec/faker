@@ -1099,7 +1099,6 @@ func fetchOneOfArgsFromTag(tag string) ([]string, error) {
 	if strings.Contains(argsList[0], ",,") {
 		return nil, fmt.Errorf(ErrDuplicateSeparator)
 	}
-	fmt.Printf("argsList(%v)\n", argsList[0])
 	if argsList[0] == "" {
 		return nil, fmt.Errorf(ErrNotEnoughTagArguments)
 	}
