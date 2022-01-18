@@ -27,8 +27,10 @@ var (
 	randomStringLen = 25
 	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
 	nBoundary = numberBoundary{start: 0, end: 100}
-	//Sets the random size for slices and maps.
-	randomSize = 100
+	//Sets the random max size for slices and maps.
+	randomMaxSize = 100
+	//Sets the random min size for slices and maps.
+	randomMinSize = 0
 	// Sets the single fake data generator to generate unique values
 	generateUniqueValues = false
 	// Sets whether interface{}s should be ignored.
@@ -314,11 +316,26 @@ func SetStringLang(l langRuneBoundary) {
 }
 
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
+// deprecates, currently left for old version usage
 func SetRandomMapAndSliceSize(size int) error {
+	return SetRandomMapAndSliceMaxSize(size)
+}
+
+// SetRandomMapAndSliceMaxSize sets the max size for maps and slices for random generation.
+func SetRandomMapAndSliceMaxSize(size int) error {
 	if size < 1 {
 		return fmt.Errorf(ErrSmallerThanOne, size)
 	}
-	randomSize = size
+	randomMaxSize = size
+	return nil
+}
+
+// SetRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
+func SetRandomMapAndSliceMinSize(size int) error {
+	if size < 0 {
+		return fmt.Errorf(ErrSmallerThanZero, size)
+	}
+	randomMinSize = size
 	return nil
 }
 
@@ -872,17 +889,10 @@ func extractStringFromTag(tag string) (interface{}, error) {
 		}
 	}
 	if isOneOfTag {
-		items := strings.Split(tag, colon)
-		argsList := items[1:]
-		if len(argsList) != 1 {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-		}
-		if strings.Contains(argsList[0], ",,") {
-			return nil, fmt.Errorf(ErrDuplicateSeparator)
-		}
-		args := strings.Split(argsList[0], comma)
-		if len(args) < 2 {
-			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		var args []string
+		args, err = fetchOneOfArgsFromTag(tag)
+		if err != nil {
+			return nil, err
 		}
 		toRet := args[rand.Intn(len(args))]
 		return strings.TrimSpace(toRet), nil
@@ -923,16 +933,9 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 
 	// handling oneof tag
 	if usingOneOfTag {
-		argsList := strings.Split(tag, colon)[1:]
-		if len(argsList) != 1 {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
-		}
-		if strings.Contains(argsList[0], ",,") {
-			return nil, fmt.Errorf(ErrDuplicateSeparator)
-		}
-		args := strings.Split(argsList[0], comma)
-		if len(args) < 2 {
-			return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+		args, err := fetchOneOfArgsFromTag(tag)
+		if err != nil {
+			return nil, err
 		}
 		switch t.Kind() {
 		case reflect.Float64:
@@ -1087,6 +1090,25 @@ func extractNumberFromText(text string) (int, error) {
 	return strconv.Atoi(texts[1])
 }
 
+func fetchOneOfArgsFromTag(tag string) ([]string, error) {
+	items := strings.Split(tag, colon)
+	argsList := items[1:]
+	if len(argsList) != 1 {
+		return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+	}
+	if strings.Contains(argsList[0], ",,") {
+		return nil, fmt.Errorf(ErrDuplicateSeparator)
+	}
+	if argsList[0] == "" {
+		return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+	}
+	args := strings.Split(argsList[0], comma)
+	if len(args) < 1 {
+		return nil, fmt.Errorf(ErrNotEnoughTagArguments)
+	}
+	return args, nil
+}
+
 func randomString(n int, lang *langRuneBoundary) (string, error) {
 	b := make([]rune, 0)
 	set := make(map[rune]struct{})
@@ -1137,7 +1159,11 @@ func randomSliceAndMapSize() int {
 	if testRandZero {
 		return 0
 	}
-	return rand.Intn(randomSize)
+	r := randomMaxSize - randomMinSize
+	if r < 1 {
+		r = 1
+	}
+	return randomMinSize + rand.Intn(r)
 }
 
 func randomElementFromSliceString(s []string) string {
