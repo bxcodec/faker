@@ -1209,24 +1209,34 @@ func randomStringNumber(n int) string {
 }
 
 // RandomInt Get three parameters , only first mandatory and the rest are optional
-// 		If only set one parameter :  This means the minimum number of digits and the total number
-// 		If only set two parameters : First this is min digit and second max digit and the total number the difference between them
-// 		If only three parameters: the third argument set Max count Digit
+// (minimum_int, maximum_int, count)
+// 		If only set one parameter :  An integer greater than minimum_int will be returned
+// 		If only set two parameters : All integers between minimum_int and maximum_int will be returned, in a random order.
+// 		If three parameters: `count` integers between minimum_int and maximum_int will be returned.
 func RandomInt(parameters ...int) (p []int, err error) {
 	switch len(parameters) {
 	case 1:
-		minCount := parameters[0]
-		p = rand.Perm(minCount)
+		minInt := parameters[0]
+		p = rand.Perm(minInt)
 		for i := range p {
-			p[i] += minCount
+			p[i] += minInt
 		}
 	case 2:
-		minDigit, maxDigit := parameters[0], parameters[1]
-		p = rand.Perm(maxDigit - minDigit + 1)
+		minInt, maxInt := parameters[0], parameters[1]
+		p = rand.Perm(maxInt - minInt + 1)
 
 		for i := range p {
-			p[i] += minDigit
+			p[i] += minInt
 		}
+	case 3:
+		minInt, maxInt := parameters[0], parameters[1]
+		count := parameters[2]
+		p = rand.Perm(maxInt - minInt + 1)
+
+		for i := range p {
+			p[i] += minInt
+		}
+		p = p[0:count]
 	default:
 		err = fmt.Errorf(ErrMoreArguments, len(parameters))
 	}
