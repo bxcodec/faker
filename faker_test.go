@@ -1562,7 +1562,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -1580,7 +1579,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1667,7 +1665,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1685,7 +1682,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error", err)
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1703,7 +1699,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -1721,7 +1716,6 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrDuplicateSeparator
@@ -1743,7 +1737,6 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -1761,7 +1754,6 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1779,7 +1771,6 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1797,7 +1788,6 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -1815,7 +1805,6 @@ func TestOneOfTag__BadInputsForStrings(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrDuplicateSeparator
@@ -1839,7 +1828,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		t.Log(a.Age, a.Avg)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1857,7 +1845,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1875,7 +1862,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1893,7 +1879,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1911,7 +1896,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1929,7 +1913,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1947,7 +1930,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1965,7 +1947,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -1983,7 +1964,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -2001,7 +1981,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -2019,7 +1998,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -2037,7 +2015,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -2072,7 +2049,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		expected := ErrUnsupportedTagArguments
 		actual := err.Error()
@@ -2089,7 +2065,6 @@ func TestFakeData3(t *testing.T) {
 		err := FakeData(a)
 		if err == nil {
 			t.Errorf("expected error but got nil")
-			return
 		}
 		actual := err.Error()
 		expected1 := "Use sample:=new"
