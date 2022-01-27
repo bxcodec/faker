@@ -2020,7 +2020,6 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Fatal("expected error, but got no error")
-			return
 		}
 		actual := err.Error()
 		expected := ErrDuplicateSeparator
