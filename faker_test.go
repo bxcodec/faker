@@ -33,6 +33,34 @@ var (
 	sliceLenIncorrectTags = [3]string{"slice_len=b", "slice_len=-1", "slice_len=-10"}
 )
 
+type Coupon struct {
+	ID         int      `json:"id" xorm:"id"`
+	BrokerCode string   `json:"broker_code" xorm:"broker_code"`
+	IgetUID    int      `json:"iget_uid" xorm:"iget_uid"`
+	CreateTime string   `json:"create_time" xorm:"create_time"`
+	CFirstName string   `json:"chinese_first_name" faker:"chinese_first_name"`
+	CLsstName  string   `json:"chinese_last_name" faker:"chinese_last_name"`
+	CName      string   `json:"name" faker:"chinese_name"`
+	AdNames    []string `json:"ad_name" xorm:"ad_name" faker:"slice_len=5,len=10"` // faker:"len=10,slice_len=5"
+	CdNames    []string `json:"cd_name" xorm:"cd_name" faker:"len=10,slice_len=5"` //
+}
+
+func TestPLen(t *testing.T) {
+	coupon := Coupon{}
+	err := FakeData(&coupon)
+	if err != nil {
+		t.Fatal(err)
+		return
+	}
+	if len(coupon.AdNames[0]) != 10 || len(coupon.AdNames) != 5 {
+		t.Fatal("slice len is error")
+	}
+	if len(coupon.CdNames[0]) != 10 || len(coupon.CdNames) != 5 {
+		t.Fatal("slice len is error")
+	}
+	t.Logf("%+v\n", coupon)
+}
+
 type SomeInt32 int32
 
 type TArray [16]byte
@@ -224,6 +252,9 @@ type TaggedStruct struct {
 	FirstNameFemale    string  `faker:"first_name_female"`
 	LastName           string  `faker:"last_name"`
 	Name               string  `faker:"name"`
+	ChineseFirstName   string  `faker:"chinese_first_name"`
+	ChineseLastName    string  `faker:"chinese_last_name"`
+	ChineseName        string  `faker:"chinese_name"`
 	UnixTime           int64   `faker:"unix_time"`
 	Date               string  `faker:"date"`
 	Time               string  `faker:"time"`
@@ -394,19 +425,28 @@ func TestSetDataIfArgumentNotHaveReflect(t *testing.T) {
 
 func TestSetDataErrorDataParseTagStringType(t *testing.T) {
 	temp := &struct {
-		Test string `faker:"test"`
+		Test string `faker:"test_no_exist"`
 	}{}
-	fmt.Printf("%+v ", temp)
-	if err := FakeData(temp); err == nil {
-		t.Error("Exptected error Unsupported tag, but got nil")
+	for idx, tag := range PriorityTags {
+		if tag == "test_no_exist" {
+			PriorityTags[idx] = ""
+		}
 	}
+	if err := FakeData(temp); err == nil {
+		t.Error("Exptected error Unsupported tag, but got nil", temp, err)
+	}
+
 }
 
 func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 	temp := &struct {
-		Test int `faker:"test"`
+		Test int `faker:"test_no_exist"`
 	}{}
-
+	for idx, tag := range PriorityTags {
+		if tag == "test_no_exist" {
+			PriorityTags[idx] = ""
+		}
+	}
 	if err := FakeData(temp); err == nil {
 		t.Error("Expected error Unsupported tag, but got nil")
 	}
@@ -1672,6 +1712,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		err := FakeData(&a)
 		if err == nil {
 			t.Errorf("expected error, but got no error")
+			return
 		}
 		actual := err.Error()
 		expected := ErrNotEnoughTagArguments
@@ -1705,7 +1746,7 @@ func TestOneOfTag__BadInputsForFloats(t *testing.T) {
 		a := CustomWrongFloat9{}
 		err := FakeData(&a)
 		if err == nil {
-			t.Fatal("expected error, but got no error")
+			t.Fatal("expected error, but got no error", err)
 		}
 		actual := err.Error()
 		expected := ErrUnsupportedTagArguments
@@ -1809,11 +1850,13 @@ func TestOneOfTag__BadInputsForInts(t *testing.T) {
 
 	type CustomTypeInt64Wrong struct {
 		Age int64 `faker:"oneof: 1_000_000, oops"`
+		Avg int64 `faker:"boundary_start=31, boundary_end=88"`
 	}
 
 	t.Run("should error for int64 with bad tag arguments", func(t *testing.T) {
 		a := CustomTypeInt64Wrong{}
 		err := FakeData(&a)
+		t.Log(a.Age, a.Avg)
 		if err == nil {
 			t.Errorf("expected error but got nil")
 		}
