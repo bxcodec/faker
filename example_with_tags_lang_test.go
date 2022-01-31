@@ -29,7 +29,7 @@ func Example_withTagsLang() {
 			   StringCHI: 随机字符串
 			   StringRUS:ваЩфз
 			   StringJPN:びゃほぱヒてふ
-			   StringKOR:텻밚쨋큊몉\
+			   StringKOR:텻밚쨋큊몉
 			   StringEMJ:🐅😄🕢🍪🐡
 		   }
 	*/
