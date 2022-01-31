@@ -64,6 +64,8 @@ var (
 	LangRUS = langRuneBoundary{1025, 1105, nil}
 	// LangJPN is for japanese Hiragana Katakana language
 	LangJPN = langRuneBoundary{12353, 12534, []rune{12436, 12437, 12438, 12439, 12440, 12441, 12442, 12443, 12444, 12445, 12446, 12447, 12448}}
+	// LangKOR is for korean Hangul language
+	LangKOR = langRuneBoundary{44032, 55203, nil}
 	// EmotEMJ is for emoticons
 	EmotEMJ = langRuneBoundary{126976, 129535, nil}
 )
@@ -312,7 +314,7 @@ func SetRandomStringLength(size int) error {
 	return nil
 }
 
-// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN, EmotEMJ)
+// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN, LangKOR, EmotEMJ)
 func SetStringLang(l langRuneBoundary) {
 	lang = l
 }
@@ -918,6 +920,8 @@ func extractLangFromTag(tag string) (*langRuneBoundary, error) {
 		return &LangCHI, nil
 	case "jpn":
 		return &LangJPN, nil
+	case "kor":
+		return &LangKOR, nil
 	case "emj":
 		return &EmotEMJ, nil
 	default:

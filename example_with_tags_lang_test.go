@@ -14,6 +14,7 @@ func Example_withTagsLang() {
 		StringCHI string `faker:"lang=chi"`
 		StringRUS string `faker:"lang=rus"`
 		StringJPN string `faker:"lang=jpn"`
+		StringKOR string `faker:"lang=kor"`
 		StringEMJ string `faker:"lang=emj"`
 	}
 
@@ -28,6 +29,7 @@ func Example_withTagsLang() {
 			   StringCHI: 随机字符串
 			   StringRUS:ваЩфз
 			   StringJPN:びゃほぱヒてふ
+			   StringKOR:텻밚쨋큊몉\
 			   StringEMJ:🐅😄🕢🍪🐡
 		   }
 	*/
