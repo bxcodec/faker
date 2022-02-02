@@ -25,8 +25,10 @@ var (
 	testRandZero = false
 	//Sets the default number of string when it is created randomly.
 	randomStringLen = 25
-	//Sets the boundary for random value generation. Boundaries can not exceed integer(4 byte...)
-	nBoundary = numberBoundary{start: 0, end: 100}
+	//Sets the boundary for random integer value generation. Boundaries can not exceed integer(4 byte...)
+	iBoundary = intBoundary{start: 0, end: 100}
+	//Sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
+	fBoundary = floatBoundary{start: 0, end: 100}
 	//Sets the random max size for slices and maps.
 	randomMaxSize = 100
 	//Sets the random min size for slices and maps.
@@ -43,9 +45,14 @@ var (
 	maxGenerateStringRetries = 1000000
 )
 
-type numberBoundary struct {
+type intBoundary struct {
 	start int
 	end   int
+}
+
+type floatBoundary struct {
+	start float64
+	end   float64
 }
 
 type langRuneBoundary struct {
@@ -364,7 +371,7 @@ func SetRandomNumberBoundaries(start, end int) error {
 	if start > end {
 		return errors.New(ErrStartValueBiggerThanEnd)
 	}
-	nBoundary = numberBoundary{start: start, end: end}
+	iBoundary = intBoundary{start: start, end: end}
 	return nil
 }
 
@@ -594,9 +601,9 @@ func getValue(a interface{}) (reflect.Value, error) {
 	case reflect.Int64:
 		return reflect.ValueOf(int64(randomInteger())), nil
 	case reflect.Float32:
-		return reflect.ValueOf(rand.Float32()), nil
+		return reflect.ValueOf(float32(randomFloat())), nil
 	case reflect.Float64:
-		return reflect.ValueOf(rand.Float64()), nil
+		return reflect.ValueOf(randomFloat()), nil
 	case reflect.Bool:
 		val := rand.Intn(2) > 0
 		return reflect.ValueOf(val), nil
@@ -797,7 +804,7 @@ func userDefinedMap(v reflect.Value, tag string) error {
 func getValueWithTag(t reflect.Type, tag string) (interface{}, error) {
 	switch t.Kind() {
 	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
-		reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
 		res, err := extractNumberFromTag(tag, t)
 		if err != nil {
 			return nil, err
@@ -1091,15 +1098,35 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	if len(valuesStr) != 2 {
 		return nil, fmt.Errorf(ErrWrongFormattedTag, tag)
 	}
-	startBoundary, err := extractNumberFromText(valuesStr[0])
+
+	// TODO(Xaspy): When Golang provides generics, we will be able to make this method simpler and more beautiful.
+	if t.Kind() == reflect.Float64 || t.Kind() == reflect.Float32 {
+		startBoundary, err := extractFloatFromText(valuesStr[0])
+		if err != nil {
+			return nil, err
+		}
+		endBoundary, err := extractFloatFromText(valuesStr[1])
+		if err != nil {
+			return nil, err
+		}
+		boundary := floatBoundary{start: startBoundary, end: endBoundary}
+		switch t.Kind() {
+		case reflect.Float32:
+			return float32(randomFloatWithBoundary(boundary)), nil
+		case reflect.Float64:
+			return randomFloatWithBoundary(boundary), nil
+		}
+	}
+
+	startBoundary, err := extractIntFromText(valuesStr[0])
 	if err != nil {
 		return nil, err
 	}
-	endBoundary, err := extractNumberFromText(valuesStr[1])
+	endBoundary, err := extractIntFromText(valuesStr[1])
 	if err != nil {
 		return nil, err
 	}
-	boundary := numberBoundary{start: startBoundary, end: endBoundary}
+	boundary := intBoundary{start: startBoundary, end: endBoundary}
 	switch t.Kind() {
 	case reflect.Uint:
 		return uint(randomIntegerWithBoundary(boundary)), nil
@@ -1126,13 +1153,22 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 	}
 }
 
-func extractNumberFromText(text string) (int, error) {
+func extractIntFromText(text string) (int, error) {
 	text = strings.TrimSpace(text)
 	texts := strings.SplitN(text, Equals, -1)
 	if len(texts) != 2 {
 		return 0, fmt.Errorf(ErrWrongFormattedTag, text)
 	}
 	return strconv.Atoi(texts[1])
+}
+
+func extractFloatFromText(text string) (float64, error) {
+	text = strings.TrimSpace(text)
+	texts := strings.SplitN(text, Equals, -1)
+	if len(texts) != 2 {
+		return 0, fmt.Errorf(ErrWrongFormattedTag, text)
+	}
+	return strconv.ParseFloat(texts[1], 64)
 }
 
 func fetchOneOfArgsFromTag(tag string) ([]string, error) {
@@ -1185,7 +1221,7 @@ func randomString(n int, lang *langRuneBoundary) (string, error) {
 }
 
 // randomIntegerWithBoundary returns a random integer between input start and end boundary. [start, end)
-func randomIntegerWithBoundary(boundary numberBoundary) int {
+func randomIntegerWithBoundary(boundary intBoundary) int {
 	span := boundary.end - boundary.start
 	if span <= 0 {
 		return boundary.start
@@ -1193,9 +1229,23 @@ func randomIntegerWithBoundary(boundary numberBoundary) int {
 	return rand.Intn(span) + boundary.start
 }
 
+// randomFloatWithBoundary returns a random float between input start and end boundary. [start, end)
+func randomFloatWithBoundary(boundary floatBoundary) float64 {
+	span := boundary.end - boundary.start
+	if span <= 0 {
+		return boundary.start
+	}
+	return boundary.start + rand.Float64()*span
+}
+
 // randomInteger returns a random integer between start and end boundary. [start, end)
 func randomInteger() int {
-	return randomIntegerWithBoundary(nBoundary)
+	return randomIntegerWithBoundary(iBoundary)
+}
+
+// randomFloat returns a random float between start and end boundary. [start, end)
+func randomFloat() float64 {
+	return randomFloatWithBoundary(fBoundary)
 }
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0

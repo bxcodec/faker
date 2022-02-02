@@ -22,6 +22,9 @@ func Example_withTagsLengthAndBoundary() {
 		UInt32 uint32 `faker:"boundary_start=0, boundary_end=40"`
 		UInt64 uint64 `faker:"boundary_start=14, boundary_end=50"`
 
+		Float32 float32 `faker:"boundary_start=12.65, boundary_end=184.05"`
+		Float64 float64 `faker:"boundary_start=1.256, boundary_end=3.4"`
+
 		ASString []string          `faker:"len=50"`
 		SString  string            `faker:"len=25"`
 		MSString map[string]string `faker:"len=30"`
@@ -45,6 +48,8 @@ func Example_withTagsLengthAndBoundary() {
 	       UInt16:1797
 	       UInt32:8
 	       UInt64:34
+	       Float32:60.999058
+	       Float64:2.590148738554016
 	       ASString:[
 	           geHYIpEoQhQdijFooVEAOyvtTwJOofbQPJdbHvEEdjueZaKIgI
 	           WVJBBtmrrVccyIydAiLSkMwWbFzFMEotEXsyUXqcmBTVORlkJK
