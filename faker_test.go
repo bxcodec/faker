@@ -20,10 +20,11 @@ const (
 	someStructWithLenAndLangRUS = 15
 	someStructWithLenAndLangJPN = 20
 	someStructWithLenAndLangKOR = 25
+	someStructWithLenAndEmotEMJ = 50
 )
 
 var (
-	langCorrectTagsMap = map[string]langRuneBoundary{"lang=eng": LangENG, "lang=chi": LangCHI, "lang=rus": LangRUS, "lang=jpn": LangJPN, "lang=kor": LangKOR}
+	langCorrectTagsMap = map[string]langRuneBoundary{"lang=eng": LangENG, "lang=chi": LangCHI, "lang=rus": LangRUS, "lang=jpn": LangJPN, "lang=kor": LangKOR, "lang=emj": EmotEMJ}
 	langUncorrectTags  = [3]string{"lang=", "lang", "lng=eng"}
 
 	lenCorrectTags   = [3]string{"len=4", "len=5", "len=10"}
@@ -145,6 +146,7 @@ type SomeStructWithLang struct {
 	ValueRUS string `faker:"lang=rus"`
 	ValueJPN string `faker:"lang=jpn"`
 	ValueKOR string `faker:"lang=kor"`
+	ValueEMJ string `faker:"lang=emj"`
 
 	ValueWithUndefinedLang string `faker:"lang=und"`
 }
@@ -155,6 +157,7 @@ type SomeStructWithLenAndLang struct {
 	ValueRUS string ` faker:"len=15, lang=rus"`
 	ValueJPN string ` faker:"len=20, lang=jpn"`
 	ValueKOR string ` faker:"len=25, lang=kor"`
+	ValueEMJ string ` faker:"len=50, lang=emj"`
 }
 
 func (s SomeStruct) String() string {
@@ -651,6 +654,10 @@ func TestLang(t *testing.T) {
 	if err != nil {
 		t.Error(err.Error())
 	}
+	err = isStringLangCorrect(someStruct.ValueEMJ, EmotEMJ)
+	if err != nil {
+		t.Error(err.Error())
+	}
 
 	err = isStringLangCorrect(someStruct.ValueWithUndefinedLang, LangENG)
 	if err != nil {
@@ -801,6 +808,15 @@ func TestLangWithLen(t *testing.T) {
 	korLen := utfLen(someStruct.ValueKOR)
 	if korLen != someStructWithLenAndLangKOR {
 		t.Errorf("Got %d, but expected to be %d as a string len", korLen, someStructWithLenAndLangKOR)
+	}
+
+	err = isStringLangCorrect(someStruct.ValueEMJ, EmotEMJ)
+	if err != nil {
+		t.Error(err.Error())
+	}
+	emjLen := utfLen(someStruct.ValueEMJ)
+	if emjLen != someStructWithLenAndEmotEMJ {
+		t.Errorf("Got %d, but expected to be %d as a string len", emjLen, someStructWithLenAndEmotEMJ)
 	}
 }
 
