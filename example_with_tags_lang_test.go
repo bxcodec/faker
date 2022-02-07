@@ -15,6 +15,7 @@ func Example_withTagsLang() {
 		StringRUS string `faker:"lang=rus"`
 		StringJPN string `faker:"lang=jpn"`
 		StringKOR string `faker:"lang=kor"`
+		StringEMJ string `faker:"lang=emj"`
 	}
 
 	a := SomeStruct{}
@@ -29,6 +30,7 @@ func Example_withTagsLang() {
 			   StringRUS:ваЩфз
 			   StringJPN:びゃほぱヒてふ
 			   StringKOR:텻밚쨋큊몉
+			   StringEMJ:🐅😄🕢🍪🐡
 		   }
 	*/
 }
