@@ -497,6 +497,57 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	}
 }
 
+func TestStepBoundaries(t *testing.T) {
+	type StepStructError struct {
+		Inta int `faker:"boundary_start=10"`
+	}
+	stepErr := StepStructError{}
+	if err := FakeData(&stepErr); err == nil {
+		t.Error("boundary tag format error")
+	}
+
+	type StepStructError1 struct {
+		Inta int `faker:"boundary_start=10, boundary_end=100, boundary_step=a"`
+	}
+	stepErr1 := StepStructError1{}
+	if err := FakeData(&stepErr1); err == nil {
+		t.Error("boundary tag format error")
+	}
+
+	type StepStruct struct {
+		Inta int `faker:"boundary_start=10, boundary_end=100, boundary_step=3"`
+	}
+	step := StepStruct{}
+	for i := 10; i < 100; i += 3 {
+		if err := FakeData(&step); err != nil {
+			t.Error("Fake data generation has failed")
+		}
+		if step.Inta != i {
+			t.Errorf("step error: expected: %d actual %d", i, step.Inta)
+		}
+	}
+
+	type Int8StepStruct struct {
+		UID int `faker:"boundary_start=10, boundary_end=20, boundary_step=1"`
+	}
+	int8Step := Int8StepStruct{}
+	for i := 10; i < 22; i++ {
+		if i >= 20 {
+			if err := FakeData(&int8Step); err == nil {
+				t.Error("boundary end error")
+			}
+			continue
+		}
+		if err := FakeData(&int8Step); err != nil {
+			t.Error("Fake data generation has failed")
+		}
+
+		if int8Step.UID != i {
+			t.Errorf("step error: expected: %d actual %d", i, int8Step.UID)
+		}
+	}
+}
+
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
 	if err := SetRandomMapAndSliceSize(-1); err == nil {
