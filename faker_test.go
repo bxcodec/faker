@@ -131,6 +131,9 @@ type SomeStructWithLen struct {
 	UInt32 uint32 `faker:"boundary_start=5, boundary_end=10"`
 	UInt64 uint64 `faker:"boundary_start=5, boundary_end=10"`
 
+	Float32 float32 `faker:"boundary_start=5, boundary_end=10"`
+	Float64 float64 `faker:"boundary_start=5, boundary_end=10"`
+
 	ASString []string          `faker:"len=2"`
 	SString  string            `faker:"len=2"`
 	MSString map[string]string `faker:"len=2"`
@@ -485,7 +488,7 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 	if err := SetRandomNumberBoundaries(10, 0); err == nil {
 		t.Error("Start must be smaller than end value")
 	}
-	boundary := numberBoundary{start: 10, end: 90}
+	boundary := intBoundary{start: 10, end: 90}
 	if err := SetRandomNumberBoundaries(boundary.start, boundary.end); err != nil {
 		t.Error("SetRandomNumberBoundaries method is corrupted.")
 	}
@@ -551,34 +554,40 @@ func TestBoundaryAndLen(t *testing.T) {
 		if err := FakeData(&someStruct); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.Int8)); err != nil {
+		if err := validateIntRange(int(someStruct.Int8)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.Int16)); err != nil {
+		if err := validateIntRange(int(someStruct.Int16)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.Int32)); err != nil {
+		if err := validateIntRange(int(someStruct.Int32)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(someStruct.Inta); err != nil {
+		if err := validateIntRange(someStruct.Inta); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.Int64)); err != nil {
+		if err := validateIntRange(int(someStruct.Int64)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.UInt8)); err != nil {
+		if err := validateIntRange(int(someStruct.UInt8)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.UInt16)); err != nil {
+		if err := validateIntRange(int(someStruct.UInt16)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.UInt32)); err != nil {
+		if err := validateIntRange(int(someStruct.UInt32)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.UInta)); err != nil {
+		if err := validateIntRange(int(someStruct.UInta)); err != nil {
 			t.Error(err)
 		}
-		if err := validateRange(int(someStruct.UInt64)); err != nil {
+		if err := validateIntRange(int(someStruct.UInt64)); err != nil {
+			t.Error(err)
+		}
+		if err := validateFloatRange(float64(someStruct.Float32)); err != nil {
+			t.Error(err)
+		}
+		if err := validateFloatRange(someStruct.Float64); err != nil {
 			t.Error(err)
 		}
 		if err := validateLen(someStruct.SString); err != nil {
@@ -598,10 +607,10 @@ func TestBoundaryAndLen(t *testing.T) {
 			}
 		}
 		for k, v := range someStruct.MIint {
-			if err := validateRange(k); err != nil {
+			if err := validateIntRange(k); err != nil {
 				t.Error(err)
 			}
-			if err := validateRange(v); err != nil {
+			if err := validateIntRange(v); err != nil {
 				t.Error(err)
 			}
 		}
@@ -823,12 +832,6 @@ func isStringLangCorrect(value string, lang langRuneBoundary) error {
 }
 
 func TestExtractNumberFromTagFail(t *testing.T) {
-	notSupportedTypeStruct := &struct {
-		Test float32 `faker:"boundary_start=5, boundary_end=10"`
-	}{}
-	if err := FakeData(&notSupportedTypeStruct); err == nil {
-		t.Error(err)
-	}
 	notSupportedStruct := &struct {
 		Test int `faker:"boundary_start=5"`
 	}{}
@@ -877,9 +880,17 @@ func validateLen(value string) error {
 	return nil
 }
 
-func validateRange(value int) error {
+func validateIntRange(value int) error {
 	if value < someStructBoundaryStart || value > someStructBoundaryEnd {
 		return fmt.Errorf("%d must be between %d and %d", value, someStructBoundaryStart,
+			someStructBoundaryEnd)
+	}
+	return nil
+}
+
+func validateFloatRange(value float64) error {
+	if value < someStructBoundaryStart || value > someStructBoundaryEnd {
+		return fmt.Errorf("%f must be between %d and %d", value, someStructBoundaryStart,
 			someStructBoundaryEnd)
 	}
 	return nil
