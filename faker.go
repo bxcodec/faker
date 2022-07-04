@@ -380,13 +380,18 @@ func FakeDataSkipFields(a interface{}, fieldsToSkip []string) error {
 	s := ind.Type()
 
 	for i := 0; i < s.NumField(); i++ {
-		if _, ok := skipMap[s.Field(i).Name]; !ok {
-			ifc := ind.Field(i).Interface()
-			if err := FakeData(&ifc); err != nil {
-				return err
-			}
-			ind.Field(i).Set(reflect.ValueOf(ifc))
+		field := ind.Field(i)
+		if !field.CanSet() {
+			continue
 		}
+		if _, ok := skipMap[s.Field(i).Name]; ok {
+			continue
+		}
+		ifc := field.Interface()
+		if err := FakeData(&ifc); err != nil {
+			return err
+		}
+		field.Set(reflect.ValueOf(ifc))
 	}
 	return nil
 }
