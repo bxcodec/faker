@@ -1998,6 +1998,55 @@ func TestFakeData3(t *testing.T) {
 	})
 }
 
+func TestFakeDataWithNilPointerGenerator(t *testing.T) {
+	t.Run("test fake data with nil pointer generator", func(t *testing.T) {
+		type s struct {
+			A *int
+			B *struct {
+				C *int
+			}
+		}
+		gen := FakeDataWithNilPointerGenerator()
+
+		f := new(s)
+		done, err := gen.Next(f)
+		if done {
+			t.Error("Next returned done = true after one call, want false")
+		}
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if f.A != nil {
+			t.Errorf("got f.A = %v, but want nil", f.A)
+		}
+		if f.B == nil {
+			t.Error("got f.B = nil, but want non-nil after first step")
+		}
+
+		done, err = gen.Next(f)
+		if done {
+			t.Error("Next returned done = true after two calls, want false")
+		}
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if f.B != nil {
+			t.Errorf("got f.B = %v, but want nil", f.B)
+		}
+
+		done, err = gen.Next(f)
+		if !done {
+			t.Error("Next returned done = false after three calls, want true")
+		}
+		if err != nil {
+			t.Errorf("unexpected error: %v", err)
+		}
+		if f.B.C != nil {
+			t.Errorf("got f.B.C = %v, but want nil", f.B.C)
+		}
+	})
+}
+
 // getStringLen for language independent string length
 func utfLen(value string) int {
 	var r int
