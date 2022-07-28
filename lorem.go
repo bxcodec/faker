@@ -96,8 +96,8 @@ func (l Lorem) sentence() string {
 	r, _ := RandomInt(1, 6)
 	size := len(r)
 	for key, val := range r {
-		if key == 0 {
-			sentence += strings.Title(wordList[val])
+		if key == 0 && len(wordList[val]) > 0 {
+			sentence += strings.ToUpper(wordList[val][:1]) + wordList[val][1:]
 		} else {
 			sentence += wordList[val]
 		}
