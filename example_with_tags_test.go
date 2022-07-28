@@ -64,6 +64,7 @@ type SomeStructWithTags struct {
 	NumU16             uint16  `faker:"oneof: 13, 14"`
 	NumU8              uint8   `faker:"oneof: 15, 16"`
 	NumU               uint    `faker:"oneof: 17, 18"`
+	PtrNumU            *uint   `faker:"oneof: 19, 20"`
 }
 
 func Example_withTags() {
@@ -132,6 +133,7 @@ func Example_withTags() {
 			NumU16:	13
 			NumU8:	15
 			NumU:	17
+			PtrNumU: 19
 			Skip:
 		}
 	*/
