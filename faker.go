@@ -480,9 +480,9 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 	if typeSeen[t] > recursionMaxDepth {
 		return reflect.Zero(t), nil
 	}
-	typeSeen[t] += 1
+	typeSeen[t]++
 	defer func() {
-		typeSeen[t] -= 1
+		typeSeen[t]--
 	}()
 	k := t.Kind()
 

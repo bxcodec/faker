@@ -2235,7 +2235,7 @@ type Nested2 struct {
 }
 
 func TestFakeData_RecursiveType(t *testing.T) {
-	toJson := func(val interface{}) string {
+	toJSON := func(val interface{}) string {
 		data, _ := json.MarshalIndent(val, "", "  ")
 		return string(data)
 	}
@@ -2244,13 +2244,13 @@ func TestFakeData_RecursiveType(t *testing.T) {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("binary tree node:", toJson(node1))
+	t.Log("binary tree node:", toJSON(node1))
 	node2 := GeneralTreeNode{}
 	if err := FakeData(&node2); err != nil {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("general tree node:", toJson(node2))
+	t.Log("general tree node:", toJSON(node2))
 	t.Log("len:", len(node2.Children), "cap:", cap(node2.Children))
 
 	n := Nested1{}
@@ -2258,5 +2258,5 @@ func TestFakeData_RecursiveType(t *testing.T) {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("nested:", toJson(n))
+	t.Log("nested:", toJSON(n))
 }
