@@ -393,7 +393,8 @@ func FakeData(a interface{}) error {
 
 	rval := reflect.ValueOf(a)
 
-	finalValue, err := getValue(a)
+	typeSeen := map[reflect.Type]int{}
+	finalValue, err := getValue(a, typeSeen)
 	if err != nil {
 		return err
 	}
@@ -466,7 +467,9 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-func getValue(a interface{}) (reflect.Value, error) {
+const recursionMaxDepth = 1
+
+func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
 		if ignoreInterface {
@@ -474,6 +477,13 @@ func getValue(a interface{}) (reflect.Value, error) {
 		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
+	if typeSeen[t] > recursionMaxDepth {
+		return reflect.Zero(t), nil
+	}
+	typeSeen[t] += 1
+	defer func() {
+		typeSeen[t] -= 1
+	}()
 	k := t.Kind()
 
 	switch k {
@@ -482,12 +492,12 @@ func getValue(a interface{}) (reflect.Value, error) {
 		var val reflect.Value
 		var err error
 		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
-			val, err = getValue(reflect.ValueOf(a).Elem().Interface())
+			val, err = getValue(reflect.ValueOf(a).Elem().Interface(), typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 		} else {
-			val, err = getValue(v.Elem().Interface())
+			val, err = getValue(v.Elem().Interface(), typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -523,7 +533,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 					}
 					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
-					val, err := getValue(v.Field(i).Interface())
+					val, err := getValue(v.Field(i).Interface(), typeSeen)
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -573,7 +583,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface())
+			val, err := getValue(v.Index(i).Interface(), typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -584,7 +594,7 @@ func getValue(a interface{}) (reflect.Value, error) {
 	case reflect.Array:
 		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface())
+			val, err := getValue(v.Index(i).Interface(), typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -633,13 +643,13 @@ func getValue(a interface{}) (reflect.Value, error) {
 		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
-			key, err := getValue(keyInstance)
+			key, err := getValue(keyInstance, typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 
 			valueInstance := reflect.New(t.Elem()).Elem().Interface()
-			val, err := getValue(valueInstance)
+			val, err := getValue(valueInstance, typeSeen)
 			if err != nil {
 				return reflect.Value{}, err
 			}
