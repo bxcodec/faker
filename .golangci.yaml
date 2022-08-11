@@ -31,11 +31,10 @@ linters:
     - errcheck
     - goconst
     - gocyclo
-    - golint
+    - revive
     - gosimple
     - govet
     - ineffassign
-    - interfacer
     - misspell
     - staticcheck
     - structcheck
@@ -53,3 +52,7 @@ issues:
     - path: datetime.go
       linters:
         - misspell
+run:
+  timeout: 5m
+  go: "1.17"
+  skip-dirs: []
