@@ -1031,8 +1031,10 @@ func TestUnexportedFieldStruct(t *testing.T) {
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
+		t.FailNow()
 	}
 	fmt.Printf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
+
 }
 
 func TestPointerToCustomScalar(t *testing.T) {
