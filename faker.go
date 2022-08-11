@@ -653,6 +653,7 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 			if err != nil {
 				return reflect.Value{}, err
 			}
+			val = val.Convert(v.Type().Elem())
 			v.SetMapIndex(key, val)
 		}
 		return v, nil
