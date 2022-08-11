@@ -1657,6 +1657,39 @@ func TestOneOfTag__GoodInputs(t *testing.T) {
 		}
 	})
 
+	type CustomTypeLotsOfPtrNumbers struct {
+		Age1 *int64  `faker:"oneof: 1, 2"`
+		Age2 *int32  `faker:"oneof: 3, 5"`
+		Age3 *int16  `faker:"oneof: 8, 3"`
+		Age4 *int8   `faker:"oneof: 7, 9"`
+		Age5 *int    `faker:"oneof: 6, 2"`
+		Age6 *uint64 `faker:"oneof: 2, 4"`
+		Age7 *uint32 `faker:"oneof: 6, 8"`
+		Age8 *uint16 `faker:"oneof: 9, 6"`
+		Age9 *uint8  `faker:"oneof: 3, 5"`
+		Age0 *uint   `faker:"oneof: 1, 4"`
+	}
+
+	t.Run("Should support all the ptr number types", func(t *testing.T) {
+		a := CustomTypeLotsOfPtrNumbers{}
+		err := FakeData(&a)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+		val := reflect.ValueOf(a)
+
+		for i := 0; i < val.Type().NumField(); i++ {
+			if val.Field(i).IsZero() {
+				t.Errorf("%s: expected non-nil but got %v", val.Type().Field(i).Name, val.Field(i).Interface())
+				continue
+			}
+			strVal := fmt.Sprintf("%d", val.Field(i).Elem().Interface())
+			if len(strVal) != 1 {
+				t.Errorf("%s: expected [0,9] but got %s", val.Type().Field(i).Name, strVal)
+			}
+		}
+
+	})
 }
 
 func TestOneOfTag__BadInputsForFloats(t *testing.T) {

@@ -728,7 +728,12 @@ func setDataWithTag(v reflect.Value, tag string) error {
 	switch v.Kind() {
 	case reflect.Ptr:
 		if _, exist := mapperTag[tag]; !exist {
-			return fmt.Errorf(ErrTagNotSupported, tag)
+			newv := reflect.New(v.Type().Elem())
+			if err := setDataWithTag(newv, tag); err != nil {
+				return err
+			}
+			v.Set(newv)
+			return nil
 		}
 		if _, def := defaultTag[tag]; !def {
 			res, err := mapperTag[tag](v)
