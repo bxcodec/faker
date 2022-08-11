@@ -56,4 +56,3 @@ run:
   timeout: 5m
   go: "1.17"
   skip-dirs: []
-    # - */mocks
