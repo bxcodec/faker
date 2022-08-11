@@ -360,7 +360,7 @@ func TestFakerData(t *testing.T) {
 		t.Error("Expected NoError")
 	}
 	fmt.Println("SomeStruct:")
-	fmt.Printf("%+v\n", a)
+	t.Logf("%+v\n", a)
 
 	var b TaggedStruct
 	err = FakeData(&b)
@@ -370,7 +370,7 @@ func TestFakerData(t *testing.T) {
 	}
 
 	fmt.Println("TaggedStruct:")
-	fmt.Printf("%+v\n", b)
+	t.Logf("%+v\n", b)
 
 	// Example Result :
 	// {Int:8906957488773767119 Int8:6 Int16:14 Int32:391219825 Int64:2374447092794071106 String:poraKzAxVbWVkMkpcZCcWlYMd Bool:false SString:[MehdV aVotHsi] SInt:[528955241289647236 7620047312653801973 2774096449863851732] SInt8:[122 -92 -92] SInt16:[15679 -19444 -30246] SInt32:[1146660378 946021799 852909987] SInt64:[6079203475736033758 6913211867841842836 3269201978513619428] SFloat32:[0.019562425 0.12729558 0.36450312] SFloat64:[0.7825838989890364 0.9732903338838912 0.8316541489234004] SBool:[true false true] Struct:{Number:7693944638490551161 Height:6513508020379591917}}
@@ -985,14 +985,14 @@ func TestStructPointer(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
+	t.Logf(" A value: %+v , Somestruct Value: %+v  ", a, a)
 
 	tagged := new(PointerC)
 	err = FakeData(tagged)
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" tagged value: %+v , TaggedStruct Value: %+v  ", a, a.PointA.SomeStruct)
+	t.Logf(" tagged value: %+v , TaggedStruct Value: %+v  ", a, a.PointA.SomeStruct)
 }
 
 type CustomString string
@@ -1012,8 +1012,7 @@ func TestCustomType(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , Somestruct Value: %+v  ", a, a)
-
+	t.Logf(" A value: %+v , Somestruct Value: %+v  ", a, a)
 }
 
 type SampleStruct struct {
@@ -1032,8 +1031,9 @@ func TestUnexportedFieldStruct(t *testing.T) {
 
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
+		t.FailNow()
 	}
-	fmt.Printf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
+	t.Logf(" A value: %+v , SampleStruct Value: %+v  ", a, a)
 }
 
 func TestPointerToCustomScalar(t *testing.T) {
@@ -1044,7 +1044,7 @@ func TestPointerToCustomScalar(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , Custom scalar Value: %+v  ", a, a)
+	t.Logf(" A value: %+v , Custom scalar Value: %+v  ", a, a)
 }
 
 type PointerCustomIntStruct struct {
@@ -1059,7 +1059,7 @@ func TestPointerToCustomIntStruct(t *testing.T) {
 	if err != nil {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
-	fmt.Printf(" A value: %+v , PointerCustomIntStruct scalar Value: %+v  ", a, a)
+	t.Logf(" A value: %+v , PointerCustomIntStruct scalar Value: %+v  ", a, a)
 }
 
 func TestSkipField(t *testing.T) {
@@ -1086,7 +1086,6 @@ func TestSkipField(t *testing.T) {
 	if a.ShouldBeSkippedFilled != 10 {
 		t.Error("Expected that field will be skipped")
 	}
-
 }
 
 type Student struct {
