@@ -3,7 +3,9 @@ package faker
 import (
 	"fmt"
 	"reflect"
-	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 var lorem DataFaker
@@ -96,8 +98,8 @@ func (l Lorem) sentence() string {
 	r, _ := RandomInt(1, 6)
 	size := len(r)
 	for key, val := range r {
-		if key == 0 && len(wordList[val]) > 0 {
-			sentence += strings.ToUpper(wordList[val][:1]) + wordList[val][1:]
+		if key == 0 {
+			sentence += cases.Title(language.Und, cases.NoLower).String(wordList[val])
 		} else {
 			sentence += wordList[val]
 		}
