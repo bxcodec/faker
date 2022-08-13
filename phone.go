@@ -67,7 +67,7 @@ func (p Phone) tollfreephonenumber() string {
 		}
 		out += v
 	}
-	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(1)], out)
+	return fmt.Sprintf("(%s) %s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], out)
 }
 
 // TollFreePhoneNumber generates phone numbers of type: "(888) 937-7238"
@@ -91,7 +91,7 @@ func (p Phone) e164PhoneNumber() string {
 	for _, v := range slice.IntToString(ints) {
 		out += v
 	}
-	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(1)], strings.Join(slice.IntToString(ints), ""))
+	return fmt.Sprintf("+%s%s", boxDigitsStart[rand.Intn(len(boxDigitsStart))], strings.Join(slice.IntToString(ints), ""))
 }
 
 // E164PhoneNumber generates phone numbers of type: "+27113456789"
