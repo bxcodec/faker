@@ -204,6 +204,9 @@ var defaultTag = map[string]string{
 	HyphenatedID:          HyphenatedID,
 }
 
+// CustomProviderFunction used as the standard layout function for custom providers
+type CustomProviderFunction func() (interface{}, error)
+
 // TaggedFunction used as the standard layout function for tag providers in struct.
 // This type also can be used for custom provider.
 type TaggedFunction func(v reflect.Value) (interface{}, error)
@@ -379,7 +382,8 @@ func SetRandomNumberBoundaries(start, end int) error {
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
-func FakeData(a interface{}) error {
+func FakeData(a interface{}, opt ...OptionFunc) error {
+	opts := buildOptions(opt)
 
 	reflectType := reflect.TypeOf(a)
 
@@ -393,8 +397,7 @@ func FakeData(a interface{}) error {
 
 	rval := reflect.ValueOf(a)
 
-	typeSeen := map[reflect.Type]int{}
-	finalValue, err := getValue(a, typeSeen)
+	finalValue, err := getValue(a, opts)
 	if err != nil {
 		return err
 	}
@@ -467,9 +470,7 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-const recursionMaxDepth = 1
-
-func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, error) {
+func getValue(a interface{}, opts *options) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
 		if ignoreInterface {
@@ -477,12 +478,12 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
-	if typeSeen[t] > recursionMaxDepth {
+	if opts.recursionOutOfLimit(t) {
 		return reflect.Zero(t), nil
 	}
-	typeSeen[t]++
+	opts.rememberType(t)
 	defer func() {
-		typeSeen[t]--
+		opts.forgetType(t)
 	}()
 	k := t.Kind()
 
@@ -492,15 +493,12 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 		var val reflect.Value
 		var err error
 		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
-			val, err = getValue(reflect.ValueOf(a).Elem().Interface(), typeSeen)
-			if err != nil {
-				return reflect.Value{}, err
-			}
+			val, err = getValue(reflect.ValueOf(a).Elem().Interface(), opts)
 		} else {
-			val, err = getValue(v.Elem().Interface(), typeSeen)
-			if err != nil {
-				return reflect.Value{}, err
-			}
+			val, err = getValue(v.Elem().Interface(), opts)
+		}
+		if err != nil {
+			return reflect.Value{}, err
 		}
 		v.Elem().Set(val.Convert(t.Elem()))
 		return v, nil
@@ -517,6 +515,20 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 				if !v.Field(i).CanSet() {
 					continue // to avoid panic to set on unexported field in struct
 				}
+
+				if _, ok := opts.ignoreFields[t.Field(i).Name]; ok {
+					continue
+				}
+
+				if p, ok := opts.fieldProviders[t.Field(i).Name]; ok {
+					val, err := p()
+					if err != nil {
+						return reflect.Value{}, fmt.Errorf("custom provider for field %s: %w", t.Field(i).Name, err)
+					}
+					v.Field(i).Set(reflect.ValueOf(val))
+					continue
+				}
+
 				tags := decodeTags(t, i)
 				switch {
 				case tags.keepOriginal:
@@ -533,7 +545,7 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 					}
 					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
-					val, err := getValue(v.Field(i).Interface(), typeSeen)
+					val, err := getValue(v.Field(i).Interface(), opts)
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -583,7 +595,7 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface(), typeSeen)
+			val, err := getValue(v.Index(i).Interface(), opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -594,7 +606,7 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 	case reflect.Array:
 		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface(), typeSeen)
+			val, err := getValue(v.Index(i).Interface(), opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -643,13 +655,13 @@ func getValue(a interface{}, typeSeen map[reflect.Type]int) (reflect.Value, erro
 		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
-			key, err := getValue(keyInstance, typeSeen)
+			key, err := getValue(keyInstance, opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 
 			valueInstance := reflect.New(t.Elem()).Elem().Interface()
-			val, err := getValue(valueInstance, typeSeen)
+			val, err := getValue(valueInstance, opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
