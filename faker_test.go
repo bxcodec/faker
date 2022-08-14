@@ -1266,7 +1266,7 @@ func TestTagWithPointer(t *testing.T) {
 		t.Error("Expected Not Error, But Got: ", err)
 	}
 
-	//Assert
+	// Assert
 	if sample.FirstName == nil || *sample.FirstName == "" {
 		t.Error("Expected filled but got empty")
 	}
@@ -2243,5 +2243,52 @@ func TestRandomMapSliceSize(t *testing.T) {
 		if len(s.Slice) >= expect {
 			t.Errorf("slice (len:%d) not expect length with test case %+v\n", len(s.Slice), expect)
 		}
+	}
+}
+
+func TestWithFieldsToIgnore(t *testing.T) {
+	a := AStruct{}
+	if err := FakeData(&a, WithFieldsToIgnore("Height", "Name")); err != nil {
+		t.Error(err)
+	}
+
+	if a.Height != 0 {
+		t.Errorf("Height expected to be ignored")
+	}
+	if a.AnotherStruct.Name != "" {
+		t.Errorf("Name expected to be ignored")
+	}
+	if a.AnotherStruct.Image == "" {
+		t.Errorf("other fields are affected")
+	}
+}
+
+func TestWithFieldProvider(t *testing.T) {
+	a := AStruct{}
+	const heightVal = int64(123)
+	const nameVal = "some string"
+	if err := FakeData(&a,
+		WithCustomFieldProvider("Height", func() (interface{}, error) {
+			return heightVal, nil
+		}),
+		WithCustomFieldProvider("Name", func() (interface{}, error) {
+			return nameVal, nil
+		}),
+	); err != nil {
+		t.Error(err)
+	}
+
+	if a.Height != heightVal {
+		t.Errorf("expected Height %d, got %d", heightVal, a.Height)
+	}
+	if a.AnotherStruct.Name != nameVal {
+		t.Errorf("expected Name %q, got %q", nameVal, a.AnotherStruct.Name)
+	}
+
+	// when provider fails
+	if err := FakeData(&a, WithCustomFieldProvider("Height", func() (interface{}, error) {
+		return nil, fmt.Errorf("test")
+	})); err == nil {
+		t.Errorf("expected an error, but got nil")
 	}
 }
