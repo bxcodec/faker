@@ -23,7 +23,7 @@ import (
 var (
 	mu = &sync.Mutex{}
 	// Sets nil if the value type is struct or map and the size of it equals to zero.
-	shouldSetNil = false
+	// shouldSetNil = false
 	//Sets random integer generation to zero for slice and maps
 	testRandZero = false
 	//Sets the boundary for random integer value generation. Boundaries can not exceed integer(4 byte...)
@@ -237,11 +237,6 @@ func init() {
 // Call this when you're done generating a dataset.
 func ResetUnique() {
 	uniqueValues = map[string][]interface{}{}
-}
-
-// SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
-func SetNilIfLenIsZero(setNil bool) {
-	shouldSetNil = setNil
 }
 
 // SetRandomNumberBoundaries sets boundary for random number generation
@@ -476,7 +471,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
 		len := randomSliceAndMapSize(*opts)
-		if shouldSetNil && len == 0 {
+		if opts.SetSliceMapNilIfLenZero && len == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeSlice(t, len, len)
@@ -535,7 +530,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 
 	case reflect.Map:
 		len := randomSliceAndMapSize(*opts)
-		if shouldSetNil && len == 0 {
+		if opts.SetSliceMapNilIfLenZero && len == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeMap(t)
@@ -697,7 +692,7 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 	}
 
 	len := randomSliceAndMapSize(opt)
-	if shouldSetNil && len == 0 {
+	if opt.SetSliceMapNilIfLenZero && len == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
@@ -751,7 +746,7 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	if err != nil {
 		return err
 	}
-	if shouldSetNil && sliceLen == 0 {
+	if opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
