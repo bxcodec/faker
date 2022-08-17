@@ -22,18 +22,11 @@ import (
 
 var (
 	mu = &sync.Mutex{}
-	//Sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
-	fBoundary = floatBoundary{start: 0, end: 100}
 	//Sets the random min size for slices and maps.
 	// randomMinSize = 0
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 )
-
-type floatBoundary struct {
-	start float64
-	end   float64
-}
 
 // Supported tags
 const (
@@ -486,9 +479,9 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 	case reflect.Int64:
 		return reflect.ValueOf(int64(randomInteger(opts))), nil
 	case reflect.Float32:
-		return reflect.ValueOf(float32(randomFloat())), nil
+		return reflect.ValueOf(float32(randomFloat(opts))), nil
 	case reflect.Float64:
-		return reflect.ValueOf(randomFloat()), nil
+		return reflect.ValueOf(randomFloat(opts)), nil
 	case reflect.Bool:
 		val := rand.Intn(2) > 0
 		return reflect.ValueOf(val), nil
@@ -1005,7 +998,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
-		boundary := floatBoundary{start: startBoundary, end: endBoundary}
+		boundary := interfaces.RandomFloatBoundary{Start: startBoundary, End: endBoundary}
 		switch t.Kind() {
 		case reflect.Float32:
 			return float32(randomFloatWithBoundary(boundary)), nil
@@ -1126,12 +1119,12 @@ func randomIntegerWithBoundary(boundary interfaces.RandomIntegerBoundary) int {
 }
 
 // randomFloatWithBoundary returns a random float between input start and end boundary. [start, end)
-func randomFloatWithBoundary(boundary floatBoundary) float64 {
-	span := boundary.end - boundary.start
+func randomFloatWithBoundary(boundary interfaces.RandomFloatBoundary) float64 {
+	span := boundary.End - boundary.Start
 	if span <= 0 {
-		return boundary.start
+		return boundary.Start
 	}
-	return boundary.start + rand.Float64()*span
+	return boundary.Start + rand.Float64()*span
 }
 
 // randomInteger returns a random integer between start and end boundary. [start, end)
@@ -1144,8 +1137,12 @@ func randomInteger(opt *options.Options) int {
 }
 
 // randomFloat returns a random float between start and end boundary. [start, end)
-func randomFloat() float64 {
-	return randomFloatWithBoundary(fBoundary)
+func randomFloat(opt *options.Options) float64 {
+	if opt == nil {
+		opt = options.DefaultOption()
+	}
+
+	return randomFloatWithBoundary(*opt.RandomFloatBoundary)
 }
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0

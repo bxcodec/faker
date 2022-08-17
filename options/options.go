@@ -23,6 +23,7 @@ type Options struct {
 	SetSliceMapNilIfLenZero  bool
 	SetSliceMapRandomToZero  bool
 	RandomIntegerBoundary    *interfaces.RandomIntegerBoundary
+	RandomFloatBoundary      *interfaces.RandomFloatBoundary
 }
 
 type MaxDepthOption struct {
@@ -64,6 +65,7 @@ func DefaultOption() *Options {
 	ops.RandomMinSliceSize = 0             // default
 	ops.MaxGenerateStringRetries = 1000000 //default
 	ops.RandomIntegerBoundary = &interfaces.DefaultIntBoundary
+	ops.RandomFloatBoundary = &interfaces.DefaultFloatBoundary
 	return ops
 }
 
@@ -186,5 +188,16 @@ func WithRandomIntegerBoundaries(boundary interfaces.RandomIntegerBoundary) Opti
 	}
 	return func(oo *Options) {
 		oo.RandomIntegerBoundary = &boundary
+	}
+}
+
+// WithRandomFloatBoundaries sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
+func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFunc {
+	if boundary.Start > boundary.End {
+		err := errors.New(fakerErrors.ErrStartValueBiggerThanEnd)
+		panic(err)
+	}
+	return func(oo *Options) {
+		oo.RandomFloatBoundary = &boundary
 	}
 }
