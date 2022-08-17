@@ -486,18 +486,13 @@ func TestSetStringLang(t *testing.T) {
 
 func TestSetRandomNumberBoundaries(t *testing.T) {
 	someStruct := SomeStruct{}
-	if err := SetRandomNumberBoundaries(10, 0); err == nil {
-		t.Error("Start must be smaller than end value")
-	}
-	boundary := intBoundary{start: 10, end: 90}
-	if err := SetRandomNumberBoundaries(boundary.start, boundary.end); err != nil {
-		t.Error("SetRandomNumberBoundaries method is corrupted.")
-	}
-	if err := FakeData(&someStruct); err != nil {
+	boundary := interfaces.RandomIntegerBoundary{Start: 10, End: 90}
+	if err := FakeData(&someStruct, options.WithRandomIntegerBoundaries(boundary)); err != nil {
 		t.Error("Fake data generation has failed")
 	}
-	if someStruct.Inta >= boundary.end || someStruct.Inta < boundary.start {
-		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.start, boundary.end)
+
+	if someStruct.Inta >= boundary.End || someStruct.Inta < boundary.Start {
+		t.Errorf("%d must be between [%d,%d)", someStruct.Inta, boundary.Start, boundary.End)
 	}
 }
 

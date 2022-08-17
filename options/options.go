@@ -1,6 +1,7 @@
 package options
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 
@@ -21,6 +22,7 @@ type Options struct {
 	MaxGenerateStringRetries int
 	SetSliceMapNilIfLenZero  bool
 	SetSliceMapRandomToZero  bool
+	RandomIntegerBoundary    *interfaces.RandomIntegerBoundary
 }
 
 type MaxDepthOption struct {
@@ -61,6 +63,7 @@ func DefaultOption() *Options {
 	ops.RandomMaxSliceSize = 100           //default
 	ops.RandomMinSliceSize = 0             // default
 	ops.MaxGenerateStringRetries = 1000000 //default
+	ops.RandomIntegerBoundary = &interfaces.DefaultIntBoundary
 	return ops
 }
 
@@ -168,9 +171,20 @@ func WithNilIfLenIsZero(setNil bool) OptionFunc {
 	}
 }
 
-//WithSliceMapRandomToZero Sets random integer generation to zero for slice and maps
+// WithSliceMapRandomToZero Sets random integer generation to zero for slice and maps
 func WithSliceMapRandomToZero(setNumberToZero bool) OptionFunc {
 	return func(oo *Options) {
 		oo.SetSliceMapRandomToZero = setNumberToZero
+	}
+}
+
+// WithRandomIntegerBoundaries sets boundary random integer value generation. Boundaries can not exceed integer(4 byte...)
+func WithRandomIntegerBoundaries(boundary interfaces.RandomIntegerBoundary) OptionFunc {
+	if boundary.Start > boundary.End {
+		err := errors.New(fakerErrors.ErrStartValueBiggerThanEnd)
+		panic(err)
+	}
+	return func(oo *Options) {
+		oo.RandomIntegerBoundary = &boundary
 	}
 }
