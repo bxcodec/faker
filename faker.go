@@ -22,10 +22,8 @@ import (
 
 var (
 	mu = &sync.Mutex{}
-	// Sets nil if the value type is struct or map and the size of it equals to zero.
-	// shouldSetNil = false
 	//Sets random integer generation to zero for slice and maps
-	testRandZero = false
+	// testRandZero = false
 	//Sets the boundary for random integer value generation. Boundaries can not exceed integer(4 byte...)
 	iBoundary = intBoundary{start: 0, end: 100}
 	//Sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
@@ -1167,7 +1165,7 @@ func randomFloat() float64 {
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
 // Written for test purposes for shouldSetNil
 func randomSliceAndMapSize(opt options.Options) int {
-	if testRandZero {
+	if opt.SetSliceMapRandomToZero {
 		return 0
 	}
 	r := opt.RandomMaxSliceSize - opt.RandomMinSliceSize

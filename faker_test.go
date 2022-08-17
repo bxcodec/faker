@@ -514,8 +514,8 @@ func TestSetRandomMapAndSliceSize(t *testing.T) {
 
 func TestSetNilIfLenIsZero(t *testing.T) {
 	someStruct := SomeStruct{}
-	testRandZero = true
-	if err := FakeData(&someStruct, options.WithNilIfLenIsZero(true)); err != nil {
+	// testRandZero = true
+	if err := FakeData(&someStruct, options.WithNilIfLenIsZero(true), options.WithSliceMapRandomToZero(true)); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if someStruct.MapStringString != nil && someStruct.MapStringStruct != nil &&
@@ -525,7 +525,6 @@ func TestSetNilIfLenIsZero(t *testing.T) {
 	if someStruct.Stime != nil && someStruct.SBool != nil {
 		t.Error("Array has to be nil")
 	}
-	testRandZero = false
 }
 
 func TestSetIgnoreInterface(t *testing.T) {

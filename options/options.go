@@ -20,6 +20,7 @@ type Options struct {
 	RandomMinSliceSize       int
 	MaxGenerateStringRetries int
 	SetSliceMapNilIfLenZero  bool
+	SetSliceMapRandomToZero  bool
 }
 
 type MaxDepthOption struct {
@@ -164,5 +165,12 @@ func WithMaxGenerateStringRetries(retries uint) OptionFunc {
 func WithNilIfLenIsZero(setNil bool) OptionFunc {
 	return func(oo *Options) {
 		oo.SetSliceMapNilIfLenZero = setNil
+	}
+}
+
+//WithSliceMapRandomToZero Sets random integer generation to zero for slice and maps
+func WithSliceMapRandomToZero(setNumberToZero bool) OptionFunc {
+	return func(oo *Options) {
+		oo.SetSliceMapRandomToZero = setNumberToZero
 	}
 }
