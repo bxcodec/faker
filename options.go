@@ -1,12 +1,30 @@
 package faker
 
+import "reflect"
+
 type options struct {
-	ignoreFields   map[string]struct{}
-	fieldProviders map[string]CustomProviderFunction
+	ignoreFields      map[string]struct{}
+	fieldProviders    map[string]CustomProviderFunction
+	typeSeen          map[reflect.Type]int
+	recursionMaxDepth int
+}
+
+func (o *options) rememberType(t reflect.Type) {
+	o.typeSeen[t]++
+}
+
+func (o *options) forgetType(t reflect.Type) {
+	o.typeSeen[t]--
+}
+
+func (o *options) recursionOutOfLimit(t reflect.Type) bool {
+	return o.typeSeen[t] > o.recursionMaxDepth
 }
 
 func buildOptions(optFuncs []OptionFunc) *options {
 	ops := &options{}
+	ops.typeSeen = make(map[reflect.Type]int, 1)
+	ops.recursionMaxDepth = 1
 	for _, optFunc := range optFuncs {
 		optFunc(ops)
 	}
@@ -32,5 +50,13 @@ func WithCustomFieldProvider(fieldName string, provider CustomProviderFunction) 
 			oo.fieldProviders = make(map[string]CustomProviderFunction, 1)
 		}
 		oo.fieldProviders[fieldName] = provider
+	}
+}
+
+func WithRecursionMaxDepth(depth int) OptionFunc {
+	return func(oo *options) {
+		if depth >= 0 {
+			oo.recursionMaxDepth = depth
+		}
 	}
 }

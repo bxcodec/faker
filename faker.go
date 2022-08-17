@@ -478,6 +478,13 @@ func getValue(a interface{}, opts *options) (reflect.Value, error) {
 		}
 		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
 	}
+	if opts.recursionOutOfLimit(t) {
+		return reflect.Zero(t), nil
+	}
+	opts.rememberType(t)
+	defer func() {
+		opts.forgetType(t)
+	}()
 	k := t.Kind()
 
 	switch k {

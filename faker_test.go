@@ -1,6 +1,7 @@
 package faker
 
 import (
+	"encoding/json"
 	"fmt"
 	mathrand "math/rand"
 	"reflect"
@@ -2291,4 +2292,50 @@ func TestWithFieldProvider(t *testing.T) {
 	})); err == nil {
 		t.Errorf("expected an error, but got nil")
 	}
+}
+
+type BinaryTreeNode struct {
+	Val   int
+	Left  *BinaryTreeNode
+	Right *BinaryTreeNode
+}
+
+type GeneralTreeNode struct {
+	Val      int
+	Children []*GeneralTreeNode
+}
+
+type Nested1 struct {
+	Nested2 *Nested2
+}
+
+type Nested2 struct {
+	Nested1 *Nested1
+}
+
+func TestFakeData_RecursiveType(t *testing.T) {
+	toJSON := func(val interface{}) string {
+		data, _ := json.MarshalIndent(val, "", "  ")
+		return string(data)
+	}
+	node1 := BinaryTreeNode{}
+	if err := FakeData(&node1, WithRecursionMaxDepth(2)); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+	t.Log("binary tree node:", toJSON(node1))
+	node2 := GeneralTreeNode{}
+	if err := FakeData(&node2, WithRecursionMaxDepth(0)); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+	t.Log("general tree node:", toJSON(node2))
+	t.Log("len:", len(node2.Children), "cap:", cap(node2.Children))
+
+	n := Nested1{}
+	if err := FakeData(&n); err != nil {
+		t.Errorf("%+v", err)
+		t.FailNow()
+	}
+	t.Log("nested:", toJSON(n))
 }
