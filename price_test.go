@@ -5,7 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/support/slice"
 )
 
 func TestSetPrice(t *testing.T) {
@@ -34,14 +35,14 @@ func TestAmountWithCurrency(t *testing.T) {
 }
 
 func TestFakeCurrency(t *testing.T) {
-	p := Currency()
+	p := Currency(options.DefaultOption())
 	if !slice.Contains(currencies, p) {
 		t.Error("Expected a currency code from currencies")
 	}
 }
 
 func TestFakeAmountWithCurrency(t *testing.T) {
-	p := AmountWithCurrency()
+	p := AmountWithCurrency(options.DefaultOption())
 
 	if !strings.Contains(p, " ") {
 		t.Error("Expected Price currency followed by a space and it's amount")

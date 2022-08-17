@@ -3,7 +3,8 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/bxcodec/faker/v4"
+	"github.com/bxcodec/faker/v4/options"
 )
 
 // You can set length for your random strings also set boundary for your integers.
@@ -19,8 +20,7 @@ func Example_withTagsLang() {
 	}
 
 	a := SomeStruct{}
-	_ = faker.SetRandomStringLength(5)
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, options.WithRandomStringLength(5))
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

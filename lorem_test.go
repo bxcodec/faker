@@ -6,12 +6,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/support/slice"
 )
-
-func TestDataFaker(t *testing.T) {
-	SetDataFaker(Lorem{})
-}
 
 func TestWord(t *testing.T) {
 	word, err := GetLorem().Word(reflect.Value{})
@@ -47,31 +44,33 @@ func TestParagraph(t *testing.T) {
 }
 
 func TestFakeWord(t *testing.T) {
-	word := Word()
+	word := Word(options.DefaultOption())
 	if !slice.Contains(wordList, word) {
 		t.Error("Expected word from slice wordList")
 	}
 }
 
 func TestFakeSentence(t *testing.T) {
-	res := Sentence()
+	res := Sentence(options.DefaultOption())
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected sentence")
 	}
 }
 
 func TestFakeParagraph(t *testing.T) {
-	res := Paragraph()
+	res := Paragraph(options.DefaultOption())
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected paragraph")
 	}
 }
 
 func TestUniqueWord(t *testing.T) {
-	SetGenerateUniqueValues(true)
-	word := Word()
+	opt := options.BuildOptions([]options.OptionFunc{
+		options.WithGenerateUniqueValues(true),
+	})
+
+	word := Word(opt)
 	ResetUnique()
-	SetGenerateUniqueValues(false)
 	if !slice.Contains(wordList, word) {
 		t.Error("Expected word from slice wordList")
 	}
@@ -83,33 +82,36 @@ func TestUniqueWordPanic(t *testing.T) {
 			t.Errorf("expected panic, but didn't")
 		}
 		ResetUnique()
-		SetGenerateUniqueValues(false)
 	}()
+	opt := options.BuildOptions([]options.OptionFunc{
+		options.WithGenerateUniqueValues(true),
+	})
 
-	SetGenerateUniqueValues(true)
 	length := len(wordList) + 1
 	for i := 0; i < length; i++ {
-		Word()
+		Word(opt)
 	}
 	ResetUnique()
-	SetGenerateUniqueValues(false)
 }
 
 func TestUniqueSentence(t *testing.T) {
-	SetGenerateUniqueValues(true)
-	res := Sentence()
+	opt := options.BuildOptions([]options.OptionFunc{
+		options.WithGenerateUniqueValues(true),
+	})
+	res := Sentence(opt)
 	ResetUnique()
-	SetGenerateUniqueValues(false)
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected sentence")
 	}
 }
 
 func TestUniqueParagraph(t *testing.T) {
-	SetGenerateUniqueValues(true)
-	res := Paragraph()
+	opt := options.BuildOptions([]options.OptionFunc{
+		options.WithGenerateUniqueValues(true),
+	})
+
+	res := Paragraph(opt)
 	ResetUnique()
-	SetGenerateUniqueValues(false)
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected paragraph")
 	}

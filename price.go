@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"reflect"
+
+	"github.com/bxcodec/faker/v4/options"
 )
 
 // Currency Codes | Source: https://en.wikipedia.org/wiki/ISO_4217
@@ -69,11 +71,11 @@ func (p Price) Currency(v reflect.Value) (interface{}, error) {
 }
 
 // Currency get fake Currency (IDR, USD)
-func Currency() string {
+func Currency(opt *options.Options) string {
 	return singleFakeData(CurrencyTag, func() interface{} {
 		p := Price{}
 		return p.currency()
-	}).(string)
+	}, opt).(string)
 }
 
 func (p Price) amount() float64 {
@@ -104,11 +106,11 @@ func (p Price) AmountWithCurrency(v reflect.Value) (interface{}, error) {
 }
 
 // AmountWithCurrency get fake AmountWithCurrency  USD 49257.100
-func AmountWithCurrency() string {
+func AmountWithCurrency(opt *options.Options) string {
 	return singleFakeData(AmountWithCurrencyTag, func() interface{} {
 		p := Price{}
 		return p.amountwithcurrency()
-	}).(string)
+	}, opt).(string)
 }
 
 // precision | a helper function to set precision of price

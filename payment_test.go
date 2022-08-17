@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/bxcodec/faker/v4/options"
 )
 
 func TestCreditCardType(t *testing.T) {
@@ -25,12 +27,8 @@ func TestCreditCardNumber(t *testing.T) {
 	}
 }
 
-func TestSetPayment(t *testing.T) {
-	SetPayment(Payment{})
-}
-
 func TestFakeCreditCardType(t *testing.T) {
-	ccType := CCType()
+	ccType := CCType(options.DefaultOption())
 	randCC := strings.ToLower(ccType)
 
 	if _, exist := creditCards[randCC]; !exist {
@@ -39,7 +37,7 @@ func TestFakeCreditCardType(t *testing.T) {
 }
 
 func TestFakeCreditCardNumber(t *testing.T) {
-	ccNumber := CCNumber()
+	ccNumber := CCNumber(options.DefaultOption())
 
 	if ccNumber == "" {
 		t.Error("Expected Credit Card Number ")
