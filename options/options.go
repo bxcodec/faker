@@ -9,15 +9,16 @@ import (
 )
 
 type Options struct {
-	IgnoreFields         map[string]struct{}
-	FieldProviders       map[string]interfaces.CustomProviderFunction
-	MaxDepthOption       *MaxDepthOption
-	IgnoreInterface      bool
-	StringLanguage       *interfaces.LangRuneBoundary
-	GenerateUniqueValues bool
-	RandomStringLength   int
-	RandomMaxSliceSize   int
-	RandomMinSliceSize   int
+	IgnoreFields             map[string]struct{}
+	FieldProviders           map[string]interfaces.CustomProviderFunction
+	MaxDepthOption           *MaxDepthOption
+	IgnoreInterface          bool
+	StringLanguage           *interfaces.LangRuneBoundary
+	GenerateUniqueValues     bool
+	RandomStringLength       int
+	RandomMaxSliceSize       int
+	RandomMinSliceSize       int
+	MaxGenerateStringRetries int
 }
 
 type MaxDepthOption struct {
@@ -54,9 +55,10 @@ func DefaultOption() *Options {
 	ops.MaxDepthOption.typeSeen = make(map[reflect.Type]int, 1)
 	ops.MaxDepthOption.recursionMaxDepth = 1 // default
 	ops.StringLanguage = &interfaces.LangENG
-	ops.RandomStringLength = 25  //default
-	ops.RandomMaxSliceSize = 100 //default
-	ops.RandomMinSliceSize = 0   // default
+	ops.RandomStringLength = 25            //default
+	ops.RandomMaxSliceSize = 100           //default
+	ops.RandomMinSliceSize = 0             // default
+	ops.MaxGenerateStringRetries = 1000000 //default
 	return ops
 }
 
@@ -82,7 +84,7 @@ func WithCustomFieldProvider(fieldName string, provider interfaces.CustomProvide
 	}
 }
 
-func WithRecursionMaxDepth(depth int) OptionFunc {
+func WithRecursionMaxDepth(depth uint) OptionFunc {
 	return func(oo *Options) {
 		if oo.MaxDepthOption == nil {
 			oo.MaxDepthOption = &MaxDepthOption{
@@ -91,7 +93,7 @@ func WithRecursionMaxDepth(depth int) OptionFunc {
 			}
 		}
 		if depth >= 0 {
-			oo.MaxDepthOption.recursionMaxDepth = depth
+			oo.MaxDepthOption.recursionMaxDepth = int(depth)
 		}
 	}
 }
@@ -118,34 +120,41 @@ func WithGenerateUniqueValues(unique bool) OptionFunc {
 }
 
 // WithRandomStringLength sets a length for random string generation
-func WithRandomStringLength(size int) OptionFunc {
+func WithRandomStringLength(size uint) OptionFunc {
 	if size < 0 {
 		err := fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
 		panic(err)
 	}
 	return func(oo *Options) {
-		oo.RandomStringLength = size
+		oo.RandomStringLength = int(size)
 	}
 }
 
 // WithRandomMapAndSliceMaxSize sets the max size for maps and slices for random generation.
-func WithRandomMapAndSliceMaxSize(size int) OptionFunc {
+func WithRandomMapAndSliceMaxSize(size uint) OptionFunc {
 	if size < 1 {
 		err := fmt.Errorf(fakerErrors.ErrSmallerThanOne, size)
 		panic(err)
 	}
 	return func(oo *Options) {
-		oo.RandomMaxSliceSize = size
+		oo.RandomMaxSliceSize = int(size)
 	}
 }
 
 // WithRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
-func WithRandomMapAndSliceMinSize(size int) OptionFunc {
+func WithRandomMapAndSliceMinSize(size uint) OptionFunc {
 	if size < 0 {
 		err := fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
 		panic(err)
 	}
 	return func(oo *Options) {
-		oo.RandomMinSliceSize = size
+		oo.RandomMinSliceSize = int(size)
+	}
+}
+
+// MaxGenerateStringRetries set how much tries for generating random string
+func WithMaxGenerateStringRetries(retries uint) OptionFunc {
+	return func(oo *Options) {
+		oo.MaxGenerateStringRetries = int(retries)
 	}
 }

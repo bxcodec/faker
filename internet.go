@@ -54,10 +54,10 @@ type Internet struct {
 func (internet Internet) email() (string, error) {
 	var err error
 	var emailName, emailDomain string
-	if emailName, err = randomString(7, internet.fakerOption.StringLanguage); err != nil {
+	if emailName, err = randomString(7, internet.fakerOption); err != nil {
 		return "", err
 	}
-	if emailDomain, err = randomString(7, internet.fakerOption.StringLanguage); err != nil {
+	if emailDomain, err = randomString(7, internet.fakerOption); err != nil {
 		return "", err
 	}
 	return (emailName + "@" + emailDomain + "." + randomElementFromSliceString(tld)), nil
@@ -102,7 +102,7 @@ func MacAddress(opt *options.Options) string {
 }
 
 func (internet Internet) domainName() (string, error) {
-	domainPart, err := randomString(7, internet.fakerOption.StringLanguage)
+	domainPart, err := randomString(7, internet.fakerOption)
 	if err != nil {
 		return "", err
 	}
@@ -161,7 +161,7 @@ func URL(opt *options.Options) string {
 }
 
 func (internet Internet) username() (string, error) {
-	return randomString(7, internet.fakerOption.StringLanguage)
+	return randomString(7, internet.fakerOption)
 }
 
 // UserName generates random username
@@ -228,7 +228,7 @@ func IPv6(opt *options.Options) string {
 }
 
 func (internet Internet) password() (string, error) {
-	return randomString(50, internet.fakerOption.StringLanguage)
+	return randomString(50, internet.fakerOption)
 }
 
 // Password returns a hashed password
@@ -249,7 +249,7 @@ func Password(opt *options.Options) string {
 }
 
 func (internet Internet) jwt() (string, error) {
-	element, err := randomString(40, internet.fakerOption.StringLanguage)
+	element, err := randomString(40, internet.fakerOption)
 	sl := element[:]
 	if err != nil {
 		return "", err

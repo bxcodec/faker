@@ -468,7 +468,7 @@ func TestSetDataErrorDataParseTagIntType(t *testing.T) {
 func TestSetRandomStringLength(t *testing.T) {
 	someStruct := SomeStruct{}
 	strLen := 5
-	if err := FakeData(&someStruct, options.WithRandomStringLength(strLen)); err != nil {
+	if err := FakeData(&someStruct, options.WithRandomStringLength(uint(strLen))); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if utfLen(someStruct.StringValue) > strLen {
@@ -504,7 +504,7 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
 	size := 5
-	if err := FakeData(&someStruct, options.WithRandomMapAndSliceMaxSize(size)); err != nil {
+	if err := FakeData(&someStruct, options.WithRandomMapAndSliceMaxSize(uint(size))); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
@@ -2167,8 +2167,8 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 	} {
 
 		s := SliceMap{}
-		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(c.max),
-			options.WithRandomMapAndSliceMinSize(c.min))
+		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(uint(c.max)),
+			options.WithRandomMapAndSliceMinSize(uint(c.min)))
 		if err != nil {
 			t.Error(err)
 		}
@@ -2192,7 +2192,7 @@ func TestRandomMapSliceSize(t *testing.T) {
 	expect := 5
 	for i := 0; i < 10; i++ {
 		s := SliceMap{}
-		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(expect))
+		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(uint(expect)))
 		if err != nil {
 			t.Error(err)
 		}

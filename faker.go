@@ -34,8 +34,6 @@ var (
 	// randomMinSize = 0
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
-	// How much tries for generating random string
-	maxGenerateStringRetries = 1000000
 )
 
 type intBoundary struct {
@@ -474,7 +472,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		}
 
 	case reflect.String:
-		res, err := randomString(opts.RandomStringLength, opts.StringLanguage)
+		res, err := randomString(opts.RandomStringLength, *opts)
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
 		len := randomSliceAndMapSize(*opts)
@@ -865,7 +863,10 @@ func extractStringFromTag(tag string, opts options.Options) (interface{}, error)
 		toRet := args[rand.Intn(len(args))]
 		return strings.TrimSpace(toRet), nil
 	}
-	res, err := randomString(strlen, strlng)
+
+	copyOption := opts
+	copyOption.StringLanguage = strlng
+	res, err := randomString(strlen, copyOption)
 	return res, err
 }
 
@@ -1110,23 +1111,23 @@ func fetchOneOfArgsFromTag(tag string) ([]string, error) {
 	return args, nil
 }
 
-func randomString(n int, lang *interfaces.LangRuneBoundary) (string, error) {
+func randomString(n int, fakerOpt options.Options) (string, error) {
 	b := make([]rune, 0)
 	set := make(map[rune]struct{})
-	if lang.Exclude != nil {
-		for _, s := range lang.Exclude {
+	if fakerOpt.StringLanguage.Exclude != nil {
+		for _, s := range fakerOpt.StringLanguage.Exclude {
 			set[s] = struct{}{}
 		}
 	}
 
 	counter := 0
 	for i := 0; i < n; {
-		randRune := rune(rand.Intn(int(lang.End-lang.Start)) + int(lang.Start))
+		randRune := rune(rand.Intn(int(fakerOpt.StringLanguage.End-fakerOpt.StringLanguage.Start)) + int(fakerOpt.StringLanguage.Start))
 		for slice.ContainsRune(set, randRune) {
-			if counter++; counter >= maxGenerateStringRetries {
+			if counter++; counter >= fakerOpt.MaxGenerateStringRetries {
 				return "", errors.New("Max number of string generation retries exhausted")
 			}
-			randRune = rune(rand.Intn(int(lang.End-lang.Start)) + int(lang.Start))
+			randRune = rune(rand.Intn(int(fakerOpt.StringLanguage.End-fakerOpt.StringLanguage.Start)) + int(fakerOpt.StringLanguage.Start))
 			_, ok := set[randRune]
 			if !ok {
 				break
