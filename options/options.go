@@ -121,7 +121,7 @@ func WithRecursionMaxDepth(depth uint) OptionFunc {
 				typeSeen:          make(map[reflect.Type]int, 1),
 			}
 		}
-		if depth >= 0 {
+		if depth > 0 {
 			oo.MaxDepthOption.recursionMaxDepth = int(depth)
 		}
 	}
@@ -150,10 +150,6 @@ func WithGenerateUniqueValues(unique bool) OptionFunc {
 
 // WithRandomStringLength sets a length for random string generation
 func WithRandomStringLength(size uint) OptionFunc {
-	if size < 0 {
-		err := fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
-		panic(err)
-	}
 	return func(oo *Options) {
 		oo.RandomStringLength = int(size)
 	}
@@ -172,10 +168,6 @@ func WithRandomMapAndSliceMaxSize(size uint) OptionFunc {
 
 // WithRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
 func WithRandomMapAndSliceMinSize(size uint) OptionFunc {
-	if size < 0 {
-		err := fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
-		panic(err)
-	}
 	return func(oo *Options) {
 		oo.RandomMinSliceSize = int(size)
 	}
