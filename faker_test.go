@@ -2158,14 +2158,6 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 		Map   map[string]int
 	}
 
-	orimin := randomMinSize
-	defer func() {
-		err := SetRandomMapAndSliceMinSize(orimin)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}()
-
 	for _, c := range []struct {
 		max, min, expect int
 	}{
@@ -2174,12 +2166,9 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 		{2, 3, 3}, // if min >= max, result will always be min
 	} {
 
-		err := SetRandomMapAndSliceMinSize(c.min)
-		if err != nil {
-			t.Fatal(err)
-		}
 		s := SliceMap{}
-		err = FakeData(&s, options.WithRandomMapAndSliceMaxSize(c.max))
+		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(c.max),
+			options.WithRandomMapAndSliceMinSize(c.min))
 		if err != nil {
 			t.Error(err)
 		}

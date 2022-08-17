@@ -17,6 +17,7 @@ type Options struct {
 	GenerateUniqueValues bool
 	RandomStringLength   int
 	RandomMaxSliceSize   int
+	RandomMinSliceSize   int
 }
 
 type MaxDepthOption struct {
@@ -55,6 +56,7 @@ func DefaultOption() *Options {
 	ops.StringLanguage = &interfaces.LangENG
 	ops.RandomStringLength = 25  //default
 	ops.RandomMaxSliceSize = 100 //default
+	ops.RandomMinSliceSize = 0   // default
 	return ops
 }
 
@@ -134,5 +136,16 @@ func WithRandomMapAndSliceMaxSize(size int) OptionFunc {
 	}
 	return func(oo *Options) {
 		oo.RandomMaxSliceSize = size
+	}
+}
+
+// WithRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
+func WithRandomMapAndSliceMinSize(size int) OptionFunc {
+	if size < 0 {
+		err := fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
+		panic(err)
+	}
+	return func(oo *Options) {
+		oo.RandomMinSliceSize = size
 	}
 }

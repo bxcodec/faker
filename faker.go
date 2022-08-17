@@ -30,10 +30,8 @@ var (
 	iBoundary = intBoundary{start: 0, end: 100}
 	//Sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
 	fBoundary = floatBoundary{start: 0, end: 100}
-	// //Sets the random max size for slices and maps.
-	// randomMaxSize = 100
 	//Sets the random min size for slices and maps.
-	randomMinSize = 0
+	// randomMinSize = 0
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 	// How much tries for generating random string
@@ -246,15 +244,6 @@ func ResetUnique() {
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
-}
-
-// SetRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
-func SetRandomMapAndSliceMinSize(size int) error {
-	if size < 0 {
-		return fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
-	}
-	randomMinSize = size
-	return nil
 }
 
 // SetRandomNumberBoundaries sets boundary for random number generation
@@ -1185,11 +1174,11 @@ func randomSliceAndMapSize(opt options.Options) int {
 	if testRandZero {
 		return 0
 	}
-	r := opt.RandomMaxSliceSize - randomMinSize
+	r := opt.RandomMaxSliceSize - opt.RandomMinSliceSize
 	if r < 1 {
 		r = 1
 	}
-	return randomMinSize + rand.Intn(r)
+	return opt.RandomMinSliceSize + rand.Intn(r)
 }
 
 func randomElementFromSliceString(s []string) string {
