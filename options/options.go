@@ -9,23 +9,39 @@ import (
 	"github.com/bxcodec/faker/v4/interfaces"
 )
 
+// Options represent all available option for faker.
 type Options struct {
-	IgnoreFields             map[string]struct{}
-	FieldProviders           map[string]interfaces.CustomProviderFunction
-	MaxDepthOption           *MaxDepthOption
-	IgnoreInterface          bool
-	StringLanguage           *interfaces.LangRuneBoundary
-	GenerateUniqueValues     bool
-	RandomStringLength       int
-	RandomMaxSliceSize       int
-	RandomMinSliceSize       int
+	// IgnoreFields used for ignoring a field when generating the fake data
+	IgnoreFields map[string]struct{}
+	// FieldProviders used for storing the custom provider function
+	FieldProviders map[string]interfaces.CustomProviderFunction
+	// MaxDepthOption used for configuring the max depth of nested struct for faker
+	MaxDepthOption *MaxDepthOption
+	// IgnoreInterface used for ignoring any interface field
+	IgnoreInterface bool
+	// StringLanguage used for setting the language for any string in faker
+	StringLanguage *interfaces.LangRuneBoundary
+	// GenerateUniqueValues to ensure the generated data is unique
+	GenerateUniqueValues bool
+	// RandomStringLength to ensure the generated string is expected as we want
+	RandomStringLength int
+	// RandomMaxSliceSize used for setting the maximum of slice size, or map size that will be generated
+	RandomMaxSliceSize int
+	// RandomMinSliceSize used for setting the minimum of slize, array, map size that will be generated
+	RandomMinSliceSize int
+	// MaxGenerateStringRetries set how much tries for generating random string
 	MaxGenerateStringRetries int
-	SetSliceMapNilIfLenZero  bool
-	SetSliceMapRandomToZero  bool
-	RandomIntegerBoundary    *interfaces.RandomIntegerBoundary
-	RandomFloatBoundary      *interfaces.RandomFloatBoundary
+	// SetSliceMapNilIfLenZero allows to set nil for the slice and maps, if size is 0.
+	SetSliceMapNilIfLenZero bool
+	// SetSliceMapRandomToZero sets random integer generation to zero for slice and maps
+	SetSliceMapRandomToZero bool
+	// RandomIntegerBoundary sets boundary random integer value generation. Boundaries can not exceed integer(4 byte...)
+	RandomIntegerBoundary *interfaces.RandomIntegerBoundary
+	// RandomFloatBoundary sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
+	RandomFloatBoundary *interfaces.RandomFloatBoundary
 }
 
+// MaxDepthOption used for configuring the max depth of nested struct for faker
 type MaxDepthOption struct {
 	typeSeen          map[reflect.Type]int
 	recursionMaxDepth int
@@ -43,6 +59,7 @@ func (o *MaxDepthOption) RecursionOutOfLimit(t reflect.Type) bool {
 	return o.typeSeen[t] > o.recursionMaxDepth
 }
 
+// BuildOptions build all option functions into one option
 func BuildOptions(optFuncs []OptionFunc) *Options {
 	ops := DefaultOption()
 
@@ -53,12 +70,13 @@ func BuildOptions(optFuncs []OptionFunc) *Options {
 	return ops
 }
 
+// DefaultOption build the default option
 func DefaultOption() *Options {
-	ops := &Options{
-		MaxDepthOption: &MaxDepthOption{},
+	ops := &Options{}
+	ops.MaxDepthOption = &MaxDepthOption{
+		typeSeen:          make(map[reflect.Type]int, 1),
+		recursionMaxDepth: 1,
 	}
-	ops.MaxDepthOption.typeSeen = make(map[reflect.Type]int, 1)
-	ops.MaxDepthOption.recursionMaxDepth = 1 // default
 	ops.StringLanguage = &interfaces.LangENG
 	ops.RandomStringLength = 25            //default
 	ops.RandomMaxSliceSize = 100           //default
@@ -69,8 +87,10 @@ func DefaultOption() *Options {
 	return ops
 }
 
+// OptionFunc define the options contract
 type OptionFunc func(oo *Options)
 
+// WithFieldsToIgnore used for ignoring a field when generating the fake data
 func WithFieldsToIgnore(fieldNames ...string) OptionFunc {
 	return func(oo *Options) {
 		if oo.IgnoreFields == nil {
@@ -82,6 +102,7 @@ func WithFieldsToIgnore(fieldNames ...string) OptionFunc {
 	}
 }
 
+// WithCustomFieldProvider used for storing the custom provider function
 func WithCustomFieldProvider(fieldName string, provider interfaces.CustomProviderFunction) OptionFunc {
 	return func(oo *Options) {
 		if oo.FieldProviders == nil {
@@ -91,6 +112,7 @@ func WithCustomFieldProvider(fieldName string, provider interfaces.CustomProvide
 	}
 }
 
+// WithRecursionMaxDepth used for configuring the max depth of nested struct for faker
 func WithRecursionMaxDepth(depth uint) OptionFunc {
 	return func(oo *Options) {
 		if oo.MaxDepthOption == nil {
@@ -159,7 +181,7 @@ func WithRandomMapAndSliceMinSize(size uint) OptionFunc {
 	}
 }
 
-// MaxGenerateStringRetries set how much tries for generating random string
+// WithMaxGenerateStringRetries set how much tries for generating random string
 func WithMaxGenerateStringRetries(retries uint) OptionFunc {
 	return func(oo *Options) {
 		oo.MaxGenerateStringRetries = int(retries)

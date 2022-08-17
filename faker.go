@@ -22,8 +22,6 @@ import (
 
 var (
 	mu = &sync.Mutex{}
-	//Sets the random min size for slices and maps.
-	// randomMinSize = 0
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 )
@@ -597,7 +595,6 @@ type structTag struct {
 }
 
 func setDataWithTag(v reflect.Value, tag string, opt options.Options) error {
-
 	if v.Kind() != reflect.Ptr {
 		return errors.New(fakerErrors.ErrValueNotPtr)
 	}

@@ -1,5 +1,6 @@
 package interfaces
 
+// LangRuneBoundary is for language boundary
 type LangRuneBoundary struct {
 	Start   rune
 	End     rune
