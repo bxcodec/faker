@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bxcodec/faker/v4"
+	"github.com/bxcodec/faker/v4/options"
 )
 
 // You can set length for your random strings also set boundary for your integers.
@@ -31,9 +32,8 @@ func Example_withTagsLengthAndBoundary() {
 		MIint    map[int]int       `faker:"boundary_start=5, boundary_end=10"`
 	}
 
-	_ = faker.SetRandomMapAndSliceSize(20) // Random generated map or array size wont exceed 20...
 	a := SomeStruct{}
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, options.WithRandomMapAndSliceMaxSize(20)) // Random generated map or array size wont exceed 20...
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

@@ -16,6 +16,7 @@ type Options struct {
 	StringLanguage       *interfaces.LangRuneBoundary
 	GenerateUniqueValues bool
 	RandomStringLength   int
+	RandomMaxSliceSize   int
 }
 
 type MaxDepthOption struct {
@@ -52,7 +53,8 @@ func DefaultOption() *Options {
 	ops.MaxDepthOption.typeSeen = make(map[reflect.Type]int, 1)
 	ops.MaxDepthOption.recursionMaxDepth = 1 // default
 	ops.StringLanguage = &interfaces.LangENG
-	ops.RandomStringLength = 25 //default
+	ops.RandomStringLength = 25  //default
+	ops.RandomMaxSliceSize = 100 //default
 	return ops
 }
 
@@ -121,5 +123,16 @@ func WithRandomStringLength(size int) OptionFunc {
 	}
 	return func(oo *Options) {
 		oo.RandomStringLength = size
+	}
+}
+
+// WithRandomMapAndSliceMaxSize sets the max size for maps and slices for random generation.
+func WithRandomMapAndSliceMaxSize(size int) OptionFunc {
+	if size < 1 {
+		err := fmt.Errorf(fakerErrors.ErrSmallerThanOne, size)
+		panic(err)
+	}
+	return func(oo *Options) {
+		oo.RandomMaxSliceSize = size
 	}
 }

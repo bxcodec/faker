@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bxcodec/faker/v4"
+	"github.com/bxcodec/faker/v4/options"
 )
 
 // You can set the size for your random slices.
@@ -16,9 +17,8 @@ func Example_withTagsSliceLength() {
 		RandomIntList   []int64
 	}
 
-	_ = faker.SetRandomMapAndSliceSize(20) // If no slice_len is set, this sets the max of the random size
 	a := SomeStruct{}
-	_ = faker.FakeData(&a)
+	_ = faker.FakeData(&a, options.WithRandomMapAndSliceMaxSize(20)) // If no slice_len is set, this sets the max of the random size
 	fmt.Printf("%+v", a)
 	// Result:
 	/*

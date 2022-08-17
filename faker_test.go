@@ -503,14 +503,8 @@ func TestSetRandomNumberBoundaries(t *testing.T) {
 
 func TestSetRandomMapAndSliceSize(t *testing.T) {
 	someStruct := SomeStruct{}
-	if err := SetRandomMapAndSliceSize(-1); err == nil {
-		t.Error("Random Map and Slice must not accept lower than 0 as a size")
-	}
 	size := 5
-	if err := SetRandomMapAndSliceSize(size); err != nil {
-		t.Error("SetRandomMapAndSliceSize method is corrupted.")
-	}
-	if err := FakeData(&someStruct); err != nil {
+	if err := FakeData(&someStruct, options.WithRandomMapAndSliceMaxSize(size)); err != nil {
 		t.Error("Fake data generation has failed")
 	}
 	if len(someStruct.MapStringStruct) > size || len(someStruct.SBool) > size {
@@ -745,12 +739,12 @@ func TestWrongSliceLen(t *testing.T) {
 
 func TestExtractingSliceLenFromTag(t *testing.T) {
 	for _, tag := range sliceLenCorrectTags {
-		if _, err := extractSliceLengthFromTag(tag); err != nil {
+		if _, err := extractSliceLengthFromTag(tag, *options.DefaultOption()); err != nil {
 			t.Error(err.Error())
 		}
 	}
 	for _, tag := range sliceLenIncorrectTags {
-		if _, err := extractSliceLengthFromTag(tag); err == nil {
+		if _, err := extractSliceLengthFromTag(tag, *options.DefaultOption()); err == nil {
 			t.Errorf("Extracting should have thrown an error for tag %s", tag)
 		}
 	}
@@ -2164,13 +2158,7 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 		Map   map[string]int
 	}
 
-	orimax, orimin := randomMaxSize, randomMinSize
-	defer func() {
-		err := SetRandomMapAndSliceMaxSize(orimax)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}()
+	orimin := randomMinSize
 	defer func() {
 		err := SetRandomMapAndSliceMinSize(orimin)
 		if err != nil {
@@ -2185,16 +2173,13 @@ func TestRandomMaxMinMapSliceSize(t *testing.T) {
 		{2, 2, 2},
 		{2, 3, 3}, // if min >= max, result will always be min
 	} {
-		err := SetRandomMapAndSliceMaxSize(c.max)
-		if err != nil {
-			t.Fatal(err)
-		}
-		err = SetRandomMapAndSliceMinSize(c.min)
+
+		err := SetRandomMapAndSliceMinSize(c.min)
 		if err != nil {
 			t.Fatal(err)
 		}
 		s := SliceMap{}
-		err = FakeData(&s)
+		err = FakeData(&s, options.WithRandomMapAndSliceMaxSize(c.max))
 		if err != nil {
 			t.Error(err)
 		}
@@ -2216,20 +2201,9 @@ func TestRandomMapSliceSize(t *testing.T) {
 		Map   map[string]int
 	}
 	expect := 5
-	orimax := randomMaxSize
-	defer func() {
-		err := SetRandomMapAndSliceSize(orimax)
-		if err != nil {
-			t.Fatal(err)
-		}
-	}()
-	err := SetRandomMapAndSliceSize(expect)
-	if err != nil {
-		t.Fatal(err)
-	}
 	for i := 0; i < 10; i++ {
 		s := SliceMap{}
-		err := FakeData(&s)
+		err := FakeData(&s, options.WithRandomMapAndSliceMaxSize(expect))
 		if err != nil {
 			t.Error(err)
 		}

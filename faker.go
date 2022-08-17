@@ -26,14 +26,12 @@ var (
 	shouldSetNil = false
 	//Sets random integer generation to zero for slice and maps
 	testRandZero = false
-	//Sets the default number of string when it is created randomly.
-	// randomStringLen = 25
 	//Sets the boundary for random integer value generation. Boundaries can not exceed integer(4 byte...)
 	iBoundary = intBoundary{start: 0, end: 100}
 	//Sets the boundary for random float value generation. Boundaries should comply with float values constraints (IEEE 754)
 	fBoundary = floatBoundary{start: 0, end: 100}
-	//Sets the random max size for slices and maps.
-	randomMaxSize = 100
+	// //Sets the random max size for slices and maps.
+	// randomMaxSize = 100
 	//Sets the random min size for slices and maps.
 	randomMinSize = 0
 	// Unique values are kept in memory so the generator retries if the value already exists
@@ -248,21 +246,6 @@ func ResetUnique() {
 // SetNilIfLenIsZero allows to set nil for the slice and maps, if size is 0.
 func SetNilIfLenIsZero(setNil bool) {
 	shouldSetNil = setNil
-}
-
-// SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
-// deprecates, currently left for old version usage
-func SetRandomMapAndSliceSize(size int) error {
-	return SetRandomMapAndSliceMaxSize(size)
-}
-
-// SetRandomMapAndSliceMaxSize sets the max size for maps and slices for random generation.
-func SetRandomMapAndSliceMaxSize(size int) error {
-	if size < 1 {
-		return fmt.Errorf(fakerErrors.ErrSmallerThanOne, size)
-	}
-	randomMaxSize = size
-	return nil
 }
 
 // SetRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
@@ -505,7 +488,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		res, err := randomString(opts.RandomStringLength, opts.StringLanguage)
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
-		len := randomSliceAndMapSize()
+		len := randomSliceAndMapSize(*opts)
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
@@ -564,7 +547,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		return reflect.ValueOf(uint64(randomInteger())), nil
 
 	case reflect.Map:
-		len := randomSliceAndMapSize()
+		len := randomSliceAndMapSize(*opts)
 		if shouldSetNil && len == 0 {
 			return reflect.Zero(t), nil
 		}
@@ -726,7 +709,7 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 		return nil
 	}
 
-	len := randomSliceAndMapSize()
+	len := randomSliceAndMapSize(opt)
 	if shouldSetNil && len == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
@@ -777,7 +760,7 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 		v.Set(reflect.ValueOf(res))
 		return nil
 	}
-	sliceLen, err := extractSliceLengthFromTag(tag)
+	sliceLen, err := extractSliceLengthFromTag(tag, opt)
 	if err != nil {
 		return err
 	}
@@ -844,7 +827,7 @@ func userDefinedNumber(v reflect.Value, tag string) error {
 }
 
 //extractSliceLengthFromTag checks if the sliceLength tag 'slice_len' is set, if so, returns its value, else return a random length
-func extractSliceLengthFromTag(tag string) (int, error) {
+func extractSliceLengthFromTag(tag string, opt options.Options) (int, error) {
 	if strings.Contains(tag, SliceLength) {
 		lenParts := strings.SplitN(findSliceLenReg.FindString(tag), Equals, -1)
 		if len(lenParts) != 2 {
@@ -860,7 +843,7 @@ func extractSliceLengthFromTag(tag string) (int, error) {
 		return sliceLen, nil
 	}
 
-	return randomSliceAndMapSize(), nil //Returns random slice length if the sliceLength tag isn't set
+	return randomSliceAndMapSize(opt), nil //Returns random slice length if the sliceLength tag isn't set
 }
 
 func extractStringFromTag(tag string, opts options.Options) (interface{}, error) {
@@ -1198,11 +1181,11 @@ func randomFloat() float64 {
 
 // randomSliceAndMapSize returns a random integer between [0,randomSliceAndMapSize). If the testRandZero is set, returns 0
 // Written for test purposes for shouldSetNil
-func randomSliceAndMapSize() int {
+func randomSliceAndMapSize(opt options.Options) int {
 	if testRandZero {
 		return 0
 	}
-	r := randomMaxSize - randomMinSize
+	r := opt.RandomMaxSliceSize - randomMinSize
 	if r < 1 {
 		r = 1
 	}
