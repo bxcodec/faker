@@ -365,6 +365,7 @@ func FakeData(a interface{}) error {
 	return nil
 }
 
+//FakeDataSkipFields - fakes structure except fields that should be skipped FakeDataSkipFields(&a, []string{"A.A", "C.A", "TestField.Test"})
 func FakeDataSkipFields(a interface{}, fieldsToSkip []string) error {
 	reflectType := reflect.TypeOf(a)
 
@@ -372,28 +373,24 @@ func FakeDataSkipFields(a interface{}, fieldsToSkip []string) error {
 		return errors.New(ErrValueNotPtr)
 	}
 
+	if reflect.ValueOf(a).IsNil() {
+		return fmt.Errorf(ErrNotSupportedPointer, reflectType.Elem().String())
+	}
+
 	skipMap := make(map[string]struct{})
 	for _, s := range fieldsToSkip {
 		skipMap[s] = struct{}{}
 	}
-	v := reflect.ValueOf(a)
-	ind := reflect.Indirect(v)
-	s := ind.Type()
 
-	for i := 0; i < s.NumField(); i++ {
-		field := ind.Field(i)
-		if !field.CanSet() {
-			continue
-		}
-		if _, ok := skipMap[s.Field(i).Name]; ok {
-			continue
-		}
-		ifc := field.Interface()
-		if err := FakeData(&ifc); err != nil {
-			return err
-		}
-		field.Set(reflect.ValueOf(ifc))
+	rval := reflect.ValueOf(a)
+
+	seenNullableFields := 0
+	finalValue, err := getValueSkipFields(a, &seenNullableFields, -1, skipMap)
+	if err != nil {
+		return err
 	}
+
+	rval.Elem().Set(finalValue.Elem().Convert(reflectType.Elem()))
 	return nil
 }
 
@@ -711,7 +708,223 @@ func getValue(a interface{}, seenPointers *int, nilIndex int) (reflect.Value, er
 		err := fmt.Errorf("no support for kind %+v", t)
 		return reflect.Value{}, err
 	}
+}
 
+// seenPointers is used to keep track of the number of pointers that have been encountered
+// while recursing. A pointer will be set to nil if seenPointers matches nilIndex. If nilIndex is -1,
+// no pointers will be set to nil.
+func getValueSkipFields(a interface{}, seenPointers *int, nilIndex int, skipMap map[string]struct{}) (reflect.Value, error) {
+	t := reflect.TypeOf(a)
+	if t == nil {
+		if ignoreInterface {
+			return reflect.New(reflect.TypeOf(reflect.Struct)), nil
+		}
+		return reflect.Value{}, fmt.Errorf("interface{} not allowed")
+	}
+	k := t.Kind()
+
+	switch k {
+	case reflect.Ptr:
+		seen := *seenPointers
+		(*seenPointers)++
+		v := reflect.New(t.Elem())
+		var val reflect.Value
+		var err error
+		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
+			val, err = getValueSkipFields(reflect.ValueOf(a).Elem().Interface(), seenPointers, nilIndex, skipMap)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		} else {
+			val, err = getValueSkipFields(v.Elem().Interface(), seenPointers, nilIndex, skipMap)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+		}
+		// Set pointer to nil at this index, if requested
+		if seen == nilIndex {
+			v = reflect.Zero(t)
+		} else {
+			v.Elem().Set(val.Convert(t.Elem()))
+		}
+		return v, nil
+	case reflect.Struct:
+		switch t.String() {
+		case "time.Time":
+			ft := time.Now().Add(time.Duration(rand.Int63()))
+			return reflect.ValueOf(ft), nil
+		default:
+			originalDataVal := reflect.ValueOf(a)
+			v := reflect.New(t).Elem()
+			retry := 0 // error if cannot generate unique value after maxRetry tries
+			for i := 0; i < v.NumField(); i++ {
+				if !v.Field(i).CanSet() {
+					continue // to avoid panic to set on unexported field in struct
+				}
+				fieldName := t.Field(i).Name
+				if _, ok := skipMap[fieldName]; ok {
+					fmt.Printf("skippint field from map")
+					continue
+				}
+				newSkipMap := filterSkipMap(skipMap, fieldName)
+				tags := decodeTags(t, i)
+				switch {
+				case tags.keepOriginal:
+					zero, err := isZero(reflect.ValueOf(a).Field(i))
+					if err != nil {
+						return reflect.Value{}, err
+					}
+					if zero {
+						err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
+						if err != nil {
+							return reflect.Value{}, err
+						}
+						continue
+					}
+					v.Field(i).Set(reflect.ValueOf(a).Field(i))
+				case tags.fieldType == "":
+					val, err := getValueSkipFields(v.Field(i).Interface(), seenPointers, nilIndex, newSkipMap)
+					if err != nil {
+						return reflect.Value{}, err
+					}
+					val = val.Convert(v.Field(i).Type())
+					v.Field(i).Set(val)
+				case tags.fieldType == SKIP:
+					item := originalDataVal.Field(i).Interface()
+					if v.CanSet() && item != nil {
+						v.Field(i).Set(reflect.ValueOf(item))
+					}
+				default:
+					err := setDataWithTag(v.Field(i).Addr(), tags.fieldType)
+					if err != nil {
+						return reflect.Value{}, err
+					}
+				}
+
+				if tags.unique {
+
+					if retry >= maxRetry {
+						return reflect.Value{}, fmt.Errorf(ErrUniqueFailure, reflect.TypeOf(a).Field(i).Name)
+					}
+
+					value := v.Field(i).Interface()
+					if slice.ContainsValue(uniqueValues[tags.fieldType], value) { // Retry if unique value already found
+						i--
+						retry++
+						continue
+					}
+					retry = 0
+					uniqueValues[tags.fieldType] = append(uniqueValues[tags.fieldType], value)
+				} else {
+					retry = 0
+				}
+
+			}
+			return v, nil
+		}
+
+	case reflect.String:
+		res, err := randomString(randomStringLen, &lang)
+		return reflect.ValueOf(res), err
+	case reflect.Slice:
+		len := randomSliceAndMapSize()
+		if shouldSetNil && len == 0 {
+			return reflect.Zero(t), nil
+		}
+		v := reflect.MakeSlice(t, len, len)
+		for i := 0; i < v.Len(); i++ {
+			val, err := getValueSkipFields(v.Index(i).Interface(), seenPointers, nilIndex, skipMap)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			val = val.Convert(v.Index(i).Type())
+			v.Index(i).Set(val)
+		}
+		return v, nil
+	case reflect.Array:
+		v := reflect.New(t).Elem()
+		for i := 0; i < v.Len(); i++ {
+			val, err := getValue(v.Index(i).Interface(), seenPointers, nilIndex)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			val = val.Convert(v.Index(i).Type())
+			v.Index(i).Set(val)
+		}
+		return v, nil
+	case reflect.Int:
+		return reflect.ValueOf(randomInteger()), nil
+	case reflect.Int8:
+		return reflect.ValueOf(int8(randomInteger())), nil
+	case reflect.Int16:
+		return reflect.ValueOf(int16(randomInteger())), nil
+	case reflect.Int32:
+		return reflect.ValueOf(int32(randomInteger())), nil
+	case reflect.Int64:
+		return reflect.ValueOf(int64(randomInteger())), nil
+	case reflect.Float32:
+		return reflect.ValueOf(rand.Float32()), nil
+	case reflect.Float64:
+		return reflect.ValueOf(rand.Float64()), nil
+	case reflect.Bool:
+		val := rand.Intn(2) > 0
+		return reflect.ValueOf(val), nil
+
+	case reflect.Uint:
+		return reflect.ValueOf(uint(randomInteger())), nil
+
+	case reflect.Uint8:
+		return reflect.ValueOf(uint8(randomInteger())), nil
+
+	case reflect.Uint16:
+		return reflect.ValueOf(uint16(randomInteger())), nil
+
+	case reflect.Uint32:
+		return reflect.ValueOf(uint32(randomInteger())), nil
+
+	case reflect.Uint64:
+		return reflect.ValueOf(uint64(randomInteger())), nil
+
+	case reflect.Map:
+		len := randomSliceAndMapSize()
+		if shouldSetNil && len == 0 {
+			return reflect.Zero(t), nil
+		}
+		v := reflect.MakeMap(t)
+		for i := 0; i < len; i++ {
+			keyInstance := reflect.New(t.Key()).Elem().Interface()
+			key, err := getValue(keyInstance, seenPointers, nilIndex)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+
+			valueInstance := reflect.New(t.Elem()).Elem().Interface()
+			val, err := getValue(valueInstance, seenPointers, nilIndex)
+			if err != nil {
+				return reflect.Value{}, err
+			}
+			v.SetMapIndex(key, val)
+		}
+		return v, nil
+	default:
+		err := fmt.Errorf("no support for kind %+v", t)
+		return reflect.Value{}, err
+	}
+}
+
+func filterSkipMap(skipMap map[string]struct{}, field string) map[string]struct{} {
+	response := make(map[string]struct{})
+	for k, _ := range skipMap {
+		if strings.HasPrefix(k, field) {
+			key := strings.Replace(k, field, "", 1)
+			if len(key) > 0 {
+				key = strings.Replace(key, ".", "", 1)
+			}
+			response[key] = struct{}{}
+		}
+
+	}
+	return response
 }
 
 func isZero(field reflect.Value) (bool, error) {
