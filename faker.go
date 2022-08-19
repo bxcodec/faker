@@ -14,10 +14,10 @@ import (
 	"sync"
 	"time"
 
-	fakerErrors "github.com/bxcodec/faker/v4/errors"
-	"github.com/bxcodec/faker/v4/interfaces"
-	"github.com/bxcodec/faker/v4/options"
-	"github.com/bxcodec/faker/v4/support/slice"
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
+	"github.com/bxcodec/faker/v4/pkg/interfaces"
+	"github.com/bxcodec/faker/v4/pkg/options"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
 
 var (

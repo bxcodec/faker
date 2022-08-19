@@ -9,9 +9,9 @@ import (
 	"time"
 	"unicode/utf8"
 
-	fakerErrors "github.com/bxcodec/faker/v4/errors"
-	"github.com/bxcodec/faker/v4/interfaces"
-	"github.com/bxcodec/faker/v4/options"
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
+	"github.com/bxcodec/faker/v4/pkg/interfaces"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 const (

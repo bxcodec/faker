@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )

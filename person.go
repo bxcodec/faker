@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 // Dowser provides interfaces to generate random logical Names with their initials

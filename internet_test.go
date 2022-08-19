@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v4/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
 
 func TestEmail(t *testing.T) {

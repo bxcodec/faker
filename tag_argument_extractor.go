@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	fakerErrors "github.com/bxcodec/faker/v4/errors"
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
 )
 
 func extractFloat64FromTagArgs(args []string) (interface{}, error) {

@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 var century = []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI"}

@@ -5,7 +5,7 @@ import (
 	"math"
 	"reflect"
 
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 // Currency Codes | Source: https://en.wikipedia.org/wiki/ISO_4217

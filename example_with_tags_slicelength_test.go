@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bxcodec/faker/v4"
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 // You can set the size for your random slices.

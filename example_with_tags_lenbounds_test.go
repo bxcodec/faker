@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/bxcodec/faker/v4"
-	"github.com/bxcodec/faker/v4/options"
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 // You can set length for your random strings also set boundary for your integers.

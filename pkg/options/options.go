@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"reflect"
 
-	fakerErrors "github.com/bxcodec/faker/v4/errors"
-	"github.com/bxcodec/faker/v4/interfaces"
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
+	"github.com/bxcodec/faker/v4/pkg/interfaces"
 )
 
 // Options represent all available option for faker.
