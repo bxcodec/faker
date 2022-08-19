@@ -121,9 +121,7 @@ func WithRecursionMaxDepth(depth uint) OptionFunc {
 				typeSeen:          make(map[reflect.Type]int, 1),
 			}
 		}
-		if depth >= 0 {
-			oo.MaxDepthOption.recursionMaxDepth = int(depth)
-		}
+		oo.MaxDepthOption.recursionMaxDepth = int(depth)
 	}
 }
 
