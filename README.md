@@ -10,7 +10,6 @@ Faker will generate you a fake data based on your Struct.
 [![codecov](https://codecov.io/gh/bxcodec/faker/branch/master/graph/badge.svg)](https://codecov.io/gh/bxcodec/faker)
 [![Go Report Card](https://goreportcard.com/badge/github.com/bxcodec/faker)](https://goreportcard.com/report/github.com/bxcodec/faker)
 [![License](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/bxcodec/faker/blob/master/LICENSE)
-[![GoDoc](https://godoc.org/github.com/bxcodec/faker?status.svg)](https://godoc.org/github.com/bxcodec/faker)
 [![Go.Dev](https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white)](https://pkg.go.dev/github.com/bxcodec/faker/v4?tab=doc)
 
 ## Index
@@ -24,7 +23,7 @@ Faker will generate you a fake data based on your Struct.
 ## Support
 
 You can file an [Issue](https://github.com/bxcodec/faker/issues/new).
-See documentation in [Godoc](https://godoc.org/github.com/bxcodec/faker) or in [Go.Dev](https://pkg.go.dev/github.com/bxcodec/faker/v4?tab=doc)
+See documentation in [Go.Dev](https://pkg.go.dev/github.com/bxcodec/faker/v4?tab=doc)
 
 ## Getting Started
 
