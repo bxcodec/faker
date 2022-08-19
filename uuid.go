@@ -59,12 +59,12 @@ func (u UUID) Hyphenated(v reflect.Value) (interface{}, error) {
 }
 
 // UUIDHyphenated get fake Hyphenated UUID
-func UUIDHyphenated(opt *options.Options) string {
+func UUIDHyphenated(opts ...options.OptionFunc) string {
 	return singleFakeData(HyphenatedID, func() interface{} {
 		u := UUID{}
 		res, _ := u.hyphenated()
 		return res
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (u UUID) digit() (string, error) {
@@ -82,10 +82,10 @@ func (u UUID) Digit(v reflect.Value) (interface{}, error) {
 }
 
 // UUIDDigit get fake Digit UUID
-func UUIDDigit(opt *options.Options) string {
+func UUIDDigit(opts ...options.OptionFunc) string {
 	return singleFakeData(ID, func() interface{} {
 		u := UUID{}
 		res, _ := u.digit()
 		return res
-	}, opt).(string)
+	}, opts...).(string)
 }

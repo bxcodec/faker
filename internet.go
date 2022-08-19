@@ -26,9 +26,10 @@ var urlFormats = []string{
 }
 
 // GetNetworker returns a new Networker interface of Internet
-func GetNetworker(opt options.Options) Networker {
+func GetNetworker(opts ...options.OptionFunc) Networker {
+	opt := options.BuildOptions(opts)
 	internet := &Internet{
-		fakerOption: opt,
+		fakerOption: *opt,
 	}
 	return internet
 }
@@ -69,15 +70,16 @@ func (internet Internet) Email(v reflect.Value) (interface{}, error) {
 }
 
 // Email get email randomly in string
-func Email(opt *options.Options) string {
+func Email(opts ...options.OptionFunc) string {
 	return singleFakeData(EmailTag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		r, err := i.email()
 		if err != nil {
 			panic(err.Error())
 		}
 		return r
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) macAddress() string {
@@ -94,11 +96,12 @@ func (internet Internet) MacAddress(v reflect.Value) (interface{}, error) {
 }
 
 // MacAddress get mac address randomly in string
-func MacAddress(opt *options.Options) string {
+func MacAddress(opts ...options.OptionFunc) string {
 	return singleFakeData(MacAddressTag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		return i.macAddress()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) domainName() (string, error) {
@@ -115,15 +118,16 @@ func (internet Internet) DomainName(v reflect.Value) (interface{}, error) {
 }
 
 // DomainName get email domain name in string
-func DomainName(opt *options.Options) string {
+func DomainName(opts ...options.OptionFunc) string {
 	return singleFakeData(DomainNameTag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		d, err := i.domainName()
 		if err != nil {
 			panic(err.Error())
 		}
 		return d
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) url() (string, error) {
@@ -149,15 +153,16 @@ func (internet Internet) URL(v reflect.Value) (interface{}, error) {
 }
 
 // URL get Url randomly in string
-func URL(opt *options.Options) string {
+func URL(opts ...options.OptionFunc) string {
 	return singleFakeData(URLTag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		u, err := i.url()
 		if err != nil {
 			panic(err.Error())
 		}
 		return u
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) username() (string, error) {
@@ -170,17 +175,16 @@ func (internet Internet) UserName(v reflect.Value) (interface{}, error) {
 }
 
 // Username get username randomly in string
-func Username(opt *options.Options) string {
+func Username(opts ...options.OptionFunc) string {
 	return singleFakeData(UserNameTag, func() interface{} {
-		i := Internet{
-			fakerOption: *opt,
-		}
+		opt := options.BuildOptions(opts)
+		i := Internet{fakerOption: *opt}
 		u, err := i.username()
 		if err != nil {
 			panic(err.Error())
 		}
 		return u
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) ipv4() string {
@@ -198,11 +202,12 @@ func (internet Internet) IPv4(v reflect.Value) (interface{}, error) {
 }
 
 // IPv4 get IPv4 randomly in string
-func IPv4(opt *options.Options) string {
+func IPv4(opts ...options.OptionFunc) string {
 	return singleFakeData(IPV4Tag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		return i.ipv4()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) ipv6() string {
@@ -220,11 +225,12 @@ func (internet Internet) IPv6(v reflect.Value) (interface{}, error) {
 }
 
 // IPv6 get IPv6 randomly in string
-func IPv6(opt *options.Options) string {
+func IPv6(opts ...options.OptionFunc) string {
 	return singleFakeData(IPV6Tag, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		return i.ipv6()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) password() (string, error) {
@@ -237,15 +243,16 @@ func (internet Internet) Password(v reflect.Value) (interface{}, error) {
 }
 
 // Password get password randomly in string
-func Password(opt *options.Options) string {
+func Password(opts ...options.OptionFunc) string {
 	return singleFakeData(PASSWORD, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		p, err := i.password()
 		if err != nil {
 			panic(err.Error())
 		}
 		return p
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (internet Internet) jwt() (string, error) {
@@ -263,13 +270,14 @@ func (internet Internet) Jwt(v reflect.Value) (interface{}, error) {
 }
 
 // Jwt get jwt-like string
-func Jwt(opt *options.Options) string {
+func Jwt(opts ...options.OptionFunc) string {
 	return singleFakeData(JWT, func() interface{} {
+		opt := options.BuildOptions(opts)
 		i := Internet{fakerOption: *opt}
 		p, err := i.jwt()
 		if err != nil {
 			panic(err.Error())
 		}
 		return p
-	}, opt).(string)
+	}, opts...).(string)
 }

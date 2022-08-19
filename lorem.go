@@ -76,11 +76,11 @@ func (l Lorem) Word(v reflect.Value) (interface{}, error) {
 }
 
 // Word get a word randomly in string
-func Word(opt *options.Options) string {
+func Word(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(WORD, func() interface{} {
 		return i.word()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (l Lorem) sentence() string {
@@ -107,11 +107,11 @@ func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 }
 
 // Sentence get a sentence randomly in string
-func Sentence(opt *options.Options) string {
+func Sentence(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(SENTENCE, func() interface{} {
 		return i.sentence()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (l Lorem) paragraph() string {
@@ -132,9 +132,9 @@ func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 }
 
 // Paragraph get a paragraph randomly in string
-func Paragraph(opt *options.Options) string {
+func Paragraph(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(PARAGRAPH, func() interface{} {
 		return i.paragraph()
-	}, opt).(string)
+	}, opts...).(string)
 }

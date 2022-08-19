@@ -44,32 +44,28 @@ func TestParagraph(t *testing.T) {
 }
 
 func TestFakeWord(t *testing.T) {
-	word := Word(options.DefaultOption())
+	word := Word()
 	if !slice.Contains(wordList, word) {
 		t.Error("Expected word from slice wordList")
 	}
 }
 
 func TestFakeSentence(t *testing.T) {
-	res := Sentence(options.DefaultOption())
+	res := Sentence()
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected sentence")
 	}
 }
 
 func TestFakeParagraph(t *testing.T) {
-	res := Paragraph(options.DefaultOption())
+	res := Paragraph()
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected paragraph")
 	}
 }
 
 func TestUniqueWord(t *testing.T) {
-	opt := options.BuildOptions([]options.OptionFunc{
-		options.WithGenerateUniqueValues(true),
-	})
-
-	word := Word(opt)
+	word := Word(options.WithGenerateUniqueValues(true))
 	ResetUnique()
 	if !slice.Contains(wordList, word) {
 		t.Error("Expected word from slice wordList")
@@ -83,22 +79,16 @@ func TestUniqueWordPanic(t *testing.T) {
 		}
 		ResetUnique()
 	}()
-	opt := options.BuildOptions([]options.OptionFunc{
-		options.WithGenerateUniqueValues(true),
-	})
 
 	length := len(wordList) + 1
 	for i := 0; i < length; i++ {
-		Word(opt)
+		Word(options.WithGenerateUniqueValues(true))
 	}
 	ResetUnique()
 }
 
 func TestUniqueSentence(t *testing.T) {
-	opt := options.BuildOptions([]options.OptionFunc{
-		options.WithGenerateUniqueValues(true),
-	})
-	res := Sentence(opt)
+	res := Sentence(options.WithGenerateUniqueValues(true))
 	ResetUnique()
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected sentence")
@@ -106,11 +96,7 @@ func TestUniqueSentence(t *testing.T) {
 }
 
 func TestUniqueParagraph(t *testing.T) {
-	opt := options.BuildOptions([]options.OptionFunc{
-		options.WithGenerateUniqueValues(true),
-	})
-
-	res := Paragraph(opt)
+	res := Paragraph(options.WithGenerateUniqueValues(true))
 	ResetUnique()
 	if res == "" || !strings.HasSuffix(res, ".") {
 		t.Error("Expected paragraph")

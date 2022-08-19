@@ -71,11 +71,11 @@ func (p Price) Currency(v reflect.Value) (interface{}, error) {
 }
 
 // Currency get fake Currency (IDR, USD)
-func Currency(opt *options.Options) string {
+func Currency(opts ...options.OptionFunc) string {
 	return singleFakeData(CurrencyTag, func() interface{} {
 		p := Price{}
 		return p.currency()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (p Price) amount() float64 {
@@ -106,11 +106,11 @@ func (p Price) AmountWithCurrency(v reflect.Value) (interface{}, error) {
 }
 
 // AmountWithCurrency get fake AmountWithCurrency  USD 49257.100
-func AmountWithCurrency(opt *options.Options) string {
+func AmountWithCurrency(opts ...options.OptionFunc) string {
 	return singleFakeData(AmountWithCurrencyTag, func() interface{} {
 		p := Price{}
 		return p.amountwithcurrency()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 // precision | a helper function to set precision of price

@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bxcodec/faker/v4/options"
 	"github.com/bxcodec/faker/v4/support/slice"
 )
 
@@ -168,7 +167,7 @@ func TestTimePeriod(t *testing.T) {
 }
 
 func TestFakeUnixTime(t *testing.T) {
-	unixTime := UnixTime(options.DefaultOption())
+	unixTime := UnixTime()
 
 	if time.Now().Unix() <= unixTime {
 		t.Error("UnixTime should return time <= now")
@@ -176,7 +175,7 @@ func TestFakeUnixTime(t *testing.T) {
 }
 
 func TestFakeDate(t *testing.T) {
-	date := Date(options.DefaultOption())
+	date := Date()
 
 	_, err := time.Parse(BaseDateFormat, date)
 	if err != nil {
@@ -185,7 +184,7 @@ func TestFakeDate(t *testing.T) {
 }
 
 func TestFakeTime(t *testing.T) {
-	tm := TimeString(options.DefaultOption())
+	tm := TimeString()
 	_, err := time.Parse(TimeFormat, tm)
 	if err != nil {
 		t.Error("function Time need return valid value")
@@ -193,7 +192,7 @@ func TestFakeTime(t *testing.T) {
 }
 
 func TestFakeMonthName(t *testing.T) {
-	mt := MonthName(options.DefaultOption())
+	mt := MonthName()
 	_, err := time.Parse(MonthFormat, mt)
 	if err != nil {
 		t.Error("function Month need return valid month")
@@ -201,7 +200,7 @@ func TestFakeMonthName(t *testing.T) {
 }
 
 func TestFakeYear(t *testing.T) {
-	year := YearString(options.DefaultOption())
+	year := YearString()
 	_, err := time.Parse(YearFormat, year)
 	if err != nil {
 		t.Error("function Year need return valid year")
@@ -209,7 +208,7 @@ func TestFakeYear(t *testing.T) {
 }
 
 func TestFakeDayOfWeek(t *testing.T) {
-	week := DayOfWeek(options.DefaultOption())
+	week := DayOfWeek()
 	_, err := time.Parse(DayFormat, week)
 	if err != nil {
 		t.Error("function DayOfWeek need return valid day")
@@ -217,7 +216,7 @@ func TestFakeDayOfWeek(t *testing.T) {
 }
 
 func TestFakeDayOfMonth(t *testing.T) {
-	mt := DayOfMonth(options.DefaultOption())
+	mt := DayOfMonth()
 	_, err := time.Parse(DayOfMonthFormat, mt)
 	if err != nil {
 		t.Error("function DayOfMonth need return valid digit")
@@ -226,7 +225,7 @@ func TestFakeDayOfMonth(t *testing.T) {
 
 func TestFakeTimestamp(t *testing.T) {
 
-	tstmp := Timestamp(options.DefaultOption())
+	tstmp := Timestamp()
 
 	_, err := time.Parse(fmt.Sprintf("%s %s", BaseDateFormat, TimeFormat), tstmp)
 	if err != nil {
@@ -235,21 +234,21 @@ func TestFakeTimestamp(t *testing.T) {
 }
 
 func TestFakeCentury(t *testing.T) {
-	centry := Century(options.DefaultOption())
+	centry := Century()
 	if !slice.Contains(century, centry) {
 		t.Error("Expected century from functuon Century")
 	}
 }
 
 func TestFakeTimeZone(t *testing.T) {
-	tz := Timezone(options.DefaultOption())
+	tz := Timezone()
 	if !slice.Contains(timezones, tz) {
 		t.Error("Expected timezone from variable timezones")
 	}
 }
 
 func TestFakeTimePeriod(t *testing.T) {
-	periode := Timeperiod(options.DefaultOption())
+	periode := Timeperiod()
 	_, err := time.Parse(TimePeriodFormat, periode)
 	if err != nil {
 		t.Error("function TimePeriod need return valid period")

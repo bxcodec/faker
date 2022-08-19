@@ -38,11 +38,11 @@ func (p Phone) PhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // Phonenumber get fake phone number
-func Phonenumber(opt *options.Options) string {
+func Phonenumber(opts ...options.OptionFunc) string {
 	return singleFakeData(PhoneNumber, func() interface{} {
 		p := Phone{}
 		return p.phonenumber()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (p Phone) tollfreephonenumber() string {
@@ -65,11 +65,11 @@ func (p Phone) TollFreePhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // TollFreePhoneNumber get fake TollFreePhoneNumber
-func TollFreePhoneNumber(opt *options.Options) string {
+func TollFreePhoneNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(TollFreeNumber, func() interface{} {
 		p := Phone{}
 		return p.tollfreephonenumber()
-	}, opt).(string)
+	}, opts...).(string)
 }
 
 func (p Phone) e164PhoneNumber() string {
@@ -89,9 +89,9 @@ func (p Phone) E164PhoneNumber(v reflect.Value) (interface{}, error) {
 }
 
 // E164PhoneNumber get fake E164PhoneNumber
-func E164PhoneNumber(opt *options.Options) string {
+func E164PhoneNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(E164PhoneNumberTag, func() interface{} {
 		p := Phone{}
 		return p.e164PhoneNumber()
-	}, opt).(string)
+	}, opts...).(string)
 }

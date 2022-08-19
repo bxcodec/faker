@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bxcodec/faker/v4/options"
 	"github.com/bxcodec/faker/v4/support/slice"
 )
 
@@ -90,56 +89,56 @@ func TestNameFemale(t *testing.T) {
 }
 
 func TestFakeTitleMale(t *testing.T) {
-	male := TitleMale(options.DefaultOption())
+	male := TitleMale()
 	if !slice.Contains(titlesMale, male) {
 		t.Error("Expected value from variable titleMales in function TitleMale")
 	}
 }
 
 func TestFakeTitleFemale(t *testing.T) {
-	female := TitleFemale(options.DefaultOption())
+	female := TitleFemale()
 	if !slice.Contains(titlesFemale, female) {
 		t.Error("Expected value from variable titleFemales in function TitleFeMale")
 	}
 }
 
 func TestFakeFirstNameMale(t *testing.T) {
-	firstName := FirstNameMale(options.DefaultOption())
+	firstName := FirstNameMale()
 	if !slice.Contains(firstNamesMale, firstName) {
 		t.Error("Expected value from variable firstNamesMale in function FirstNameMale")
 	}
 }
 
 func TestFakeFirstNameFemale(t *testing.T) {
-	firstName := FirstNameFemale(options.DefaultOption())
+	firstName := FirstNameFemale()
 	if !slice.Contains(firstNamesFemale, firstName) {
 		t.Error("Expected value from variable firstNamesFemale in function FirstNameFemale")
 	}
 }
 
 func TestFakeFirstName(t *testing.T) {
-	firstname := FirstName(options.DefaultOption())
+	firstname := FirstName()
 	if !slice.Contains(firstNames, firstname) {
 		t.Error("Expected value from either firstNamesMale or firstNamesFemale in function FirstName")
 	}
 }
 
 func TestFakeLastName(t *testing.T) {
-	lastname := LastName(options.DefaultOption())
+	lastname := LastName()
 	if !slice.Contains(lastNames, lastname) {
 		t.Error("Expected value from variable lastNames in function LastName")
 	}
 }
 
 func TestFakeNameMale(t *testing.T) {
-	name := Name(options.DefaultOption())
+	name := Name()
 	randNameFlag = 51
 	if name == "" {
 		t.Error("Expected from function name string get empty string")
 	}
 }
 func TestFakeNameFemale(t *testing.T) {
-	name := Name(options.DefaultOption())
+	name := Name()
 	randNameFlag = 20
 	if name == "" {
 		t.Error("Expected from function name string get empty string")
@@ -158,7 +157,7 @@ func TestFakeGender(t *testing.T) {
 }
 
 func TestFakeGenderPublicFunction(t *testing.T) {
-	gender := Gender(options.DefaultOption())
+	gender := Gender()
 	if !slice.Contains(genders, gender) {
 		t.Error("Expected value from variable genders in function Gender")
 	}

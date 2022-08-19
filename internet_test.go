@@ -6,12 +6,11 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v4/options"
 	"github.com/bxcodec/faker/v4/support/slice"
 )
 
 func TestEmail(t *testing.T) {
-	email, err := GetNetworker(*options.DefaultOption()).Email(reflect.Value{})
+	email, err := GetNetworker().Email(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -31,7 +30,7 @@ func TestMacAddress(t *testing.T) {
 	}
 }
 func TestDomainName(t *testing.T) {
-	domain, err := GetNetworker(*options.DefaultOption()).DomainName(reflect.Value{})
+	domain, err := GetNetworker().DomainName(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -45,7 +44,7 @@ func TestDomainName(t *testing.T) {
 func TestURLOneVerbs(t *testing.T) {
 	urlFormats = []string{
 		"http://www.%s/"}
-	res, err := GetNetworker(*options.DefaultOption()).URL(reflect.Value{})
+	res, err := GetNetworker().URL(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -56,7 +55,7 @@ func TestURLOneVerbs(t *testing.T) {
 func TestURLTwoVerbs(t *testing.T) {
 	urlFormats = []string{
 		"http://www.%s/%s"}
-	res, err := GetNetworker(*options.DefaultOption()).URL(reflect.Value{})
+	res, err := GetNetworker().URL(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -65,7 +64,7 @@ func TestURLTwoVerbs(t *testing.T) {
 	}
 }
 func TestUserName(t *testing.T) {
-	usrname, err := GetNetworker(*options.DefaultOption()).UserName(reflect.Value{})
+	usrname, err := GetNetworker().UserName(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -75,7 +74,7 @@ func TestUserName(t *testing.T) {
 
 }
 func TestIPv4(t *testing.T) {
-	ip, err := GetNetworker(*options.DefaultOption()).IPv4(reflect.Value{})
+	ip, err := GetNetworker().IPv4(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -84,7 +83,7 @@ func TestIPv4(t *testing.T) {
 	}
 }
 func TestIPv6(t *testing.T) {
-	ip, err := GetNetworker(*options.DefaultOption()).IPv6(reflect.Value{})
+	ip, err := GetNetworker().IPv6(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -94,7 +93,7 @@ func TestIPv6(t *testing.T) {
 }
 
 func TestPassword(t *testing.T) {
-	pass, err := GetNetworker(*options.DefaultOption()).Password(reflect.Value{})
+	pass, err := GetNetworker().Password(reflect.Value{})
 	if err != nil {
 		t.Error("Expected  not error, got err", err)
 	}
@@ -104,19 +103,19 @@ func TestPassword(t *testing.T) {
 }
 
 func TestFakeEmail(t *testing.T) {
-	email := Email(options.DefaultOption())
+	email := Email()
 	if !strings.Contains(email, "@") {
 		t.Error("Expected  email")
 	}
 }
 func TestFakeMacAddress(t *testing.T) {
-	mc := MacAddress(options.DefaultOption())
+	mc := MacAddress()
 	if strings.Count(mc, ":") != 5 {
 		t.Error("Expected mac address")
 	}
 }
 func TestFakeDomainName(t *testing.T) {
-	domain := DomainName(options.DefaultOption())
+	domain := DomainName()
 	preTld := strings.Split(domain, ".")
 
 	if !slice.Contains(tld, preTld[1]) {
@@ -124,40 +123,40 @@ func TestFakeDomainName(t *testing.T) {
 	}
 }
 func TestFakeURL(t *testing.T) {
-	resURL := URL(options.DefaultOption())
+	resURL := URL()
 	if !strings.Contains(resURL, "http") {
 		t.Error("Expected get url")
 	}
 }
 
 func TestFakeUserName(t *testing.T) {
-	usrname := Username(options.DefaultOption())
+	usrname := Username()
 	if usrname == "" {
 		t.Error("Expected get username")
 	}
 }
 func TestFakeIPv4(t *testing.T) {
-	ip := IPv4(options.DefaultOption())
+	ip := IPv4()
 	if strings.Count(ip, ".") != 3 {
 		t.Error("Expected IPv4 format")
 	}
 }
 func TestFakeIPv6(t *testing.T) {
-	ip := IPv6(options.DefaultOption())
+	ip := IPv6()
 	if strings.Count(ip, ":") != 7 {
 		t.Error("Expected IPv4 format")
 	}
 }
 
 func TestFakePassword(t *testing.T) {
-	pass := Password(options.DefaultOption())
+	pass := Password()
 	if pass == "" {
 		t.Error("Expected hash password")
 	}
 }
 
 func TestFakeJWT(t *testing.T) {
-	jwt := Jwt(options.DefaultOption())
+	jwt := Jwt()
 	reg := regexp.MustCompile(`[a-zA-Z]+.[a-zA-Z]+.[a-zA-Z]+`)
 	if !reg.MatchString(jwt) {
 		t.Error("Invalid format on JWT token")

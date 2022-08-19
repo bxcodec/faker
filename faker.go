@@ -219,24 +219,28 @@ func ResetUnique() {
 	uniqueValues = map[string][]interface{}{}
 }
 
-func initMapperTagWithOption(opts options.Options) {
-	mapperTag[EmailTag] = GetNetworker(opts).Email
-	mapperTag[MacAddressTag] = GetNetworker(opts).MacAddress
-	mapperTag[DomainNameTag] = GetNetworker(opts).DomainName
-	mapperTag[URLTag] = GetNetworker(opts).URL
-	mapperTag[UserNameTag] = GetNetworker(opts).UserName
-	mapperTag[IPV4Tag] = GetNetworker(opts).IPv4
-	mapperTag[IPV6Tag] = GetNetworker(opts).IPv6
-	mapperTag[PASSWORD] = GetNetworker(opts).Password
-	mapperTag[JWT] = GetNetworker(opts).Jwt
+func initMapperTagWithOption(opts ...options.OptionFunc) {
+	mapperTag[EmailTag] = GetNetworker(opts...).Email
+	mapperTag[MacAddressTag] = GetNetworker(opts...).MacAddress
+	mapperTag[DomainNameTag] = GetNetworker(opts...).DomainName
+	mapperTag[URLTag] = GetNetworker(opts...).URL
+	mapperTag[UserNameTag] = GetNetworker(opts...).UserName
+	mapperTag[IPV4Tag] = GetNetworker(opts...).IPv4
+	mapperTag[IPV6Tag] = GetNetworker(opts...).IPv6
+	mapperTag[PASSWORD] = GetNetworker(opts...).Password
+	mapperTag[JWT] = GetNetworker(opts...).Jwt
+}
+
+func initOption(opt ...options.OptionFunc) *options.Options {
+	opts := options.BuildOptions(opt)
+	initMapperTagWithOption(opt...)
+	return opts
 }
 
 // FakeData is the main function. Will generate a fake data based on your struct.  You can use this for automation testing, or anything that need automated data.
 // You don't need to Create your own data for your testing.
 func FakeData(a interface{}, opt ...options.OptionFunc) error {
-	opts := options.BuildOptions(opt)
-	initMapperTagWithOption(*opts)
-
+	opts := initOption(opt...)
 	reflectType := reflect.TypeOf(a)
 
 	if reflectType.Kind() != reflect.Ptr {
@@ -1221,11 +1225,8 @@ func generateUnique(dataType string, fn func() interface{}) (interface{}, error)
 	return reflect.Value{}, fmt.Errorf(fakerErrors.ErrUniqueFailure, dataType)
 }
 
-func singleFakeData(dataType string, fn func() interface{}, ops *options.Options) interface{} {
-	if ops == nil {
-		ops = options.DefaultOption()
-	}
-
+func singleFakeData(dataType string, fn func() interface{}, opts ...options.OptionFunc) interface{} {
+	ops := initOption(opts...)
 	if ops.GenerateUniqueValues {
 		v, err := generateUnique(dataType, fn)
 		if err != nil {
