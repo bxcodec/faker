@@ -8,17 +8,9 @@ import (
 	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
-var identifier Identifier
-
 // GetIdentifier returns a new Identifier
 func GetIdentifier() Identifier {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if identifier == nil {
-		identifier = &UUID{}
-	}
-	return identifier
+	return &UUID{}
 }
 
 // Identifier ...
