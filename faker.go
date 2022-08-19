@@ -11,7 +11,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
@@ -21,7 +20,6 @@ import (
 )
 
 var (
-	mu = &sync.Mutex{}
 	// Unique values are kept in memory so the generator retries if the value already exists
 	uniqueValues = map[string][]interface{}{}
 )
@@ -91,8 +89,6 @@ const (
 	comma                 = ","
 	colon                 = ":"
 	ONEOF                 = "oneof"
-	//period                = "."
-	//hyphen = "-"
 )
 
 // PriorityTags define the priority order of the tag
@@ -252,8 +248,7 @@ func FakeData(a interface{}, opt ...options.OptionFunc) error {
 	}
 
 	rval := reflect.ValueOf(a)
-
-	finalValue, err := getValue(a, opts)
+	finalValue, err := getFakedValue(a, opts)
 	if err != nil {
 		return err
 	}
@@ -326,7 +321,7 @@ func RemoveProvider(tag string) error {
 	return nil
 }
 
-func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
+func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 	t := reflect.TypeOf(a)
 	if t == nil {
 		if opts.IgnoreInterface {
@@ -349,9 +344,9 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		var val reflect.Value
 		var err error
 		if a != reflect.Zero(reflect.TypeOf(a)).Interface() {
-			val, err = getValue(reflect.ValueOf(a).Elem().Interface(), opts)
+			val, err = getFakedValue(reflect.ValueOf(a).Elem().Interface(), opts)
 		} else {
-			val, err = getValue(v.Elem().Interface(), opts)
+			val, err = getFakedValue(v.Elem().Interface(), opts)
 		}
 		if err != nil {
 			return reflect.Value{}, err
@@ -401,7 +396,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 					}
 					v.Field(i).Set(reflect.ValueOf(a).Field(i))
 				case tags.fieldType == "":
-					val, err := getValue(v.Field(i).Interface(), opts)
+					val, err := getFakedValue(v.Field(i).Interface(), opts)
 					if err != nil {
 						return reflect.Value{}, err
 					}
@@ -451,7 +446,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		}
 		v := reflect.MakeSlice(t, len, len)
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface(), opts)
+			val, err := getFakedValue(v.Index(i).Interface(), opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -462,7 +457,7 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 	case reflect.Array:
 		v := reflect.New(t).Elem()
 		for i := 0; i < v.Len(); i++ {
-			val, err := getValue(v.Index(i).Interface(), opts)
+			val, err := getFakedValue(v.Index(i).Interface(), opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -511,13 +506,13 @@ func getValue(a interface{}, opts *options.Options) (reflect.Value, error) {
 		v := reflect.MakeMap(t)
 		for i := 0; i < len; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
-			key, err := getValue(keyInstance, opts)
+			key, err := getFakedValue(keyInstance, opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
 
 			valueInstance := reflect.New(t.Elem()).Elem().Interface()
-			val, err := getValue(valueInstance, opts)
+			val, err := getFakedValue(valueInstance, opts)
 			if err != nil {
 				return reflect.Value{}, err
 			}
@@ -706,6 +701,56 @@ func getValueWithTag(t reflect.Type, tag string, opt options.Options) (interface
 	}
 }
 
+func getNumberWithBoundary(t reflect.Type, boundary interfaces.RandomIntegerBoundary) (interface{}, error) {
+	switch t.Kind() {
+	case reflect.Uint:
+		return uint(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint8:
+		return uint8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint16:
+		return uint16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint32:
+		return uint32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Uint64:
+		return uint64(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int:
+		return randomIntegerWithBoundary(boundary), nil
+	case reflect.Int8:
+		return int8(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int16:
+		return int16(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int32:
+		return int32(randomIntegerWithBoundary(boundary)), nil
+	case reflect.Int64:
+		return int64(randomIntegerWithBoundary(boundary)), nil
+	default:
+		return nil, errors.New(fakerErrors.ErrNotSupportedTypeForTag)
+	}
+}
+
+func getValueWithNoTag(t reflect.Type, opt options.Options) (interface{}, error) {
+	switch t.Kind() {
+	case reflect.Int, reflect.Int32, reflect.Int64, reflect.Int8, reflect.Int16, reflect.Uint, reflect.Uint8,
+		reflect.Uint16, reflect.Uint32, reflect.Uint64, reflect.Float32, reflect.Float64:
+		boundary := interfaces.RandomIntegerBoundary{
+			Start: opt.RandomIntegerBoundary.Start,
+			End:   opt.RandomIntegerBoundary.End}
+		res, err := getNumberWithBoundary(t, boundary)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	case reflect.String:
+		res, err := randomString(opt.RandomStringLength, opt)
+		if err != nil {
+			return nil, err
+		}
+		return res, nil
+	default:
+		return 0, errors.New(fakerErrors.ErrUnknownType)
+	}
+}
+
 func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	_, tagExists := mapperTag[tag]
 	if tagExists {
@@ -720,12 +765,24 @@ func userDefinedArray(v reflect.Value, tag string, opt options.Options) error {
 	if err != nil {
 		return err
 	}
+
 	if opt.SetSliceMapNilIfLenZero && sliceLen == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
+	//remove slice_len from tag string to avoid extra logic in downstream function
+	tag = findSliceLenReg.ReplaceAllString(tag, "")
 	array := reflect.MakeSlice(v.Type(), sliceLen, sliceLen)
-	for i := 0; i < sliceLen; i++ {
+	for i := 0; i < array.Len(); i++ {
+		if tag == "" {
+			res, err := getValueWithNoTag(v.Type().Elem(), opt)
+			if err != nil {
+				return err
+			}
+			array.Index(i).Set(reflect.ValueOf(res))
+			continue
+		}
+
 		res, err := getValueWithTag(v.Type().Elem(), tag, opt)
 		if err != nil {
 			return err
@@ -1017,30 +1074,7 @@ func extractNumberFromTag(tag string, t reflect.Type) (interface{}, error) {
 		return nil, err
 	}
 	boundary := interfaces.RandomIntegerBoundary{Start: startBoundary, End: endBoundary}
-	switch t.Kind() {
-	case reflect.Uint:
-		return uint(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint8:
-		return uint8(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint16:
-		return uint16(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint32:
-		return uint32(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Uint64:
-		return uint64(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int:
-		return randomIntegerWithBoundary(boundary), nil
-	case reflect.Int8:
-		return int8(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int16:
-		return int16(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int32:
-		return int32(randomIntegerWithBoundary(boundary)), nil
-	case reflect.Int64:
-		return int64(randomIntegerWithBoundary(boundary)), nil
-	default:
-		return nil, errors.New(fakerErrors.ErrNotSupportedTypeForTag)
-	}
+	return getNumberWithBoundary(t, boundary)
 }
 
 func extractIntFromText(text string) (int, error) {

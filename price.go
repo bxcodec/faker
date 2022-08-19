@@ -43,22 +43,9 @@ type Money interface {
 type Price struct {
 }
 
-var pri Money
-
 // GetPrice returns a new Money interface of Price struct
 func GetPrice() Money {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if pri == nil {
-		pri = &Price{}
-	}
-	return pri
-}
-
-// SetPrice sets custom Money
-func SetPrice(p Money) {
-	pri = p
+	return &Price{}
 }
 
 func (p Price) currency() string {
