@@ -1,7 +1,6 @@
 package faker
 
 import (
-	"encoding/json"
 	"fmt"
 	mathrand "math/rand"
 	"reflect"
@@ -2258,37 +2257,62 @@ type GeneralTreeNode struct {
 	Children []*GeneralTreeNode
 }
 
-type Nested1 struct {
-	Nested2 *Nested2
-}
-
-type Nested2 struct {
-	Nested1 *Nested1
-}
-
 func TestFakeData_RecursiveType(t *testing.T) {
-	toJSON := func(val interface{}) string {
-		data, _ := json.MarshalIndent(val, "", "  ")
-		return string(data)
+	flatTree := func(root *BinaryTreeNode) []*BinaryTreeNode {
+		if root == nil {
+			return nil
+		}
+		ans := []*BinaryTreeNode{root}
+		for i := 0; i < len(ans); i++ {
+			if ans[i].Left != nil {
+				ans = append(ans, ans[i].Left)
+			}
+			if ans[i].Right != nil {
+				ans = append(ans, ans[i].Right)
+			}
+		}
+		return ans
 	}
-	node1 := BinaryTreeNode{}
-	if err := FakeData(&node1, options.WithRecursionMaxDepth(2)); err != nil {
+	// depth 1
+	var root *BinaryTreeNode
+	if err := FakeData(&root); err != nil {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("binary tree node:", toJSON(node1))
-	node2 := GeneralTreeNode{}
-	if err := FakeData(&node2, options.WithRecursionMaxDepth(0)); err != nil {
+	nodes := flatTree(root)
+	if len(nodes) != 3 {
+		t.Errorf("expect 3 node, got %d", len(nodes))
+		t.FailNow()
+	}
+	if root == nil || root.Left == nil || root.Left.Left != nil {
+		t.Errorf("expect depth: 1")
+		t.FailNow()
+	}
+	// depth 0
+	root = nil
+	if err := FakeData(&root, options.WithRecursionMaxDepth(0)); err != nil {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("general tree node:", toJSON(node2))
-	t.Log("len:", len(node2.Children), "cap:", cap(node2.Children))
+	if root == nil || root.Left != nil || root.Right != nil {
+		t.Errorf("expect depth: 0")
+		t.FailNow()
+	}
 
-	n := Nested1{}
-	if err := FakeData(&n); err != nil {
+	// depth 0
+	var root2 *GeneralTreeNode
+	if err := FakeData(&root2, options.WithRecursionMaxDepth(0)); err != nil {
 		t.Errorf("%+v", err)
 		t.FailNow()
 	}
-	t.Log("nested:", toJSON(n))
+	if root2 == nil {
+		t.Errorf("empty root")
+		t.FailNow()
+	}
+	for _, child := range root2.Children {
+		if child != nil {
+			t.Errorf("expect depth: 0")
+			t.FailNow()
+		}
+	}
 }

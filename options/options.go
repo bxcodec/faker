@@ -112,7 +112,7 @@ func WithCustomFieldProvider(fieldName string, provider interfaces.CustomProvide
 	}
 }
 
-// WithRecursionMaxDepth used for configuring the max depth of nested struct for faker
+// WithRecursionMaxDepth used for configuring the max depth of recursion struct for faker
 func WithRecursionMaxDepth(depth uint) OptionFunc {
 	return func(oo *Options) {
 		if oo.MaxDepthOption == nil {
@@ -121,9 +121,7 @@ func WithRecursionMaxDepth(depth uint) OptionFunc {
 				typeSeen:          make(map[reflect.Type]int, 1),
 			}
 		}
-		if depth > 0 {
-			oo.MaxDepthOption.recursionMaxDepth = int(depth)
-		}
+		oo.MaxDepthOption.recursionMaxDepth = int(depth)
 	}
 }
 
