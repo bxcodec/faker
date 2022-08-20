@@ -4,6 +4,8 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 const (
@@ -26,24 +28,12 @@ var creditCards = map[string]creditCard{
 	"diners club":      {"Diners Club", 14, []int{36, 38, 39}},
 }
 
-var pay Render
-
 var cacheCreditCard string
 
 // GetPayment returns a new Render interface of Payment struct
 func GetPayment() Render {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if pay == nil {
-		pay = &Payment{}
-	}
+	pay := &Payment{}
 	return pay
-}
-
-// SetPayment set custom Network
-func SetPayment(p Render) {
-	pay = p
 }
 
 // Render contains Whole Random Credit Card Generators with their types
@@ -76,11 +66,11 @@ func (p Payment) CreditCardType(v reflect.Value) (interface{}, error) {
 }
 
 // CCType get a credit card type randomly in string (VISA, MasterCard, etc)
-func CCType() string {
+func CCType(opts ...options.OptionFunc) string {
 	return singleFakeData(CreditCardType, func() interface{} {
 		p := Payment{}
 		return p.cctype()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Payment) ccnumber() string {
@@ -102,9 +92,9 @@ func (p Payment) CreditCardNumber(v reflect.Value) (interface{}, error) {
 }
 
 // CCNumber get a credit card number randomly in string (VISA, MasterCard, etc)
-func CCNumber() string {
+func CCNumber(opts ...options.OptionFunc) string {
 	return singleFakeData(CreditCardNumber, func() interface{} {
 		p := Payment{}
 		return p.ccnumber()
-	}).(string)
+	}, opts...).(string)
 }

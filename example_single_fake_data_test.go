@@ -1,6 +1,8 @@
 package faker_test
 
-import "github.com/bxcodec/faker/v3"
+import (
+	"github.com/bxcodec/faker/v4"
+)
 
 // Single fake function can be used for retrieving particular values.
 func Example_singleFakeData() {
@@ -61,11 +63,7 @@ func Example_singleFakeData() {
 	faker.UUIDHyphenated() // => 8f8e4463-9560-4a38-9b0c-ef24481e4e27
 	faker.UUIDDigit()      // => 90ea6479fd0e4940af741f0a87596b73
 
-	// Unique values
-	faker.SetGenerateUniqueValues(true) // Enable unique data generation on single fake data functions
 	faker.Word()
-	// ...
-	faker.SetGenerateUniqueValues(false) // Disable unique data generation on single fake data functions
-	faker.ResetUnique()                  // Forget all generated unique values
 
+	faker.ResetUnique() // Forget all generated unique values
 }

@@ -2,24 +2,14 @@ package faker
 
 import (
 	"reflect"
-)
 
-var address Addresser
+	"github.com/bxcodec/faker/v4/pkg/options"
+)
 
 // GetAddress returns a new Addresser interface of Address
 func GetAddress() Addresser {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if address == nil {
-		address = &Address{}
-	}
+	address := &Address{}
 	return address
-}
-
-// SetAddress sets custom Address
-func SetAddress(net Addresser) {
-	address = net
 }
 
 // Addresser is logical layer for Address
@@ -60,17 +50,17 @@ func (i Address) Longitude(v reflect.Value) (interface{}, error) {
 }
 
 // Longitude get fake longitude randomly
-func Longitude() float64 {
+func Longitude(opts ...options.OptionFunc) float64 {
 	return singleFakeData(LONGITUDE, func() interface{} {
 		address := Address{}
 		return float64(address.longitude())
-	}).(float64)
+	}, opts...).(float64)
 }
 
 // Latitude get fake latitude randomly
-func Latitude() float64 {
+func Latitude(opts ...options.OptionFunc) float64 {
 	return singleFakeData(LATITUDE, func() interface{} {
 		address := Address{}
 		return float64(address.latitude())
-	}).(float64)
+	}, opts...).(float64)
 }

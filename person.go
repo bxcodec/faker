@@ -3,6 +3,8 @@ package faker
 import (
 	"fmt"
 	"reflect"
+
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 // Dowser provides interfaces to generate random logical Names with their initials
@@ -20,7 +22,6 @@ type Dowser interface {
 	ChineseName(v reflect.Value) (interface{}, error)
 }
 
-var person Dowser
 var titlesMale = []string{
 	"Mr.", "Dr.", "Prof.", "Lord", "King", "Prince",
 }
@@ -170,18 +171,8 @@ var chineseLastNames = []string{
 
 // GetPerson returns a new Dowser interface of Person struct
 func GetPerson() Dowser {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if person == nil {
-		person = &Person{}
-	}
+	person := &Person{}
 	return person
-}
-
-// SetDowser sets custom Dowsers of Person names
-func SetDowser(d Dowser) {
-	person = d
 }
 
 // Person struct
@@ -198,11 +189,11 @@ func (p Person) TitleMale(v reflect.Value) (interface{}, error) {
 }
 
 // TitleMale get a title male randomly in string ("Mr.", "Dr.", "Prof.", "Lord", "King", "Prince")
-func TitleMale() string {
+func TitleMale(opts ...options.OptionFunc) string {
 	return singleFakeData(TitleMaleTag, func() interface{} {
 		p := Person{}
 		return p.titlemale()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) titleFemale() string {
@@ -215,11 +206,11 @@ func (p Person) TitleFeMale(v reflect.Value) (interface{}, error) {
 }
 
 // TitleFemale get a title female randomly in string ("Mrs.", "Ms.", "Miss", "Dr.", "Prof.", "Lady", "Queen", "Princess")
-func TitleFemale() string {
+func TitleFemale(opts ...options.OptionFunc) string {
 	return singleFakeData(TitleFemaleTag, func() interface{} {
 		p := Person{}
 		return p.titleFemale()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) firstname() string {
@@ -232,11 +223,11 @@ func (p Person) FirstName(v reflect.Value) (interface{}, error) {
 }
 
 // FirstName get fake firstname
-func FirstName() string {
+func FirstName(opts ...options.OptionFunc) string {
 	return singleFakeData(FirstNameTag, func() interface{} {
 		p := Person{}
 		return p.firstname()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) firstnamemale() string {
@@ -249,11 +240,11 @@ func (p Person) FirstNameMale(v reflect.Value) (interface{}, error) {
 }
 
 // FirstNameMale get fake firstname for male
-func FirstNameMale() string {
+func FirstNameMale(opts ...options.OptionFunc) string {
 	return singleFakeData(FirstNameMaleTag, func() interface{} {
 		p := Person{}
 		return p.firstnamemale()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) firstnamefemale() string {
@@ -266,11 +257,11 @@ func (p Person) FirstNameFemale(v reflect.Value) (interface{}, error) {
 }
 
 // FirstNameFemale get fake firstname for female
-func FirstNameFemale() string {
+func FirstNameFemale(opts ...options.OptionFunc) string {
 	return singleFakeData(FirstNameFemaleTag, func() interface{} {
 		p := Person{}
 		return p.firstnamefemale()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) lastname() string {
@@ -283,11 +274,11 @@ func (p Person) LastName(v reflect.Value) (interface{}, error) {
 }
 
 // LastName get fake lastname
-func LastName() string {
+func LastName(opts ...options.OptionFunc) string {
 	return singleFakeData(LastNameTag, func() interface{} {
 		p := Person{}
 		return p.lastname()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (p Person) name() string {
@@ -303,11 +294,11 @@ func (p Person) Name(v reflect.Value) (interface{}, error) {
 }
 
 // Name get fake name
-func Name() string {
+func Name(opts ...options.OptionFunc) string {
 	return singleFakeData(NAME, func() interface{} {
 		p := Person{}
 		return p.name()
-	}).(string)
+	}, opts...).(string)
 }
 
 // Gender returns a random gender
@@ -320,11 +311,11 @@ func (p Person) gender() string {
 }
 
 // Gender get fake gender
-func Gender() string {
+func Gender(opts ...options.OptionFunc) string {
 	return singleFakeData(GENDER, func() interface{} {
 		p := Person{}
 		return p.gender()
-	}).(string)
+	}, opts...).(string)
 }
 
 // ChineseFirstName returns a random chinese first name
@@ -337,11 +328,11 @@ func (p Person) chineseFirstName() string {
 }
 
 // ChineseFirstName get chinese first name
-func ChineseFirstName() string {
+func ChineseFirstName(opts ...options.OptionFunc) string {
 	return singleFakeData(ChineseFirstNameTag, func() interface{} {
 		p := Person{}
 		return p.chineseFirstName()
-	}).(string)
+	}, opts...).(string)
 }
 
 // ChineseLastName returns a random chinese last name
@@ -354,11 +345,11 @@ func (p Person) chineseLastName() string {
 }
 
 // ChineseLastName get chinese lsst name
-func ChineseLastName() string {
+func ChineseLastName(opts ...options.OptionFunc) string {
 	return singleFakeData(ChineseLastNameTag, func() interface{} {
 		p := Person{}
 		return p.chineseLastName()
-	}).(string)
+	}, opts...).(string)
 }
 
 // ChineseName returns a random nhinese name
@@ -371,9 +362,9 @@ func (p Person) chineseName() string {
 }
 
 // ChineseName get chinese lsst name
-func ChineseName() string {
+func ChineseName(opts ...options.OptionFunc) string {
 	return singleFakeData(ChineseNameTag, func() interface{} {
 		p := Person{}
 		return p.chineseName()
-	}).(string)
+	}, opts...).(string)
 }

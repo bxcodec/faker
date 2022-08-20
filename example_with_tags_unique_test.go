@@ -3,7 +3,7 @@ package faker_test
 import (
 	"fmt"
 
-	"github.com/bxcodec/faker/v3"
+	"github.com/bxcodec/faker/v4"
 )
 
 // SomeStructWithUnique ...

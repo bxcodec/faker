@@ -3,6 +3,8 @@ package faker
 import (
 	"fmt"
 	"testing"
+
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
 )
 
 func TestExtractFloat64(t *testing.T) {
@@ -48,7 +50,7 @@ func TestExtractFloat64(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -57,7 +59,6 @@ func TestExtractFloat64(t *testing.T) {
 }
 
 func TestExtractFloat32(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 6500347324.4627466827
 		const f2 = 7757290047.772026643
@@ -99,7 +100,7 @@ func TestExtractFloat32(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -108,7 +109,6 @@ func TestExtractFloat32(t *testing.T) {
 }
 
 func TestExtractInt64(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 6500347324
 		const f2 = 7757290047
@@ -150,7 +150,7 @@ func TestExtractInt64(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -159,7 +159,6 @@ func TestExtractInt64(t *testing.T) {
 }
 
 func TestExtractInt32(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = -160347324
 		const f2 = -75290047
@@ -201,7 +200,7 @@ func TestExtractInt32(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -210,7 +209,6 @@ func TestExtractInt32(t *testing.T) {
 }
 
 func TestExtractInt16(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = -19474
 		const f2 = 5047
@@ -252,7 +250,7 @@ func TestExtractInt16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -270,7 +268,7 @@ func TestExtractInt16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -279,7 +277,6 @@ func TestExtractInt16(t *testing.T) {
 }
 
 func TestExtractInt8(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = -81
 		const f2 = 104
@@ -334,7 +331,7 @@ func TestExtractInt8(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 		actual := err.Error()
-		expected := ErrUnsupportedTagArguments
+		expected := fakerErrors.ErrUnsupportedTagArguments
 		if actual != expected {
 			t.Errorf("expected %v but got %v", expected, actual)
 		}
@@ -507,7 +504,6 @@ func TestExtractUint32(t *testing.T) {
 }
 
 func TestExtractUint16(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 16580
 		const f2 = 10467
@@ -562,11 +558,9 @@ func TestExtractUint16(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
-
 }
 
 func TestExtractUint8(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 254
 		const f2 = 107
@@ -621,11 +615,9 @@ func TestExtractUint8(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
-
 }
 
 func TestExtractUint(t *testing.T) {
-
 	t.Run("happy path", func(t *testing.T) {
 		const f1 = 25467565
 		const f2 = 1072562460
@@ -680,5 +672,4 @@ func TestExtractUint(t *testing.T) {
 			t.Errorf("expected error but got nil")
 		}
 	})
-
 }

@@ -5,12 +5,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
-
-func TestSetPrice(t *testing.T) {
-	SetPrice(Price{})
-}
 
 func TestCurrency(t *testing.T) {
 	p, err := GetPrice().Currency(reflect.Value{})

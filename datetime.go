@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"time"
+
+	"github.com/bxcodec/faker/v4/pkg/options"
 )
 
 var century = []string{"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV", "XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI"}
@@ -619,22 +621,10 @@ type DateTimer interface {
 	TimePeriod(v reflect.Value) (interface{}, error)
 }
 
-var date DateTimer
-
 // GetDateTimer returns a new DateTimer interface of DateTime
 func GetDateTimer() DateTimer {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if date == nil {
-		date = &DateTime{}
-	}
+	date := &DateTime{}
 	return date
-}
-
-// SetDateTimer sets custom date time
-func SetDateTimer(d DateTimer) {
-	date = d
 }
 
 // DateTime struct
@@ -659,11 +649,11 @@ func (d DateTime) UnixTime(v reflect.Value) (interface{}, error) {
 }
 
 // UnixTime get unix time randomly
-func UnixTime() int64 {
+func UnixTime(opts ...options.OptionFunc) int64 {
 	return singleFakeData(UnixTimeTag, func() interface{} {
 		datetime := DateTime{}
 		return datetime.unixtime()
-	}).(int64)
+	}, opts...).(int64)
 }
 
 func (d DateTime) date() string {
@@ -676,11 +666,11 @@ func (d DateTime) Date(v reflect.Value) (interface{}, error) {
 }
 
 // Date get fake date in string randomly
-func Date() string {
+func Date(opts ...options.OptionFunc) string {
 	return singleFakeData(DATE, func() interface{} {
 		datetime := DateTime{}
 		return datetime.date()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) time() string {
@@ -693,11 +683,11 @@ func (d DateTime) Time(v reflect.Value) (interface{}, error) {
 }
 
 // TimeString get time randomly in string format
-func TimeString() string {
+func TimeString(opts ...options.OptionFunc) string {
 	return singleFakeData(TIME, func() interface{} {
 		datetime := DateTime{}
 		return datetime.time()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) monthName() string {
@@ -710,11 +700,11 @@ func (d DateTime) MonthName(v reflect.Value) (interface{}, error) {
 }
 
 // MonthName get month name randomly in string format
-func MonthName() string {
+func MonthName(opts ...options.OptionFunc) string {
 	return singleFakeData(MonthNameTag, func() interface{} {
 		datetime := DateTime{}
 		return datetime.monthName()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) year() string {
@@ -727,11 +717,11 @@ func (d DateTime) Year(v reflect.Value) (interface{}, error) {
 }
 
 // YearString get year randomly in string format
-func YearString() string {
+func YearString(opts ...options.OptionFunc) string {
 	return singleFakeData(YEAR, func() interface{} {
 		datetime := DateTime{}
 		return datetime.year()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) dayOfWeek() string {
@@ -744,11 +734,11 @@ func (d DateTime) DayOfWeek(v reflect.Value) (interface{}, error) {
 }
 
 // DayOfWeek get day of week randomly in string format
-func DayOfWeek() string {
+func DayOfWeek(opts ...options.OptionFunc) string {
 	return singleFakeData(DayOfWeekTag, func() interface{} {
 		datetime := DateTime{}
 		return datetime.dayOfWeek()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) dayOfMonth() string {
@@ -761,11 +751,11 @@ func (d DateTime) DayOfMonth(v reflect.Value) (interface{}, error) {
 }
 
 // DayOfMonth get month randomly in string format
-func DayOfMonth() string {
+func DayOfMonth(opts ...options.OptionFunc) string {
 	return singleFakeData(DayOfMonthTag, func() interface{} {
 		datetime := DateTime{}
 		return datetime.dayOfMonth()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) timestamp() string {
@@ -778,11 +768,11 @@ func (d DateTime) Timestamp(v reflect.Value) (interface{}, error) {
 }
 
 // Timestamp get timestamp randomly in string format: 2006-01-02 15:04:05
-func Timestamp() string {
+func Timestamp(opts ...options.OptionFunc) string {
 	return singleFakeData(TIMESTAMP, func() interface{} {
 		datetime := DateTime{}
 		return datetime.timestamp()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) century() string {
@@ -795,11 +785,11 @@ func (d DateTime) Century(v reflect.Value) (interface{}, error) {
 }
 
 // Century get century randomly in string
-func Century() string {
+func Century(opts ...options.OptionFunc) string {
 	return singleFakeData(CENTURY, func() interface{} {
 		datetime := DateTime{}
 		return datetime.century()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) timezone() string {
@@ -812,11 +802,11 @@ func (d DateTime) TimeZone(v reflect.Value) (interface{}, error) {
 }
 
 // Timezone get timezone randomly in string
-func Timezone() string {
+func Timezone(opts ...options.OptionFunc) string {
 	return singleFakeData(TIMEZONE, func() interface{} {
 		datetime := DateTime{}
 		return datetime.timezone()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (d DateTime) period() string {
@@ -829,11 +819,11 @@ func (d DateTime) TimePeriod(v reflect.Value) (interface{}, error) {
 }
 
 // Timeperiod get timeperiod randomly in string (AM/PM)
-func Timeperiod() string {
+func Timeperiod(opts ...options.OptionFunc) string {
 	return singleFakeData(TimePeriodTag, func() interface{} {
 		datetime := DateTime{}
 		return datetime.period()
-	}).(string)
+	}, opts...).(string)
 }
 
 // RandomUnixTime is a helper function returning random Unix time

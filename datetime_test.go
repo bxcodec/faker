@@ -6,12 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
-
-func TestSetDateTimer(t *testing.T) {
-	SetDateTimer(DateTime{})
-}
 
 func TestUnixTimeValueValid(t *testing.T) {
 	d := GetDateTimer()

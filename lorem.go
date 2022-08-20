@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"reflect"
 
+	"github.com/bxcodec/faker/v4/pkg/options"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
 
-var lorem DataFaker
 var wordList = []string{
 	"alias", "consequatur", "aut", "perferendis", "sit", "voluptatem",
 	"accusantium", "doloremque", "aperiam", "eaque", "ipsa", "quae", "ab",
@@ -56,19 +56,9 @@ type DataFaker interface {
 	Paragraph(v reflect.Value) (interface{}, error)
 }
 
-// SetDataFaker sets Custom data in lorem
-func SetDataFaker(d DataFaker) {
-	lorem = d
-}
-
 // GetLorem returns a new DataFaker interface of Lorem struct
 func GetLorem() DataFaker {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if lorem == nil {
-		lorem = &Lorem{}
-	}
+	lorem := &Lorem{}
 	return lorem
 }
 
@@ -86,11 +76,11 @@ func (l Lorem) Word(v reflect.Value) (interface{}, error) {
 }
 
 // Word get a word randomly in string
-func Word() string {
+func Word(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(WORD, func() interface{} {
 		return i.word()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (l Lorem) sentence() string {
@@ -117,11 +107,11 @@ func (l Lorem) Sentence(v reflect.Value) (interface{}, error) {
 }
 
 // Sentence get a sentence randomly in string
-func Sentence() string {
+func Sentence(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(SENTENCE, func() interface{} {
 		return i.sentence()
-	}).(string)
+	}, opts...).(string)
 }
 
 func (l Lorem) paragraph() string {
@@ -142,9 +132,9 @@ func (l Lorem) Paragraph(v reflect.Value) (interface{}, error) {
 }
 
 // Paragraph get a paragraph randomly in string
-func Paragraph() string {
+func Paragraph(opts ...options.OptionFunc) string {
 	i := Lorem{}
 	return singleFakeData(PARAGRAPH, func() interface{} {
 		return i.paragraph()
-	}).(string)
+	}, opts...).(string)
 }

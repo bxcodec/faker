@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
 )
 
 func extractFloat64FromTagArgs(args []string) (interface{}, error) {
@@ -13,7 +15,7 @@ func extractFloat64FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseFloat(k, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, j)
 	}
@@ -28,7 +30,7 @@ func extractFloat32FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseFloat(k, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, float32(j))
 	}
@@ -43,7 +45,7 @@ func extractInt64FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, j)
 	}
@@ -58,7 +60,7 @@ func extractInt32FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, int32(j))
 	}
@@ -73,7 +75,7 @@ func extractInt16FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, int16(j))
 	}
@@ -88,7 +90,7 @@ func extractInt8FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, int8(j))
 	}
@@ -103,7 +105,7 @@ func extractIntFromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseInt(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, int(j))
 	}
@@ -118,7 +120,7 @@ func extractUint64FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, j)
 	}
@@ -133,7 +135,7 @@ func extractUint32FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, uint32(j))
 	}
@@ -148,7 +150,7 @@ func extractUint16FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, uint16(j))
 	}
@@ -163,7 +165,7 @@ func extractUint8FromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, uint8(j))
 	}
@@ -178,7 +180,7 @@ func extractUintFromTagArgs(args []string) (interface{}, error) {
 		k := strings.TrimSpace(i)
 		j, err := strconv.ParseUint(k, 10, bytes)
 		if err != nil {
-			return nil, fmt.Errorf(ErrUnsupportedTagArguments)
+			return nil, fmt.Errorf(fakerErrors.ErrUnsupportedTagArguments)
 		}
 		floatValues = append(floatValues, uint(j))
 	}

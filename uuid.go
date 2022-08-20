@@ -4,19 +4,13 @@ import (
 	"fmt"
 	"io"
 	"reflect"
-)
 
-var identifier Identifier
+	"github.com/bxcodec/faker/v4/pkg/options"
+)
 
 // GetIdentifier returns a new Identifier
 func GetIdentifier() Identifier {
-	mu.Lock()
-	defer mu.Unlock()
-
-	if identifier == nil {
-		identifier = &UUID{}
-	}
-	return identifier
+	return &UUID{}
 }
 
 // Identifier ...
@@ -57,12 +51,12 @@ func (u UUID) Hyphenated(v reflect.Value) (interface{}, error) {
 }
 
 // UUIDHyphenated get fake Hyphenated UUID
-func UUIDHyphenated() string {
+func UUIDHyphenated(opts ...options.OptionFunc) string {
 	return singleFakeData(HyphenatedID, func() interface{} {
 		u := UUID{}
 		res, _ := u.hyphenated()
 		return res
-	}).(string)
+	}, opts...).(string)
 }
 
 func (u UUID) digit() (string, error) {
@@ -80,10 +74,10 @@ func (u UUID) Digit(v reflect.Value) (interface{}, error) {
 }
 
 // UUIDDigit get fake Digit UUID
-func UUIDDigit() string {
+func UUIDDigit(opts ...options.OptionFunc) string {
 	return singleFakeData(ID, func() interface{} {
 		u := UUID{}
 		res, _ := u.digit()
 		return res
-	}).(string)
+	}, opts...).(string)
 }

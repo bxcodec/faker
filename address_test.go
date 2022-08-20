@@ -4,10 +4,6 @@ import (
 	"testing"
 )
 
-func TestFakeData(t *testing.T) {
-	SetAddress(Address{})
-}
-
 func TestGetLongitude(t *testing.T) {
 	long := Longitude()
 	if long > 180 || long < -180 {

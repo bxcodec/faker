@@ -4,12 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
-
-func TestSetDowser(t *testing.T) {
-	SetDowser(Person{})
-}
 
 func TestTitleMale(t *testing.T) {
 	male, err := GetPerson().TitleMale(reflect.Value{})

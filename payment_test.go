@@ -25,10 +25,6 @@ func TestCreditCardNumber(t *testing.T) {
 	}
 }
 
-func TestSetPayment(t *testing.T) {
-	SetPayment(Payment{})
-}
-
 func TestFakeCreditCardType(t *testing.T) {
 	ccType := CCType()
 	randCC := strings.ToLower(ccType)

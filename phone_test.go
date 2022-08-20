@@ -36,10 +36,6 @@ func TestE164PhoneNumber(t *testing.T) {
 	}
 }
 
-func TestSetPhoner(t *testing.T) {
-	SetPhoner(Phone{})
-}
-
 func TestFakePhoneNumber(t *testing.T) {
 	ph := Phonenumber()
 	if strings.Count(ph, "-") != 2 {

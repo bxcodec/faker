@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/bxcodec/faker/v3/support/slice"
+	"github.com/bxcodec/faker/v4/pkg/slice"
 )
 
 func TestEmail(t *testing.T) {
@@ -90,10 +90,6 @@ func TestIPv6(t *testing.T) {
 	if strings.Count(ip.(string), ":") != 7 {
 		t.Error("Expected IPv4 format")
 	}
-}
-func TestSetNetwork(t *testing.T) {
-
-	SetNetwork(Internet{})
 }
 
 func TestPassword(t *testing.T) {
