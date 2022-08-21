@@ -215,6 +215,17 @@ func ResetUnique() {
 	uniqueValues = map[string][]interface{}{}
 }
 
+var (
+	SetGenerateUniqueValues     = options.SetGenerateUniqueValues
+	SetIgnoreInterface          = options.SetIgnoreInterface
+	SetRandomStringLength       = options.SetRandomStringLength
+	SetStringLang               = options.SetStringLang
+	SetRandomMapAndSliceSize    = options.SetRandomMapAndSliceSize
+	SetRandomMapAndSliceMaxSize = options.SetRandomMapAndSliceMaxSize
+	SetRandomMapAndSliceMinSize = options.SetRandomMapAndSliceMinSize
+	SetRandomNumberBoundaries   = options.SetRandomNumberBoundaries
+)
+
 func initMapperTagWithOption(opts ...options.OptionFunc) {
 	mapperTag[EmailTag] = GetNetworker(opts...).Email
 	mapperTag[MacAddressTag] = GetNetworker(opts...).MacAddress

@@ -9,6 +9,16 @@ import (
 	"github.com/bxcodec/faker/v4/pkg/interfaces"
 )
 
+var (
+	generateUniqueValues = false
+	ignoreInterface      = false
+	randomStringLen      = 25
+	lang                 = &interfaces.LangENG
+	randomMaxSize        = 100
+	randomMinSize        = 0
+	iBoundary            = &interfaces.DefaultIntBoundary
+)
+
 // Options represent all available option for faker.
 type Options struct {
 	// IgnoreFields used for ignoring a field when generating the fake data
@@ -77,12 +87,14 @@ func DefaultOption() *Options {
 		typeSeen:          make(map[reflect.Type]int, 1),
 		recursionMaxDepth: 1,
 	}
-	ops.StringLanguage = &interfaces.LangENG
-	ops.RandomStringLength = 25            //default
-	ops.RandomMaxSliceSize = 100           //default
-	ops.RandomMinSliceSize = 0             // default
+	ops.GenerateUniqueValues = generateUniqueValues
+	ops.IgnoreInterface = ignoreInterface
+	ops.StringLanguage = lang
+	ops.RandomStringLength = randomStringLen
+	ops.RandomMaxSliceSize = randomMaxSize
+	ops.RandomMinSliceSize = randomMinSize
 	ops.MaxGenerateStringRetries = 1000000 //default
-	ops.RandomIntegerBoundary = &interfaces.DefaultIntBoundary
+	ops.RandomIntegerBoundary = iBoundary
 	ops.RandomFloatBoundary = &interfaces.DefaultFloatBoundary
 	return ops
 }
@@ -212,4 +224,61 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 	return func(oo *Options) {
 		oo.RandomFloatBoundary = &boundary
 	}
+}
+
+// SetGenerateUniqueValues allows to set the single fake data generator functions to generate unique data.
+func SetGenerateUniqueValues(unique bool) {
+	generateUniqueValues = unique
+}
+
+// SetIgnoreInterface allows to set a flag to ignore found interface{}s.
+func SetIgnoreInterface(ignore bool) {
+	ignoreInterface = ignore
+}
+
+// SetRandomStringLength sets a length for random string generation
+func SetRandomStringLength(size int) error {
+	if size < 0 {
+		return fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
+	}
+	randomStringLen = size
+	return nil
+}
+
+// SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN, LangKOR, EmotEMJ)
+func SetStringLang(l interfaces.LangRuneBoundary) {
+	lang = &l
+}
+
+// SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
+// deprecates, currently left for old version usage
+func SetRandomMapAndSliceSize(size int) error {
+	return SetRandomMapAndSliceMaxSize(size)
+}
+
+// SetRandomMapAndSliceMaxSize sets the max size for maps and slices for random generation.
+func SetRandomMapAndSliceMaxSize(size int) error {
+	if size < 1 {
+		return fmt.Errorf(fakerErrors.ErrSmallerThanOne, size)
+	}
+	randomMaxSize = size
+	return nil
+}
+
+// SetRandomMapAndSliceMinSize sets the min size for maps and slices for random generation.
+func SetRandomMapAndSliceMinSize(size int) error {
+	if size < 0 {
+		return fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
+	}
+	randomMinSize = size
+	return nil
+}
+
+// SetRandomNumberBoundaries sets boundary for random number generation
+func SetRandomNumberBoundaries(start, end int) error {
+	if start > end {
+		return errors.New(fakerErrors.ErrStartValueBiggerThanEnd)
+	}
+	iBoundary = &interfaces.RandomIntegerBoundary{Start: start, End: end}
+	return nil
 }
