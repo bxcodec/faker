@@ -1241,7 +1241,9 @@ func RandomInt(parameters ...int) (p []int, err error) {
 		for i := range p {
 			p[i] += minInt
 		}
-		p = p[0:count]
+		if len(p) > count {
+			p = p[0:count]
+		}
 	default:
 		err = fmt.Errorf(fakerErrors.ErrMoreArguments, len(parameters))
 	}

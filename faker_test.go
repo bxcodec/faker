@@ -925,6 +925,17 @@ func TestRandomIntOnlySecondParameters(t *testing.T) {
 }
 
 func TestRandomIntThreeParameters(t *testing.T) {
+	if res, err := RandomInt(1, 2, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 2 {
+		t.Fatalf("expect 2 numbers, got %d", len(res))
+	}
+	if res, err := RandomInt(1, 10, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 3 {
+		t.Fatalf("expect 3 numbers, got %d", len(res))
+	}
+
 	first := rand.Intn(50)
 	second := rand.Intn(100) + first
 	third := rand.Intn(5)
