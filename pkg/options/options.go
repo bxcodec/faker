@@ -4,20 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"sync/atomic"
+	"unsafe"
 
 	fakerErrors "github.com/bxcodec/faker/v4/pkg/errors"
 	"github.com/bxcodec/faker/v4/pkg/interfaces"
 )
 
 var (
-	generateUniqueValues = false
-	ignoreInterface      = false
-	randomStringLen      = 25
-	lang                 = &interfaces.LangENG
-	randomMaxSize        = 100
-	randomMinSize        = 0
-	iBoundary            = &interfaces.DefaultIntBoundary
+	// global settings, read/write must be concurrent safe
+	generateUniqueValues atomic.Value
+	ignoreInterface      atomic.Value
+	randomStringLen      int32 = 25
+	lang                 unsafe.Pointer
+	randomMaxSize        int32 = 100
+	randomMinSize        int32 = 0
+	iBoundary            unsafe.Pointer
 )
+
+func init() {
+	generateUniqueValues.Store(false)
+	ignoreInterface.Store(false)
+	lang = unsafe.Pointer(&interfaces.LangENG)
+	iBoundary = unsafe.Pointer(&interfaces.DefaultIntBoundary)
+}
 
 // Options represent all available option for faker.
 type Options struct {
@@ -87,14 +97,14 @@ func DefaultOption() *Options {
 		typeSeen:          make(map[reflect.Type]int, 1),
 		recursionMaxDepth: 1,
 	}
-	ops.GenerateUniqueValues = generateUniqueValues
-	ops.IgnoreInterface = ignoreInterface
-	ops.StringLanguage = lang
-	ops.RandomStringLength = randomStringLen
-	ops.RandomMaxSliceSize = randomMaxSize
-	ops.RandomMinSliceSize = randomMinSize
+	ops.GenerateUniqueValues = generateUniqueValues.Load().(bool)
+	ops.IgnoreInterface = ignoreInterface.Load().(bool)
+	ops.StringLanguage = (*interfaces.LangRuneBoundary)(atomic.LoadPointer(&lang))
+	ops.RandomStringLength = int(atomic.LoadInt32(&randomStringLen))
+	ops.RandomMaxSliceSize = int(atomic.LoadInt32(&randomMaxSize))
+	ops.RandomMinSliceSize = int(atomic.LoadInt32(&randomMinSize))
 	ops.MaxGenerateStringRetries = 1000000 //default
-	ops.RandomIntegerBoundary = iBoundary
+	ops.RandomIntegerBoundary = (*interfaces.RandomIntegerBoundary)(atomic.LoadPointer(&iBoundary))
 	ops.RandomFloatBoundary = &interfaces.DefaultFloatBoundary
 	return ops
 }
@@ -228,12 +238,12 @@ func WithRandomFloatBoundaries(boundary interfaces.RandomFloatBoundary) OptionFu
 
 // SetGenerateUniqueValues allows to set the single fake data generator functions to generate unique data.
 func SetGenerateUniqueValues(unique bool) {
-	generateUniqueValues = unique
+	generateUniqueValues.Store(unique)
 }
 
 // SetIgnoreInterface allows to set a flag to ignore found interface{}s.
 func SetIgnoreInterface(ignore bool) {
-	ignoreInterface = ignore
+	ignoreInterface.Store(ignore)
 }
 
 // SetRandomStringLength sets a length for random string generation
@@ -241,13 +251,13 @@ func SetRandomStringLength(size int) error {
 	if size < 0 {
 		return fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
 	}
-	randomStringLen = size
+	atomic.StoreInt32(&randomStringLen, int32(size))
 	return nil
 }
 
 // SetStringLang sets language of random string generation (LangENG, LangCHI, LangRUS, LangJPN, LangKOR, EmotEMJ)
 func SetStringLang(l interfaces.LangRuneBoundary) {
-	lang = &l
+	atomic.StorePointer(&lang, unsafe.Pointer(&l))
 }
 
 // SetRandomMapAndSliceSize sets the size for maps and slices for random generation.
@@ -261,7 +271,7 @@ func SetRandomMapAndSliceMaxSize(size int) error {
 	if size < 1 {
 		return fmt.Errorf(fakerErrors.ErrSmallerThanOne, size)
 	}
-	randomMaxSize = size
+	atomic.StoreInt32(&randomMaxSize, int32(size))
 	return nil
 }
 
@@ -270,7 +280,7 @@ func SetRandomMapAndSliceMinSize(size int) error {
 	if size < 0 {
 		return fmt.Errorf(fakerErrors.ErrSmallerThanZero, size)
 	}
-	randomMinSize = size
+	atomic.StoreInt32(&randomMinSize, int32(size))
 	return nil
 }
 
@@ -279,6 +289,7 @@ func SetRandomNumberBoundaries(start, end int) error {
 	if start > end {
 		return errors.New(fakerErrors.ErrStartValueBiggerThanEnd)
 	}
-	iBoundary = &interfaces.RandomIntegerBoundary{Start: start, End: end}
+	ptr := &interfaces.RandomIntegerBoundary{Start: start, End: end}
+	atomic.StorePointer(&iBoundary, unsafe.Pointer(ptr))
 	return nil
 }
