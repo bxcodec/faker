@@ -415,8 +415,11 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 		Map map[string]interface{}
 	}
 	var sample = new(Sample)
-	if err := FakeData(sample); err == nil {
+	if err := FakeData(sample, options.WithRandomMapAndSliceMinSize(1)); err == nil {
 		t.Error("Expected Error. But got nil")
+	}
+	if err := FakeData(sample, options.WithRandomMapAndSliceMaxSize(1)); err != nil {
+		t.Errorf("Expected nil. But got error: %+v", err) // empty map
 	}
 }
 
@@ -937,7 +940,7 @@ func TestRandomIntThreeParameters(t *testing.T) {
 	}
 
 	first := rand.Intn(50)
-	second := rand.Intn(100) + first
+	second := rand.Intn(100) + first + 5 // at least 5 numbers
 	third := rand.Intn(5)
 	res, _ := RandomInt(first, second, third)
 	if len(res) != (third) {
