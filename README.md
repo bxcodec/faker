@@ -1,3 +1,10 @@
+
+# Important Notes
+This repository has been archived, and **moved to the new repository** here https://github.com/go-faker/faker
+Further development and fixing will be happening in the new repository.
+
+---
+
 # Docs
 
 ## [faker](#)
