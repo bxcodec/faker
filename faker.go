@@ -440,11 +440,11 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		res, err := randomString(opts.RandomStringLength, *opts)
 		return reflect.ValueOf(res), err
 	case reflect.Slice:
-		len := randomSliceAndMapSize(*opts)
-		if opts.SetSliceMapNilIfLenZero && len == 0 {
+		length := randomSliceAndMapSize(*opts)
+		if opts.SetSliceMapNilIfLenZero && length == 0 {
 			return reflect.Zero(t), nil
 		}
-		v := reflect.MakeSlice(t, len, len)
+		v := reflect.MakeSlice(t, length, length)
 		for i := 0; i < v.Len(); i++ {
 			val, err := getFakedValue(v.Index(i).Interface(), opts)
 			if err != nil {
@@ -499,12 +499,12 @@ func getFakedValue(a interface{}, opts *options.Options) (reflect.Value, error) 
 		return reflect.ValueOf(uint64(randomInteger(opts))), nil
 
 	case reflect.Map:
-		len := randomSliceAndMapSize(*opts)
-		if opts.SetSliceMapNilIfLenZero && len == 0 {
+		length := randomSliceAndMapSize(*opts)
+		if opts.SetSliceMapNilIfLenZero && length == 0 {
 			return reflect.Zero(t), nil
 		}
 		v := reflect.MakeMap(t)
-		for i := 0; i < len; i++ {
+		for i := 0; i < length; i++ {
 			keyInstance := reflect.New(t.Key()).Elem().Interface()
 			key, err := getFakedValue(keyInstance, opts)
 			if err != nil {
@@ -660,13 +660,13 @@ func userDefinedMap(v reflect.Value, tag string, opt options.Options) error {
 		return nil
 	}
 
-	len := randomSliceAndMapSize(opt)
-	if opt.SetSliceMapNilIfLenZero && len == 0 {
+	length := randomSliceAndMapSize(opt)
+	if opt.SetSliceMapNilIfLenZero && length == 0 {
 		v.Set(reflect.Zero(v.Type()))
 		return nil
 	}
 	definedMap := reflect.MakeMap(v.Type())
-	for i := 0; i < len; i++ {
+	for i := 0; i < length; i++ {
 		key, err := getValueWithTag(v.Type().Key(), tag, opt)
 		if err != nil {
 			return err
@@ -1241,7 +1241,9 @@ func RandomInt(parameters ...int) (p []int, err error) {
 		for i := range p {
 			p[i] += minInt
 		}
-		p = p[0:count]
+		if len(p) > count {
+			p = p[0:count]
+		}
 	default:
 		err = fmt.Errorf(fakerErrors.ErrMoreArguments, len(parameters))
 	}

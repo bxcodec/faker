@@ -415,8 +415,11 @@ func TestUnsuportedMapStringInterface(t *testing.T) {
 		Map map[string]interface{}
 	}
 	var sample = new(Sample)
-	if err := FakeData(sample); err == nil {
+	if err := FakeData(sample, options.WithRandomMapAndSliceMinSize(1)); err == nil {
 		t.Error("Expected Error. But got nil")
+	}
+	if err := FakeData(sample, options.WithRandomMapAndSliceMaxSize(1)); err != nil {
+		t.Errorf("Expected nil. But got error: %+v", err) // empty map
 	}
 }
 
@@ -925,8 +928,19 @@ func TestRandomIntOnlySecondParameters(t *testing.T) {
 }
 
 func TestRandomIntThreeParameters(t *testing.T) {
+	if res, err := RandomInt(1, 2, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 2 {
+		t.Fatalf("expect 2 numbers, got %d", len(res))
+	}
+	if res, err := RandomInt(1, 10, 3); err != nil {
+		t.Fatal(err)
+	} else if len(res) != 3 {
+		t.Fatalf("expect 3 numbers, got %d", len(res))
+	}
+
 	first := rand.Intn(50)
-	second := rand.Intn(100) + first
+	second := rand.Intn(100) + first + 5 // at least 5 numbers
 	third := rand.Intn(5)
 	res, _ := RandomInt(first, second, third)
 	if len(res) != (third) {
